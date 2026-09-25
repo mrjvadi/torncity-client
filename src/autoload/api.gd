@@ -74,6 +74,11 @@ func command(cmd: String, args := {}) -> Dictionary:
 	var r := await _authed("POST", "/api/v1/command", body)
 	if r.data is Dictionary and (r.data as Dictionary).has("ok"):
 		var d: Dictionary = r.data
+		# screen "notice": a toast-style answer, notice = {text, alert}
+		if d.get("notice") is Dictionary:
+			var nd: Dictionary = d["notice"]
+			d["notice"] = str(nd.get("text", ""))
+			d["alert"] = bool(nd.get("alert", false))
 		if d.get("view") is Dictionary:
 			Session.absorb_view(d["view"])
 		return d

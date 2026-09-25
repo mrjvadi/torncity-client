@@ -87,9 +87,9 @@ static func decode(frame: String) -> Array:
 		line = line.strip_edges()
 		if line.is_empty():
 			continue
-		var v = JSON.parse_string(line)
-		if v is Dictionary:
-			out.append(v)
+		var j := JSON.new()
+		if j.parse(line) == OK and j.data is Dictionary:
+			out.append(j.data)
 	return out
 
 

@@ -79,6 +79,9 @@ func set_bootstrap(b: Dictionary) -> void:
 	if p is Dictionary:
 		player.merge(p, true)
 		absorb_view(p)
+	var pc = b.get("player")
+	if pc is Dictionary and str(pc.get("city_code", "")) != "":
+		city_code = str(pc["city_code"])
 	var city = b.get("city")
 	if city is Dictionary and city.has("code"):
 		city_code = str(city["code"])

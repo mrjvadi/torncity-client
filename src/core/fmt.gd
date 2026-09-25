@@ -92,7 +92,9 @@ static func money_short(n: int, lang: String) -> String:
 	var units := [[1000000000, "B", " میلیارد"], [1000000, "M", " میلیون"], [1000, "K", " هزار"]]
 	for u in units:
 		if a >= u[0]:
-			var v := float(n) / float(u[0])
+			# round in integers: 12450 -> 125 tenths, not 12.4499...
+			var tenths := int(round(float(n) * 10.0 / float(u[0])))
+			var v := tenths / 10.0
 			var places := 1 if absf(v) < 100 else 0
 			var s := decimal(v, places, lang)
 			if s.ends_with(".0") or s.ends_with(FA_DECIMAL + FA_DIGITS[0]):

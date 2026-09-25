@@ -36,6 +36,10 @@ func boot() -> bool:
 		AuthFlow.Method.REFRESH:
 			if await Api.refresh():
 				return await start_playing()
+			if TelegramApp.available and AuthFlow.is_plausible_init_data(TelegramApp.init_data):
+				var r2 := await Api.auth_telegram(TelegramApp.init_data)
+				if r2.status == 200:
+					return await start_playing()
 	return false
 
 
@@ -122,5 +126,7 @@ func _on_notice(data: Dictionary) -> void:
 
 func _on_announce(data: Dictionary) -> void:
 	var n := data.duplicate()
+	if data.get("texts") is Dictionary and data["texts"].has(I18n.lang):
+		n["text"] = str(data["texts"][I18n.lang])
 	n["kind"] = "announce"
 	Session.add_notice(n)

@@ -7,17 +7,19 @@ extends RefCounted
 ##   REFRESH   a refresh token is stored: renew the session silently.
 ##   LINK      nothing to go on: show the link-code screen (/link in the bot).
 ##
-## initData wins over a stored session: it names the Telegram user who opened
-## the app right now, which may not be whoever logged in on this device before.
+## A stored session is tried first: the server accepts Mini App sign-in data
+## only once (replays are refused), so after the first sign-in the refresh token
+## is what keeps the player in. If that refresh is refused, initData is next
+## (Game.boot), then the code screen.
 
 enum Method { TELEGRAM, REFRESH, LINK }
 
 
 static func decide(init_data: String, stored_refresh: String) -> Method:
-	if is_plausible_init_data(init_data):
-		return Method.TELEGRAM
 	if stored_refresh != "":
 		return Method.REFRESH
+	if is_plausible_init_data(init_data):
+		return Method.TELEGRAM
 	return Method.LINK
 
 

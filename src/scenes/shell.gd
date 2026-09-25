@@ -97,8 +97,12 @@ func _on_response(resp: Dictionary, req: Dictionary) -> void:
 	var screen := str(resp.get("screen", ""))
 	var key := ViewRouter.scene_for(screen, resp.get("view"))
 	var cmd := str(req.get("command", ""))
-	# An error on a screen that is up: say it, keep the screen.
-	if not resp.get("ok", false) and current != null and key == "card":
+	# A toast-style answer: show it, keep the screen.
+	if screen == "notice" and current != null:
+		toast(str(resp.get("notice", resp.get("text", ""))), "error" if resp.get("alert", false) else "ok")
+		return
+	# A refusal (screen "error", or ok=false) on a screen that is up: say it, keep the screen.
+	if (screen == "error" or not resp.get("ok", false)) and current != null and key == "card":
 		toast(str(resp.get("text", resp.get("error", {}).get("message", ""))), "error")
 		return
 	# A walk answered with text only (not the map): toast it and show the map.
@@ -148,14 +152,17 @@ func _on_notice(data: Dictionary) -> void:
 	var kind := str(data.get("kind", ""))
 	if kind in ["shift_paid", "paid", "income"]:
 		Fx.coins(self, Vector2(size.x * 0.3, 150))
-	elif kind in ["travel_arrived", "level_up"]:
+	elif kind in ["travel_arrived", "travel.completed", "level_up", "level.up"]:
 		Fx.sparkle(self, size / 2.0)
 		if current_key in ["travel_status", "city", "cities"]:
 			Game.run("map.list", {}, false)
 
 
 func _on_announce(data: Dictionary) -> void:
-	toast(str(data.get("text", "")), "announce")
+	var text := str(data.get("text", ""))
+	if data.get("texts") is Dictionary and data["texts"].has(I18n.lang):
+		text = str(data["texts"][I18n.lang])
+	toast(text, "announce")
 	if current and current.has_method("on_announce"):
 		current.on_announce(data)
 
