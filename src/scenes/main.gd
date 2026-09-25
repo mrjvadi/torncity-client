@@ -1,0 +1,58 @@
+extends Control
+## The root: splash -> (auto login | link screen) -> the game shell.
+
+var _screen: Control
+
+
+func _ready() -> void:
+	set_anchors_preset(Control.PRESET_FULL_RECT)
+	Game.login_needed.connect(show_login)
+	if Config.headless_capture:
+		return  # the screenshot/test harness drives the flow itself
+	show_splash()
+	var min_splash := get_tree().create_timer(1.2)
+	var ok := await Game.boot()
+	if min_splash.time_left > 0:
+		await min_splash.timeout
+	if ok:
+		show_shell()
+	else:
+		show_login()
+
+
+func _swap(c: Control) -> void:
+	if _screen:
+		var old := _screen
+		if Config.headless_capture:
+			old.queue_free()
+		else:
+			var t := old.create_tween()
+			t.tween_property(old, "modulate:a", 0.0, 0.25)
+			t.tween_callback(old.queue_free)
+	_screen = c
+	add_child(c)
+	if not Config.headless_capture:
+		Fx.fade_in(c, 0.3)
+
+
+func show_splash() -> Control:
+	var s: Control = load("res://src/scenes/splash.tscn").instantiate()
+	_swap(s)
+	return s
+
+
+func show_login() -> Control:
+	var l: Control = load("res://src/scenes/login.tscn").instantiate()
+	_swap(l)
+	l.done.connect(show_shell)
+	return l
+
+
+func show_shell() -> Control:
+	if _screen and _screen.name == "Shell":
+		return _screen
+	var s: Control = load("res://src/scenes/shell.tscn").instantiate()
+	s.name = "Shell"
+	_swap(s)
+	s.start()
+	return s
