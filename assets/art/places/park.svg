@@ -70,8 +70,8 @@
 <polygon points="84,208.5 96,208.5 90,200.25" fill="#3E9A4B"/>
 <polygon points="85.5,203.25 94.5,203.25 90,195.75" fill="#378646"/>
 <polygon points="90,195.75 87.75,201 90,200.25" fill="#78B881"/>
-<circle cx="136" cy="190" r="1.8" fill="#FF8FA3"/>
-<circle cx="136" cy="194" r="1.8" fill="#F6B93B"/>
-<circle cx="94" cy="183" r="1.8" fill="#FF8FA3"/>
-<circle cx="142" cy="213" r="1.8" fill="#F6B93B"/>
+<circle cx="136" cy="188.5" r="1.8" fill="#FF8FA3"/>
+<circle cx="136" cy="192.5" r="1.8" fill="#F6B93B"/>
+<circle cx="94" cy="181.5" r="1.8" fill="#FF8FA3"/>
+<circle cx="142" cy="211.5" r="1.8" fill="#F6B93B"/>
 </svg>

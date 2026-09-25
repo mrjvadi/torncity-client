@@ -44,9 +44,9 @@
 <polygon points="81.5,174.75 87,177.5 67,192.5 61.5,189.75" fill="#FFFFFF"/>
 <polygon points="87,177.5 92.5,180.25 72.5,195.25 67,192.5" fill="#E5484D"/>
 <polygon points="92.5,180.25 98,183 78,198 72.5,195.25" fill="#FFFFFF"/>
-<ellipse cx="64" cy="189" rx="3.6" ry="2.2" fill="#F6B93B"/>
-<ellipse cx="71" cy="192.5" rx="3.6" ry="2.2" fill="#67C66F"/>
-<ellipse cx="78" cy="196" rx="3.6" ry="2.2" fill="#E5484D"/>
+<circle cx="66" cy="187.5" r="2.4" fill="#F6B93B"/>
+<circle cx="73" cy="191" r="2.4" fill="#67C66F"/>
+<circle cx="80" cy="194.5" r="2.4" fill="#E5484D"/>
 <polygon points="88,210 102,203 110.25,205.47 132.25,216.47 118.25,223.47 110,221" fill="#121829" opacity="0.14"/>
 <polygon points="88,210 110,221 110,212 88,201" fill="#B98A5E"/>
 <polygon points="124,214 110,221 110,212 124,205" fill="#916F51"/>
@@ -55,9 +55,9 @@
 <polygon points="109.5,188.75 115,191.5 95,206.5 89.5,203.75" fill="#FFFFFF"/>
 <polygon points="115,191.5 120.5,194.25 100.5,209.25 95,206.5" fill="#F6B93B"/>
 <polygon points="120.5,194.25 126,197 106,212 100.5,209.25" fill="#FFFFFF"/>
-<ellipse cx="92" cy="203" rx="3.6" ry="2.2" fill="#F6B93B"/>
-<ellipse cx="99" cy="206.5" rx="3.6" ry="2.2" fill="#67C66F"/>
-<ellipse cx="106" cy="210" rx="3.6" ry="2.2" fill="#E5484D"/>
+<circle cx="94" cy="201.5" r="2.4" fill="#F6B93B"/>
+<circle cx="101" cy="205" r="2.4" fill="#67C66F"/>
+<circle cx="108" cy="208.5" r="2.4" fill="#E5484D"/>
 <polygon points="116,224 130,217 138.25,219.47 160.25,230.47 146.25,237.47 138,235" fill="#121829" opacity="0.14"/>
 <polygon points="116,224 138,235 138,226 116,215" fill="#B98A5E"/>
 <polygon points="152,228 138,235 138,226 152,219" fill="#916F51"/>
@@ -66,9 +66,9 @@
 <polygon points="137.5,202.75 143,205.5 123,220.5 117.5,217.75" fill="#FFFFFF"/>
 <polygon points="143,205.5 148.5,208.25 128.5,223.25 123,220.5" fill="#2EC4B6"/>
 <polygon points="148.5,208.25 154,211 134,226 128.5,223.25" fill="#FFFFFF"/>
-<ellipse cx="120" cy="217" rx="3.6" ry="2.2" fill="#F6B93B"/>
-<ellipse cx="127" cy="220.5" rx="3.6" ry="2.2" fill="#67C66F"/>
-<ellipse cx="134" cy="224" rx="3.6" ry="2.2" fill="#E5484D"/>
+<circle cx="122" cy="215.5" r="2.4" fill="#F6B93B"/>
+<circle cx="129" cy="219" r="2.4" fill="#67C66F"/>
+<circle cx="136" cy="222.5" r="2.4" fill="#E5484D"/>
 <polyline points="172,222 172,206" fill="none" stroke="#56627F" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
 <circle cx="172" cy="206" r="2.2" fill="#F6B93B"/>
 <ellipse cx="134.52" cy="240.7" rx="7" ry="3.47" fill="#121829" opacity="0.18"/>

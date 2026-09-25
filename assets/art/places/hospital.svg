@@ -41,8 +41,7 @@
 <polygon points="139.51,180.25 133.01,183.5 133.01,175.5 139.51,172.25" fill="#5EA0C7"/>
 <polygon points="139.51,168.25 133.01,171.5 133.01,163.5 139.51,160.25" fill="#5EA0C7"/>
 <polygon points="73.99,138 127.99,165 127.99,162 73.99,135" fill="#E5484D"/>
-<ellipse cx="128" cy="135" rx="24" ry="12" fill="#56627F"/>
-<ellipse cx="128" cy="135" rx="20" ry="10" fill="none" stroke="#FFFFFF" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+<ellipse cx="128" cy="134.9" rx="24.04" ry="12.02" fill="#56627F"/>
 <polygon points="127,130.5 129,131.5 121,135.5 119,134.5" fill="#FFFFFF"/>
 <polygon points="135,134.5 137,135.5 129,139.5 127,138.5" fill="#FFFFFF"/>
 <polygon points="125.5,133.25 131.5,136.25 130.5,136.75 124.5,133.75" fill="#FFFFFF"/>

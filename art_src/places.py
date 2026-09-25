@@ -14,7 +14,14 @@ W = H = 256
 OX, OY = 128, 150
 
 
+# The 3D backend (art_src/blender/render_places.py) swaps this for a factory
+# that returns the same (svg, iso) pair built on Blender meshes.
+FACTORY = None
+
+
 def new():
+    if FACTORY:
+        return FACTORY()
     s = Svg(W, H)
     return s, Iso(s, OX, OY)
 
@@ -52,11 +59,9 @@ def city_centre():
     i.dome(69, 23, 72, 10, P["turquoise"])
     # the fountain
     i.cylinder(cx, cy, 0, 14, 5, P["stone"])
-    wx, wy = i.p(cx, cy, 5)
-    s.ellipse(wx, wy, 16.5, 8.2, P["water"])
-    s.ellipse(wx - 3, wy - 1.5, 8, 3.5, light(P["water"], 0.45))
-    s.line([(wx, wy), (wx, wy - 14)], light(P["water"], 0.3), 2.2)
-    s.circle(wx, wy - 15, 3, light(P["water"], 0.55))
+    i.disc(cx, cy, 5.1, 11.7, P["water"])
+    i.puff(cx, cy, 12, 2.4, light(P["water"], 0.4))
+    i.puff(cx, cy, 18, 3.2, light(P["water"], 0.55), 0.9)
     # trees and lamps along the front
     i.lamp(28, 86)
     i.lamp(86, 30)
@@ -89,8 +94,7 @@ def bazaar():
             i.quad([(x + u0, 64, 16), (x + u1, 64, 16), (x + u1, 84, 11), (x + u0, 84, 11)], col)
         # produce: little heaps of colour on the counter
         for k, col in enumerate((P["saffron"], P["leaf"], P["pomegranate"])):
-            px, py = i.p(x + 4 + k * 7, 80, 9)
-            s.ellipse(px, py, 3.6, 2.2, col)
+            i.puff(x + 4 + k * 7, 78, 9.5, 2.4, col)
     i.lamp(94, 50)
     i.tree(92, 88, 0.8)
     return s
@@ -233,9 +237,7 @@ def hospital():
     i.windows(main, "right", 4, 4, mu=5, gap_u=6, v0=6, v1=50, c=mix(P["sky"], P["slate"], 0.35))
     i.on_left(main, [(0, 51), (54, 51), (54, 54), (0, 54)], P["pomegranate"])
     # helipad
-    hx, hy = i.p(39, 39, 54)
-    s.ellipse(hx, hy, 24, 12, P["slate"])
-    s.ellipse(hx, hy, 20, 10, "none", stroke=P["white"], sw=1.4)
+    i.disc(39, 39, 54.1, 17, P["slate"])
     s.poly([i.p(34, 35, 54), i.p(36, 35, 54), i.p(36, 43, 54), i.p(34, 43, 54)], P["white"])
     s.poly([i.p(42, 35, 54), i.p(44, 35, 54), i.p(44, 43, 54), i.p(42, 43, 54)], P["white"])
     s.poly([i.p(36, 38.5, 54), i.p(42, 38.5, 54), i.p(42, 39.5, 54), i.p(36, 39.5, 54)], P["white"])
@@ -364,13 +366,7 @@ def airport():
     s.line([i.p(83, 29, 70), i.p(83, 29, 80)], P["stone_dk"], 1.3)
     s.circle(*i.p(83, 29, 80.5), 2, P["pomegranate"])
     # a small plane on the runway
-    px, py = i.p(52, 71, 5)
-    body = P["white"]
-    s.path("M%.1f %.1f l-26 -13 q-3 -2 0 -3 l32 13 q3 2 -1 3 z" % (px + 18, py + 6), body)
-    s.poly([(px - 2, py - 2), (px + 6, py - 16), (px + 11, py - 15), (px + 6, py + 1)], light(P["stone"], 0.1))
-    s.poly([(px + 1, py + 3), (px - 12, py + 12), (px - 7, py + 13), (px + 8, py + 5)], P["stone"])
-    s.poly([(px - 18, py - 9), (px - 21, py - 19), (px - 17, py - 19), (px - 12, py - 7)], P["turquoise"])
-    s.line([(px - 10, py - 5), (px + 12, py + 5)], P["turquoise"], 1.4)
+    i.plane_model(52, 71, 5)
     i.tree(92, 92, 0.7, kind="cone")
     i.tree(10, 92, 0.7, kind="cone")
     return s
@@ -399,9 +395,8 @@ def industrial_zone():
         i.shadow(x - 4, y - 4, 8, 8, h, 0.18)
         i.cylinder(x, y, 0, 5, h, P["stone"])
         i.cylinder(x, y, h - 12, 5.3, 6, P["pomegranate"], cap=False)
-        tx, ty = i.p(x, y, h)
-        for k, (dx, dy, r) in enumerate(((0, -6, 5), (4, -14, 6.5), (1, -24, 8))):
-            s.circle(tx + dx, ty + dy, r, P["white"], opacity=0.75 - k * 0.15)
+        for k, (dx, dz, r) in enumerate(((0, 6, 5), (3, 14, 6.5), (1, 24, 8))):
+            i.puff(x + dx, y - dx, h + dz, r, P["white"], 0.75 - k * 0.15)
     # containers
     for (x, y, z, c) in ((66, 70, 0, P["pomegranate"]), (80, 70, 0, P["turquoise"]), (66, 70, 8, P["saffron"])):
         cbox = i.box(x, y, z, 12, 20, 8, c)
@@ -421,8 +416,7 @@ def farmland():
     for k, y in enumerate(range(50, 96, 7)):
         i.ground_poly([(66, y), (95, y), (95, y + 4.5), (66, y + 4.5)], P["leaf_dk"])
         for x in range(68, 94, 5):
-            px, py = i.p(x, y + 2, 0)
-            s.circle(px, py - 2, 2.3, P["leaf"])
+            i.puff(x, y + 2, 2, 2.3, P["leaf"])
     # barn
     i.shadow(14, 8, 34, 28, 34)
     barn = i.box(14, 8, 0, 34, 28, 20, P["pomegranate"])
@@ -508,8 +502,7 @@ def park():
         i.tree(x, y, sc, c, k)
     # flowers
     for x, y, c in ((44, 36, P["rose"]), (48, 40, P["saffron"]), (16, 50, P["rose"]), (70, 56, P["saffron"])):
-        fx, fy = i.p(x, y)
-        s.circle(fx, fy, 1.8, c)
+        i.puff(x, y, 1.5, 1.8, c)
     return s
 
 
@@ -562,8 +555,7 @@ def plaza():
     pts_ = [(50 + 30 * math.cos(2 * math.pi * k / 24), 50 + 30 * math.sin(2 * math.pi * k / 24)) for k in range(24)]
     i.ground_poly(pts_, mix(P["turquoise"], P["sand"], 0.6))
     i.cylinder(50, 50, 0, 12, 4, P["stone"])
-    wx, wy = i.p(50, 50, 4)
-    s.ellipse(wx, wy, 14, 7, P["water"])
+    i.disc(50, 50, 4.1, 10, P["water"])
     for x, y in ((14, 14), (86, 14), (14, 86), (86, 86)):
         i.tree(x, y, 0.75)
     return s

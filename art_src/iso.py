@@ -158,6 +158,27 @@ class Iso:
                 else:
                     put(b, [(u0, v_0), (u0 + ww, v_0), (u0 + ww, v_0 + wh), (u0, v_0 + wh)], fill)
 
+    # -- backend-neutral details (the 3D backend builds real geometry for these) --
+    def puff(self, x, y, z, r, c, opacity=1.0):
+        """A round blob: smoke, a shrub, a heap of produce."""
+        px, py = self.p(x, y, z)
+        self.svg.circle(px, py, r * self.k, c, opacity=opacity)
+
+    def disc(self, x, y, z, r, c):
+        """A flat round surface lying on the ground plane: water, a pad."""
+        px, py = self.p(x, y, z)
+        self.svg.ellipse(px, py, r * 1.414 * self.k, r * 0.707 * self.k, c)
+
+    def plane_model(self, x, y, z):
+        """A small airliner parked along world x."""
+        px, py = self.p(x, y, z)
+        s = self.svg
+        s.path("M%.1f %.1f l-26 -13 q-3 -2 0 -3 l32 13 q3 2 -1 3 z" % (px + 18, py + 6), P["white"])
+        s.poly([(px - 2, py - 2), (px + 6, py - 16), (px + 11, py - 15), (px + 6, py + 1)], light(P["stone"], 0.1))
+        s.poly([(px + 1, py + 3), (px - 12, py + 12), (px - 7, py + 13), (px + 8, py + 5)], P["stone"])
+        s.poly([(px - 18, py - 9), (px - 21, py - 19), (px - 17, py - 19), (px - 12, py - 7)], P["turquoise"])
+        s.line([(px - 10, py - 5), (px + 12, py + 5)], P["turquoise"], 1.4)
+
     # -- props -----------------------------------------------------------------------------
     def tree(self, x, y, size=1.0, c=None, kind="round"):
         c = c or P["leaf"]
