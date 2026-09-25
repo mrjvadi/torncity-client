@@ -32,9 +32,11 @@ func show_toast(text: String, kind := "notice", icon_name := "") -> void:
 	var body := UI.rich(TextIcons.strip(text) if TextIcons.lead_icon(text) != "" else text, 24)
 	row.add_child(body)
 	p.add_child(row)
+	var w := minf(get_viewport_rect().size.x - 32, 680)
+	p.custom_minimum_size.x = w
+	body.custom_minimum_size.x = w - 48 - 14 - p.padding * 2
 	add_child(p)
-	p.custom_minimum_size.x = minf(size.x - 32, 680)
-	p.position = Vector2((size.x - p.custom_minimum_size.x) / 2.0, -200)
+	p.position = Vector2((get_viewport_rect().size.x - w) / 2.0, -400)
 	p.gui_input.connect(func(e): if e is InputEventMouseButton and e.pressed: _dismiss(p))
 	_stack.push_front(p)
 	while _stack.size() > MAX:
@@ -46,12 +48,19 @@ func show_toast(text: String, kind := "notice", icon_name := "") -> void:
 	TelegramApp.haptic("light")
 
 
+func clear() -> void:
+	for p in _stack:
+		if is_instance_valid(p):
+			p.queue_free()
+	_stack.clear()
+
+
 func _layout() -> void:
 	var y := top_inset
 	for p in _stack:
 		if not is_instance_valid(p):
 			continue
-		var target := Vector2((size.x - p.size.x) / 2.0, y)
+		var target := Vector2((get_viewport_rect().size.x - p.size.x) / 2.0, y)
 		if Config.headless_capture:
 			p.position = target
 		else:

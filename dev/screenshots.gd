@@ -98,6 +98,7 @@ func _run() -> void:
 				Session.add_notice({"type": "notice", "kind": "shift_paid", "text": Mock.L("💰 شیفت تمام شد و ۱٬۸۵۰ نیل دستمزد گرفتید.", "💰 Your shift is over: you were paid 1,850 Nil.")})
 			if name == "city_night":
 				CityMapView.force_hour = 22.0
+			shell.toasts.clear()
 			if cmd.begins_with("@"):
 				shell.open_local(cmd.substr(1))
 			else:
@@ -111,8 +112,19 @@ func _run() -> void:
 					m._walk_left = m._walk_total * 0.55
 					m._update_walker()
 			await _frames(8)
+			if OS.get_environment("SHOT_DEBUG") != "":
+				_debug(shell)
 			await _save(lang, name)
 			if name == "city_walking":
 				Mock.st["walk"] = null
 				Mock.st["place"] = "city_centre"
 		CityMapView.force_hour = -1.0
+
+
+func _debug(n: Node, depth := 0) -> void:
+	if n is Control and depth < 9:
+		var c: Control = n
+		if c.get_combined_minimum_size().x > 720 or c.position.x < -1 or c.size.x > 721:
+			print("  ".repeat(depth), c.name, " ", c.get_class(), " pos=", c.position, " size=", c.size, " min=", c.get_combined_minimum_size())
+	for ch in n.get_children():
+		_debug(ch, depth + 1)

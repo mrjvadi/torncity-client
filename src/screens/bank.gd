@@ -46,13 +46,22 @@ func _section(title: String, icon_name: String, acts: Array, cmd: String, enable
 	g.columns = 2
 	g.add_theme_constant_override("h_separation", 12)
 	g.add_theme_constant_override("v_separation", 12)
+	var custom: Array = []
 	for a in acts:
 		if str(a.get("command", "")) != cmd:
 			continue
-		var b := UI.action_button(a, "GoldButton" if a.get("input") == null and icon_name == "deposit" else ("Button" if a.get("input") == null else "GhostButton"))
+		if a.get("input") is Dictionary:
+			custom.append(a)
+			continue
+		var b := UI.action_button(a, "GoldButton" if icon_name == "deposit" else "Button")
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.add_theme_font_size_override("font_size", 22)
 		b.disabled = not enabled
 		g.add_child(b)
+	for a in custom:
+		var b := UI.action_button(a, "GhostButton")
+		b.disabled = not enabled
+		box.add_child.call_deferred(b)
 	if g.get_child_count() == 0:
 		box.add_child(UI.label(I18n.t("bank.nothing"), "DimLabel", -1, true))
 	else:

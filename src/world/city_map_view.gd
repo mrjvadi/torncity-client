@@ -291,8 +291,11 @@ func _position_labels() -> void:
 		var anchor := CityLayout.project(CityLayout.lot_origin(slots[code]) + Vector2(CityLayout.LOT, CityLayout.LOT) * 0.86)
 		var p := to_screen(anchor)
 		chip.reset_size()
-		chip.position = p - Vector2(chip.size.x / 2.0, chip.size.y * 0.5)
-		chip.visible = Rect2(Vector2(-60, -30), size + Vector2(120, 60)).has_point(p)
+		var pos := p - Vector2(chip.size.x / 2.0, chip.size.y * 0.5)
+		# keep tags readable at the edges of the view
+		pos.x = clampf(pos.x, 6.0, maxf(6.0, size.x - chip.size.x - 6.0))
+		chip.position = pos
+		chip.visible = Rect2(Vector2(-40, -30), size + Vector2(80, 60)).has_point(p)
 
 
 func select(code: String) -> void:

@@ -111,7 +111,7 @@ static func action_button(action: Dictionary, kind := "ActionButton") -> Button:
 		ic = "forward" if ic == "back" else "back"   # arrows point the reading way
 	var b := button(TextIcons.strip(label), ic, kind)
 	b.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	b.clip_text = true
+	b.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	b.pressed.connect(func(): Game.run_action(action))
 	return b
 
