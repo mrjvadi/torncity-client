@@ -1,0 +1,435 @@
+# Client shell strings (en). Game text comes from the server.
+msgid ""
+msgstr ""
+"Project-Id-Version: torncity-client\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "app.name"
+msgstr "Torncity"
+
+msgid "app.tagline"
+msgstr "A living city. Your life in it."
+
+msgid "bank.closed"
+msgstr "The bank is closed while you are on the road."
+
+msgid "bank.deposit"
+msgstr "Deposit"
+
+msgid "bank.fee"
+msgstr "Withdrawal fee: {fee}%"
+
+msgid "bank.nothing"
+msgstr "Nothing to move this way right now."
+
+msgid "bank.title"
+msgstr "Bank of {city}"
+
+msgid "bank.withdraw"
+msgstr "Withdraw"
+
+msgid "card.title"
+msgstr "Torncity"
+
+msgid "common.cancel"
+msgstr "Cancel"
+
+msgid "common.confirm"
+msgstr "Confirm"
+
+msgid "error.network"
+msgstr "No connection to the game server. Check your internet and try again."
+
+msgid "error.server"
+msgstr "The server could not answer (code {status}). Try again in a moment."
+
+msgid "feed.ago"
+msgstr "{when} ago"
+
+msgid "feed.empty"
+msgstr "Nothing yet. City news and what happens to you will appear here."
+
+msgid "inventory.empty"
+msgstr "Your backpack is empty."
+
+msgid "job.details"
+msgstr "Details"
+
+msgid "job.energy_cost"
+msgstr "Energy per shift"
+
+msgid "job.next"
+msgstr "Next promotion"
+
+msgid "job.no_shift"
+msgstr "No shift running"
+
+msgid "job.none"
+msgstr "You have no job yet."
+
+msgid "job.pay"
+msgstr "{pay} per shift"
+
+msgid "job.performance"
+msgstr "Performance"
+
+msgid "job.shift"
+msgstr "Shift"
+
+msgid "job.shift_left"
+msgstr "Shift - {left} left"
+
+msgid "job.total"
+msgstr "Earned so far"
+
+msgid "job.workplace"
+msgstr "Workplace"
+
+msgid "life.age"
+msgstr "Age"
+
+msgid "life.intelligence"
+msgstr "Intelligence"
+
+msgid "life.me"
+msgstr "About you"
+
+msgid "life.needs"
+msgstr "Needs"
+
+msgid "life.needs_hint"
+msgstr "Hunger, sleep and stress cost you when they run high; eat, sleep and rest to bring them down."
+
+msgid "life.next_rank"
+msgstr "Next rank"
+
+msgid "life.rank"
+msgstr "Rank"
+
+msgid "life.worth"
+msgstr "Net worth"
+
+msgid "login.bad_format"
+msgstr "The code has 8 letters and digits."
+
+msgid "login.checking"
+msgstr "Checking…"
+
+msgid "login.enter"
+msgstr "Enter the game"
+
+msgid "login.mock_hint"
+msgstr "Offline demo: any 8 letters or digits work."
+
+msgid "login.rejected"
+msgstr "That code was not accepted. Ask the bot for a new one."
+
+msgid "login.step1"
+msgstr "Open the game bot in Telegram."
+
+msgid "login.step2"
+msgstr "Send «/link» (or «اتصال»)."
+
+msgid "login.step3"
+msgstr "Type the 8-character code here."
+
+msgid "login.subtitle"
+msgstr "Link this device to your game account."
+
+msgid "login.title"
+msgstr "Link with a code"
+
+msgid "map.at"
+msgstr "You are at the {place}"
+
+msgid "map.depart"
+msgstr "Departures"
+
+msgid "map.here"
+msgstr "You are here"
+
+msgid "map.on_the_way"
+msgstr "On the way…"
+
+msgid "map.walk_here"
+msgstr "Walk here"
+
+msgid "map.walking"
+msgstr "Walking to the {place} - {left} left"
+
+msgid "more.achievements"
+msgstr "Achievements"
+
+msgid "more.auction"
+msgstr "Auctions"
+
+msgid "more.companies"
+msgstr "Companies"
+
+msgid "more.crime"
+msgstr "Crime"
+
+msgid "more.education"
+msgstr "Education"
+
+msgid "more.elections"
+msgstr "Elections"
+
+msgid "more.factions"
+msgstr "Factions"
+
+msgid "more.friends"
+msgstr "Friends"
+
+msgid "more.gold"
+msgstr "Gold"
+
+msgid "more.government"
+msgstr "City hall"
+
+msgid "more.health"
+msgstr "Health"
+
+msgid "more.inventory"
+msgstr "Backpack"
+
+msgid "more.life"
+msgstr "My life"
+
+msgid "more.loans"
+msgstr "Loans"
+
+msgid "more.market"
+msgstr "Market"
+
+msgid "more.military"
+msgstr "Military"
+
+msgid "more.missions"
+msgstr "Missions"
+
+msgid "more.notifications"
+msgstr "Notifications"
+
+msgid "more.property"
+msgstr "Property"
+
+msgid "more.settings"
+msgstr "Settings"
+
+msgid "more.shops"
+msgstr "Shops"
+
+msgid "more.skills"
+msgstr "Skills"
+
+msgid "more.stocks"
+msgstr "Stocks"
+
+msgid "more.travel"
+msgstr "Travel"
+
+msgid "nav.bank"
+msgstr "Bank"
+
+msgid "nav.city"
+msgstr "City"
+
+msgid "nav.me"
+msgstr "Me"
+
+msgid "nav.more"
+msgstr "More"
+
+msgid "nav.work"
+msgstr "Work"
+
+msgid "need.happiness"
+msgstr "Happiness"
+
+msgid "need.hunger"
+msgstr "Hunger"
+
+msgid "need.sleep"
+msgstr "Sleep"
+
+msgid "need.stress"
+msgstr "Stress"
+
+msgid "page.of"
+msgstr "Page {page} of {pages}"
+
+msgid "profile.code"
+msgstr "Player code: {code}"
+
+msgid "profile.job"
+msgstr "{title} - {pay} per shift"
+
+msgid "profile.level"
+msgstr "Level {level}"
+
+msgid "profile.no_job"
+msgstr "You have no job yet. Find openings under «Work»."
+
+msgid "profile.travelling"
+msgstr "On the way to {city} - {left} left"
+
+msgid "profile.where"
+msgstr "Where you are"
+
+msgid "profile.xp_to_next"
+msgstr "{xp} XP to next level"
+
+msgid "rt.connected"
+msgstr "connected"
+
+msgid "rt.connecting"
+msgstr "connecting"
+
+msgid "rt.off"
+msgstr "off"
+
+msgid "service.auction_house"
+msgstr "Auction"
+
+msgid "service.bank"
+msgstr "Bank"
+
+msgid "service.city_hall"
+msgstr "City hall"
+
+msgid "service.market"
+msgstr "Market"
+
+msgid "service.police"
+msgstr "Police"
+
+msgid "service.training_center"
+msgstr "Training centre"
+
+msgid "service.university"
+msgstr "University"
+
+msgid "settings.about"
+msgstr "About"
+
+msgid "settings.account"
+msgstr "Account"
+
+msgid "settings.api"
+msgstr "Game API address"
+
+msgid "settings.apply"
+msgstr "Save and reconnect"
+
+msgid "settings.connection"
+msgstr "Connection"
+
+msgid "settings.credits"
+msgstr "Font: Vazirmatn (SIL Open Font License). Art: original, made for Torncity."
+
+msgid "settings.game_settings"
+msgstr "Game settings"
+
+msgid "settings.language"
+msgstr "Language"
+
+msgid "settings.logout"
+msgstr "Unlink this device"
+
+msgid "settings.mock"
+msgstr "Offline demo (mock server)"
+
+msgid "settings.realtime"
+msgstr "Realtime: {state}"
+
+msgid "settings.version"
+msgstr "Client version {v}"
+
+msgid "settings.ws"
+msgstr "Realtime (Centrifugo) address"
+
+msgid "stat.bank"
+msgstr "Bank balance"
+
+msgid "stat.cash"
+msgstr "Cash"
+
+msgid "stat.energy"
+msgstr "Energy"
+
+msgid "stat.health"
+msgstr "Health"
+
+msgid "travel.already"
+msgstr "You are on the way to {city}."
+
+msgid "travel.arriving"
+msgstr "Arriving…"
+
+msgid "travel.busy"
+msgstr "Busy route"
+
+msgid "travel.by"
+msgstr "By {mode}"
+
+msgid "travel.cash"
+msgstr "Your cash: {cash}"
+
+msgid "travel.distance"
+msgstr "{km} km"
+
+msgid "travel.free"
+msgstr "Free"
+
+msgid "travel.from"
+msgstr "You are in {city}"
+
+msgid "travel.left"
+msgstr "{left} to arrival"
+
+msgid "travel.none"
+msgstr "No routes lead out of here right now."
+
+msgid "travel.on_way"
+msgstr "On the way to {city}"
+
+msgid "travel.requoted"
+msgstr "Fares changed since you looked. Nothing was charged; choose again."
+
+msgid "travel.status"
+msgstr "My journey"
+
+msgid "travel.title"
+msgstr "Travel"
+
+msgid "travel.to"
+msgstr "To {city}"
+
+msgid "worth.bank"
+msgstr "Bank"
+
+msgid "worth.cash"
+msgstr "Cash"
+
+msgid "worth.debts"
+msgstr "Debts"
+
+msgid "worth.equity"
+msgstr "Shares"
+
+msgid "worth.gold"
+msgstr "Gold"
+
+msgid "worth.goods"
+msgstr "Goods"
+
+msgid "worth.property"
+msgstr "Property"
+
+msgid "worth.savings"
+msgstr "Savings"
+

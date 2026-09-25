@@ -1,0 +1,435 @@
+# Client shell strings (fa). Game text comes from the server.
+msgid ""
+msgstr ""
+"Project-Id-Version: torncity-client\n"
+"Language: fa\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "app.name"
+msgstr "تورن‌سیتی"
+
+msgid "app.tagline"
+msgstr "شهری زنده؛ زندگی شما در آن"
+
+msgid "bank.closed"
+msgstr "در راه، بانک بسته است."
+
+msgid "bank.deposit"
+msgstr "واریز"
+
+msgid "bank.fee"
+msgstr "کارمزد برداشت: ٪{fee}"
+
+msgid "bank.nothing"
+msgstr "فعلاً مبلغی برای جابه‌جایی نیست."
+
+msgid "bank.title"
+msgstr "بانک {city}"
+
+msgid "bank.withdraw"
+msgstr "برداشت"
+
+msgid "card.title"
+msgstr "تورن‌سیتی"
+
+msgid "common.cancel"
+msgstr "انصراف"
+
+msgid "common.confirm"
+msgstr "تأیید"
+
+msgid "error.network"
+msgstr "ارتباط با سرور بازی برقرار نشد. اینترنت را بررسی کنید و دوباره امتحان کنید."
+
+msgid "error.server"
+msgstr "سرور پاسخ نداد (کد {status}). چند لحظهٔ دیگر دوباره امتحان کنید."
+
+msgid "feed.ago"
+msgstr "{when} پیش"
+
+msgid "feed.empty"
+msgstr "هنوز خبری نیست. خبرهای شهر و اتفاق‌هایی که برایتان می‌افتد اینجا می‌آید."
+
+msgid "inventory.empty"
+msgstr "کوله‌پشتی شما خالی است."
+
+msgid "job.details"
+msgstr "جزئیات"
+
+msgid "job.energy_cost"
+msgstr "انرژی هر شیفت"
+
+msgid "job.next"
+msgstr "ارتقای بعدی"
+
+msgid "job.no_shift"
+msgstr "شیفتی در کار نیست"
+
+msgid "job.none"
+msgstr "هنوز شغلی ندارید."
+
+msgid "job.pay"
+msgstr "{pay} برای هر شیفت"
+
+msgid "job.performance"
+msgstr "عملکرد"
+
+msgid "job.shift"
+msgstr "شیفت"
+
+msgid "job.shift_left"
+msgstr "شیفت - {left} مانده"
+
+msgid "job.total"
+msgstr "درآمد تاکنون"
+
+msgid "job.workplace"
+msgstr "محل کار"
+
+msgid "life.age"
+msgstr "سن"
+
+msgid "life.intelligence"
+msgstr "هوش"
+
+msgid "life.me"
+msgstr "دربارهٔ شما"
+
+msgid "life.needs"
+msgstr "نیازها"
+
+msgid "life.needs_hint"
+msgstr "گرسنگی، خواب و استرس وقتی بالا بروند هزینه دارند؛ با خوردن، خوابیدن و استراحت پایینشان بیاورید."
+
+msgid "life.next_rank"
+msgstr "رتبهٔ بعدی"
+
+msgid "life.rank"
+msgstr "رتبه"
+
+msgid "life.worth"
+msgstr "دارایی خالص"
+
+msgid "login.bad_format"
+msgstr "کد ۸ حرف و رقم دارد."
+
+msgid "login.checking"
+msgstr "در حال بررسی…"
+
+msgid "login.enter"
+msgstr "ورود به بازی"
+
+msgid "login.mock_hint"
+msgstr "نسخهٔ آزمایشی آفلاین: هر ۸ حرف یا رقمی کار می‌کند."
+
+msgid "login.rejected"
+msgstr "این کد پذیرفته نشد. از ربات کد تازه بگیرید."
+
+msgid "login.step1"
+msgstr "ربات بازی را در تلگرام باز کنید."
+
+msgid "login.step2"
+msgstr "«/link» یا «اتصال» را بفرستید."
+
+msgid "login.step3"
+msgstr "کد ۸ حرفی را اینجا وارد کنید."
+
+msgid "login.subtitle"
+msgstr "این دستگاه را به حساب بازی‌تان وصل کنید."
+
+msgid "login.title"
+msgstr "اتصال با کد"
+
+msgid "map.at"
+msgstr "شما در {place} هستید"
+
+msgid "map.depart"
+msgstr "حرکت‌ها"
+
+msgid "map.here"
+msgstr "همین‌جا هستید"
+
+msgid "map.on_the_way"
+msgstr "در راه…"
+
+msgid "map.walk_here"
+msgstr "پیاده بروید"
+
+msgid "map.walking"
+msgstr "در راه {place} - {left} مانده"
+
+msgid "more.achievements"
+msgstr "دستاوردها"
+
+msgid "more.auction"
+msgstr "حراجی"
+
+msgid "more.companies"
+msgstr "شرکت‌ها"
+
+msgid "more.crime"
+msgstr "خلاف"
+
+msgid "more.education"
+msgstr "آموزش"
+
+msgid "more.elections"
+msgstr "انتخابات"
+
+msgid "more.factions"
+msgstr "گروه‌ها"
+
+msgid "more.friends"
+msgstr "دوستان"
+
+msgid "more.gold"
+msgstr "طلا"
+
+msgid "more.government"
+msgstr "شهرداری"
+
+msgid "more.health"
+msgstr "سلامت"
+
+msgid "more.inventory"
+msgstr "کوله‌پشتی"
+
+msgid "more.life"
+msgstr "زندگی من"
+
+msgid "more.loans"
+msgstr "وام"
+
+msgid "more.market"
+msgstr "بازار"
+
+msgid "more.military"
+msgstr "ارتش"
+
+msgid "more.missions"
+msgstr "مأموریت‌ها"
+
+msgid "more.notifications"
+msgstr "اعلان‌ها"
+
+msgid "more.property"
+msgstr "ملک"
+
+msgid "more.settings"
+msgstr "تنظیمات"
+
+msgid "more.shops"
+msgstr "فروشگاه‌ها"
+
+msgid "more.skills"
+msgstr "مهارت‌ها"
+
+msgid "more.stocks"
+msgstr "بورس"
+
+msgid "more.travel"
+msgstr "سفر"
+
+msgid "nav.bank"
+msgstr "بانک"
+
+msgid "nav.city"
+msgstr "شهر"
+
+msgid "nav.me"
+msgstr "من"
+
+msgid "nav.more"
+msgstr "بیشتر"
+
+msgid "nav.work"
+msgstr "کار"
+
+msgid "need.happiness"
+msgstr "شادی"
+
+msgid "need.hunger"
+msgstr "گرسنگی"
+
+msgid "need.sleep"
+msgstr "خواب"
+
+msgid "need.stress"
+msgstr "استرس"
+
+msgid "page.of"
+msgstr "صفحهٔ {page} از {pages}"
+
+msgid "profile.code"
+msgstr "کد بازیکن: {code}"
+
+msgid "profile.job"
+msgstr "{title} - {pay} برای هر شیفت"
+
+msgid "profile.level"
+msgstr "سطح {level}"
+
+msgid "profile.no_job"
+msgstr "هنوز شغلی ندارید. فرصت‌های شغلی را در «کار» ببینید."
+
+msgid "profile.travelling"
+msgstr "در راه {city} - {left} مانده"
+
+msgid "profile.where"
+msgstr "کجا هستید"
+
+msgid "profile.xp_to_next"
+msgstr "{xp} امتیاز تجربه تا سطح بعد"
+
+msgid "rt.connected"
+msgstr "وصل"
+
+msgid "rt.connecting"
+msgstr "در حال اتصال"
+
+msgid "rt.off"
+msgstr "خاموش"
+
+msgid "service.auction_house"
+msgstr "حراجی"
+
+msgid "service.bank"
+msgstr "بانک"
+
+msgid "service.city_hall"
+msgstr "شهرداری"
+
+msgid "service.market"
+msgstr "بازار معاملات"
+
+msgid "service.police"
+msgstr "پلیس"
+
+msgid "service.training_center"
+msgstr "آموزشگاه"
+
+msgid "service.university"
+msgstr "دانشگاه"
+
+msgid "settings.about"
+msgstr "دربارهٔ برنامه"
+
+msgid "settings.account"
+msgstr "حساب"
+
+msgid "settings.api"
+msgstr "نشانی API بازی"
+
+msgid "settings.apply"
+msgstr "ذخیره و اتصال دوباره"
+
+msgid "settings.connection"
+msgstr "اتصال"
+
+msgid "settings.credits"
+msgstr "قلم: وزیرمتن (مجوز SIL OFL). تصویرها: اثر اختصاصی تورن‌سیتی."
+
+msgid "settings.game_settings"
+msgstr "تنظیمات بازی"
+
+msgid "settings.language"
+msgstr "زبان"
+
+msgid "settings.logout"
+msgstr "قطع اتصال این دستگاه"
+
+msgid "settings.mock"
+msgstr "نسخهٔ آزمایشی آفلاین"
+
+msgid "settings.realtime"
+msgstr "رویدادهای زنده: {state}"
+
+msgid "settings.version"
+msgstr "نسخهٔ برنامه {v}"
+
+msgid "settings.ws"
+msgstr "نشانی رویدادهای زنده"
+
+msgid "stat.bank"
+msgstr "موجودی بانک"
+
+msgid "stat.cash"
+msgstr "پول نقد"
+
+msgid "stat.energy"
+msgstr "انرژی"
+
+msgid "stat.health"
+msgstr "سلامت"
+
+msgid "travel.already"
+msgstr "در راه {city} هستید."
+
+msgid "travel.arriving"
+msgstr "در حال رسیدن…"
+
+msgid "travel.busy"
+msgstr "مسیر شلوغ"
+
+msgid "travel.by"
+msgstr "با {mode}"
+
+msgid "travel.cash"
+msgstr "پول نقد شما: {cash}"
+
+msgid "travel.distance"
+msgstr "{km} کیلومتر"
+
+msgid "travel.free"
+msgstr "رایگان"
+
+msgid "travel.from"
+msgstr "شما در {city} هستید"
+
+msgid "travel.left"
+msgstr "{left} تا رسیدن"
+
+msgid "travel.none"
+msgstr "فعلاً از اینجا راهی به شهر دیگری نیست."
+
+msgid "travel.on_way"
+msgstr "در راه {city}"
+
+msgid "travel.requoted"
+msgstr "کرایه‌ها تغییر کرده‌اند. پولی کسر نشد؛ دوباره انتخاب کنید."
+
+msgid "travel.status"
+msgstr "سفر من"
+
+msgid "travel.title"
+msgstr "سفر"
+
+msgid "travel.to"
+msgstr "سفر به {city}"
+
+msgid "worth.bank"
+msgstr "بانک"
+
+msgid "worth.cash"
+msgstr "نقد"
+
+msgid "worth.debts"
+msgstr "بدهی"
+
+msgid "worth.equity"
+msgstr "سهام"
+
+msgid "worth.gold"
+msgstr "طلا"
+
+msgid "worth.goods"
+msgstr "کالا"
+
+msgid "worth.property"
+msgstr "ملک"
+
+msgid "worth.savings"
+msgstr "پس‌انداز"
+
