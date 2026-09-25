@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<defs><radialGradient id="g1" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#BDAAF5"/><stop offset="0.7" stop-color="#9A7CF0"/><stop offset="1" stop-color="#7863BE"/></radialGradient><clipPath id="disc"><circle cx="128" cy="128" r="128"/></clipPath></defs>
+<g clip-path="url(#disc)">
+<circle cx="128" cy="128" r="128" fill="url(#g1)"/>
+<circle cx="128" cy="128" r="122" fill="none" opacity="0.6" stroke="#C7B7F7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="76,96 180,96 208,128 128,222 48,128" fill="#2EC4B6"/>
+<polygon points="96,60 160,60 208,104 48,104" fill="#77D9D0"/>
+<polygon points="48,104 208,104 128,222" fill="#2EC4B6"/>
+<polygon points="48,104 100,104 128,222" fill="#4DCDC1"/>
+<polygon points="156,104 208,104 128,222" fill="#28A29A"/>
+<polygon points="100,104 156,104 128,222" fill="#43CABD"/>
+<polygon points="96,60 128,60 100,104 48,104" fill="#A1E4DE"/>
+<polygon points="128,60 160,60 156,104 100,104" fill="#82DCD3"/>
+<polygon points="84,66 86.12,75.88 96,78 86.12,80.12 84,90 81.88,80.12 72,78 81.88,75.88" fill="#FFFFFF"/>
+</g>
+</svg>

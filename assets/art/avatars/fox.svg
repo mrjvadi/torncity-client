@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<defs><radialGradient id="g1" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#99D7F4"/><stop offset="0.7" stop-color="#62C2EE"/><stop offset="1" stop-color="#4E98BD"/></radialGradient><clipPath id="disc"><circle cx="128" cy="128" r="128"/></clipPath></defs>
+<g clip-path="url(#disc)">
+<circle cx="128" cy="128" r="128" fill="url(#g1)"/>
+<circle cx="128" cy="128" r="122" fill="none" opacity="0.6" stroke="#A9DDF6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="58,40 104,92 70,112" fill="#CF7939"/>
+<polygon points="198,40 152,92 186,112" fill="#CF7939"/>
+<polygon points="66,58 96,92 76,102" fill="#121829"/>
+<polygon points="190,58 160,92 180,102" fill="#121829"/>
+<path d="M128 214 C84 214 50 178 48 128 C48 100 70 84 128 84 C186 84 208 100 208 128 C206 178 172 214 128 214 Z" fill="#F08A3C"/>
+<path d="M128 214 C104 214 70 190 58 150 C84 150 110 160 128 180 C146 160 172 150 198 150 C186 190 152 214 128 214 Z" fill="#FFFFFF"/>
+<path d="M70 110 C80 98 96 94 110 96" fill="none" stroke="#F6B98A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="98" cy="138" r="12" fill="#FFFFFF"/>
+<circle cx="99.8" cy="139.2" r="7.44" fill="#121829"/>
+<circle cx="96.8" cy="135.6" r="2.64" fill="#FFFFFF"/>
+<circle cx="158" cy="138" r="12" fill="#FFFFFF"/>
+<circle cx="159.8" cy="139.2" r="7.44" fill="#121829"/>
+<circle cx="156.8" cy="135.6" r="2.64" fill="#FFFFFF"/>
+<path d="M116 176 Q128 168 140 176 Q134 190 128 190 Q122 190 116 176 Z" fill="#121829"/>
+</g>
+</svg>

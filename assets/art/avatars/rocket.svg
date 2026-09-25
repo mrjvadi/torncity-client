@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<defs><radialGradient id="g1" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#656974"/><stop offset="0.7" stop-color="#121829"/><stop offset="1" stop-color="#121829"/></radialGradient><clipPath id="disc"><circle cx="128" cy="128" r="128"/></clipPath></defs>
+<g clip-path="url(#disc)">
+<circle cx="128" cy="128" r="128" fill="url(#g1)"/>
+<circle cx="128" cy="128" r="122" fill="none" opacity="0.6" stroke="#7D8089" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="168" cy="128" r="2" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="89.29" cy="168.53" r="3" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="133.69" cy="48.31" r="4" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="175.15" cy="159.75" r="2" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="39.38" cy="117.54" r="3" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="161.75" cy="85.07" r="4" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="114.36" cy="166.63" r="2" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="98.06" cy="74.75" r="3" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="200.79" cy="155.47" r="4" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="44.8" cy="143.25" r="2" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="144.97" cy="73.67" r="3" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="143.69" cy="204.34" r="4" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="71.78" cy="107.93" r="2" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="203.7" cy="115.14" r="3" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="76.2" cy="193.42" r="4" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="122.88" cy="88.33" r="2" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="168.12" cy="166.69" r="3" fill="#FFFFFF" opacity="0.7"/>
+<circle cx="63.05" cy="131.26" r="4" fill="#FFFFFF" opacity="0.7"/>
+<path d="M104 186 C96 212 112 232 128 240 C144 232 160 212 152 186 Z" fill="#F6B93B"/>
+<path d="M114 186 C110 204 120 218 128 224 C136 218 146 204 142 186 Z" fill="#FFFFFF"/>
+<path d="M98 150 L66 190 L102 184 Z" fill="#E5484D"/>
+<path d="M158 150 L190 190 L154 184 Z" fill="#BB3E46"/>
+<path d="M128 30 C160 56 166 110 158 188 H98 C90 110 96 56 128 30 Z" fill="#D3D9E6"/>
+<path d="M128 30 C160 56 166 110 158 188 H128 Z" fill="#B6BCCA"/>
+<path d="M128 30 C142 42 150 56 154 72 H102 C106 56 114 42 128 30 Z" fill="#E5484D"/>
+<circle cx="128" cy="112" r="18" fill="#3F63D8"/>
+<circle cx="128" cy="112" r="12" fill="#62C2EE"/>
+<circle cx="122" cy="106" r="4" fill="#FFFFFF"/>
+</g>
+</svg>

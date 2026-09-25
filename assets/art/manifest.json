@@ -1,0 +1,22 @@
+{
+  "_about": "Art slots -> files. '*' lists patterns tried in order ({code} is the slot code); '_fallback' is used when nothing matches. Replace art by dropping a file where a pattern points, or by pointing a slot at a new file. See docs/art-style.md.",
+  "icon": {
+    "*": ["res://assets/art/icons/{code}.png", "res://assets/art/icons/{code}.svg"],
+    "_fallback": "res://assets/art/icons/info.svg"
+  },
+  "place": {
+    "*": ["res://assets/art/places/render/{code}.png", "res://assets/art/places/{code}.svg"],
+    "_fallback": "res://assets/art/places/_empty.svg"
+  },
+  "avatar": {
+    "*": ["res://assets/art/avatars/{code}.png", "res://assets/art/avatars/{code}.svg"]
+  },
+  "item": {
+    "*": ["res://assets/art/items/{code}.png", "res://assets/art/items/{code}.svg"]
+  },
+  "brand": {
+    "logo": "res://assets/art/brand/logo.svg",
+    "splash": "res://assets/art/brand/splash.svg",
+    "icon": "res://assets/art/brand/icon.svg"
+  }
+}

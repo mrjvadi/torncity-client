@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<defs><radialGradient id="g1" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#829AE6"/><stop offset="0.7" stop-color="#3F63D8"/><stop offset="1" stop-color="#3450AC"/></radialGradient><clipPath id="disc"><circle cx="128" cy="128" r="128"/></clipPath></defs>
+<g clip-path="url(#disc)">
+<circle cx="128" cy="128" r="128" fill="url(#g1)"/>
+<circle cx="128" cy="128" r="122" fill="none" opacity="0.6" stroke="#95A9EA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="64,36 112,92 72,118" fill="#747E97"/>
+<polygon points="192,36 144,92 184,118" fill="#747E97"/>
+<polygon points="72,58 100,92 80,106" fill="#BBC1D1"/>
+<polygon points="184,58 156,92 176,106" fill="#BBC1D1"/>
+<path d="M128 222 C96 222 56 186 52 140 C50 110 78 86 128 86 C178 86 206 110 204 140 C200 186 160 222 128 222 Z" fill="#8D98B3"/>
+<path d="M128 222 C110 222 96 206 96 180 C96 160 110 150 128 150 C146 150 160 160 160 180 C160 206 146 222 128 222 Z" fill="#D1D6E1"/>
+<path d="M128 90 L116 150 L140 150 Z" fill="#B5BCCE"/>
+<circle cx="98" cy="132" r="11" fill="#FFFFFF"/>
+<circle cx="99.65" cy="133.1" r="6.82" fill="#F6B93B"/>
+<circle cx="96.9" cy="129.8" r="2.42" fill="#FFFFFF"/>
+<circle cx="158" cy="132" r="11" fill="#FFFFFF"/>
+<circle cx="159.65" cy="133.1" r="6.82" fill="#F6B93B"/>
+<circle cx="156.9" cy="129.8" r="2.42" fill="#FFFFFF"/>
+<ellipse cx="128" cy="176" rx="14" ry="10" fill="#121829"/>
+</g>
+</svg>

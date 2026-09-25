@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<defs><radialGradient id="g1" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#9CDAA1"/><stop offset="0.7" stop-color="#67C66F"/><stop offset="1" stop-color="#529A5E"/></radialGradient><clipPath id="disc"><circle cx="128" cy="128" r="128"/></clipPath></defs>
+<g clip-path="url(#disc)">
+<circle cx="128" cy="128" r="128" fill="url(#g1)"/>
+<circle cx="128" cy="128" r="122" fill="none" opacity="0.6" stroke="#ABE0B0" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="72" cy="76" r="30" fill="#121829"/>
+<circle cx="184" cy="76" r="30" fill="#121829"/>
+<circle cx="128" cy="140" r="86" fill="#FFFFFF"/>
+<path d="M70 126 C74 104 104 100 116 120 C120 140 104 160 88 160 C72 158 66 142 70 126 Z" fill="#121829"/>
+<path d="M186 126 C182 104 152 100 140 120 C136 140 152 160 168 160 C184 158 190 142 186 126 Z" fill="#121829"/>
+<circle cx="98" cy="132" r="8" fill="#FFFFFF"/>
+<circle cx="158" cy="132" r="8" fill="#FFFFFF"/>
+<circle cx="100" cy="132" r="4" fill="#121829"/>
+<circle cx="156" cy="132" r="4" fill="#121829"/>
+<ellipse cx="128" cy="170" rx="14" ry="10" fill="#121829"/>
+<path d="M114 184 Q128 196 142 184" fill="none" stroke="#121829" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="84" cy="166" r="9" fill="#FF8FA3" opacity="0.6"/>
+<circle cx="172" cy="166" r="9" fill="#FF8FA3" opacity="0.6"/>
+</g>
+</svg>

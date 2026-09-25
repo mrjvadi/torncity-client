@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+<defs><radialGradient id="g1" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#77D9D0"/><stop offset="0.7" stop-color="#2EC4B6"/><stop offset="1" stop-color="#279993"/></radialGradient><clipPath id="disc"><circle cx="128" cy="128" r="128"/></clipPath></defs>
+<g clip-path="url(#disc)">
+<circle cx="128" cy="128" r="128" fill="url(#g1)"/>
+<circle cx="128" cy="128" r="122" fill="none" opacity="0.6" stroke="#8CDFD7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="60,48 104,92 64,120" fill="#E7A15B"/>
+<polygon points="196,48 152,92 192,120" fill="#E7A15B"/>
+<polygon points="68,66 94,92 72,106" fill="#FF8FA3"/>
+<polygon points="188,66 162,92 184,106" fill="#FF8FA3"/>
+<circle cx="128" cy="140" r="80" fill="#E7A15B"/>
+<path d="M104 64 L104 88" fill="none" stroke="#B27F4E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M128 64 L128 88" fill="none" stroke="#B27F4E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M152 64 L152 88" fill="none" stroke="#B27F4E" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+<ellipse cx="128" cy="176" rx="34" ry="24" fill="#F4D5B5"/>
+<circle cx="98" cy="136" r="13" fill="#FFFFFF"/>
+<circle cx="99.95" cy="137.3" r="8.06" fill="#3E9A4B"/>
+<circle cx="96.7" cy="133.4" r="2.86" fill="#FFFFFF"/>
+<circle cx="158" cy="136" r="13" fill="#FFFFFF"/>
+<circle cx="159.95" cy="137.3" r="8.06" fill="#3E9A4B"/>
+<circle cx="156.7" cy="133.4" r="2.86" fill="#FFFFFF"/>
+<polygon points="120,164 136,164 128,174" fill="#FF8FA3"/>
+<path d="M112 170 L64 158 M144 170 L192 158" fill="none" opacity="0.9" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M112 182 L64 182 M144 182 L192 182" fill="none" opacity="0.9" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</svg>

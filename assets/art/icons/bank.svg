@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<polygon points="32,6 58,20 6,20" fill="#3F63D8"/>
+<polygon points="32,11 48,19 16,19" fill="#7992E4"/>
+<path d="M10 20h44a2 2 0 0 1 2 2v1a2 2 0 0 1 -2 2h-44a2 2 0 0 1 -2 -2v-1a2 2 0 0 1 2 -2z" fill="#3858BE"/>
+<path d="M15 27h3a2 2 0 0 1 2 2v16a2 2 0 0 1 -2 2h-3a2 2 0 0 1 -2 -2v-16a2 2 0 0 1 2 -2z" fill="#5C7ADE"/>
+<path d="M25 27h3a2 2 0 0 1 2 2v16a2 2 0 0 1 -2 2h-3a2 2 0 0 1 -2 -2v-16a2 2 0 0 1 2 -2z" fill="#5C7ADE"/>
+<path d="M35 27h3a2 2 0 0 1 2 2v16a2 2 0 0 1 -2 2h-3a2 2 0 0 1 -2 -2v-16a2 2 0 0 1 2 -2z" fill="#5C7ADE"/>
+<path d="M45 27h3a2 2 0 0 1 2 2v16a2 2 0 0 1 -2 2h-3a2 2 0 0 1 -2 -2v-16a2 2 0 0 1 2 -2z" fill="#5C7ADE"/>
+<path d="M9 48h46a3 3 0 0 1 3 3v2a3 3 0 0 1 -3 3h-46a3 3 0 0 1 -3 -3v-2a3 3 0 0 1 3 -3z" fill="#3F63D8"/>
+<circle cx="32" cy="15.5" r="2.4" fill="#F6B93B"/>
+</svg>
