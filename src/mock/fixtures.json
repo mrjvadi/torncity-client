@@ -1,0 +1,406 @@
+{
+ "_about": "Offline fixtures for mock mode, mirroring the server's content (configs/content/*.yml) and wording (configs/locales/*.yml). Not authoritative: the live server is.",
+ "player": {
+  "id": 1001,
+  "code": "K7Q2M9A",
+  "name_fa": "سارا",
+  "name_en": "Sara",
+  "avatar": "fox"
+ },
+ "home_city": "fenwick_span",
+ "cities": {
+  "ostmarch": {
+   "fa": "استمارچ",
+   "en": "Ostmarch",
+   "facilities": [
+    "bus_terminal",
+    "rail_station"
+   ]
+  },
+  "fenwick_span": {
+   "fa": "فنویک اسپن",
+   "en": "Fenwick Span",
+   "facilities": [
+    "bus_terminal",
+    "rail_station",
+    "airport"
+   ]
+  },
+  "aldrin_hollow": {
+   "fa": "آلدرین هالو",
+   "en": "Aldrin Hollow",
+   "facilities": [
+    "bus_terminal",
+    "rail_station"
+   ]
+  },
+  "brennhaven": {
+   "fa": "برنهاون",
+   "en": "Brennhaven",
+   "facilities": [
+    "bus_terminal",
+    "rail_station",
+    "airport"
+   ]
+  },
+  "kessmoor": {
+   "fa": "کسمور",
+   "en": "Kessmoor",
+   "facilities": [
+    "bus_terminal",
+    "rail_station",
+    "airport"
+   ]
+  },
+  "calderis": {
+   "fa": "کالدریس",
+   "en": "Calderis",
+   "facilities": [
+    "bus_terminal",
+    "rail_station",
+    "airport"
+   ]
+  },
+  "vantor_reach": {
+   "fa": "ونتور ریچ",
+   "en": "Vantor Reach",
+   "facilities": [
+    "bus_terminal",
+    "airport"
+   ]
+  }
+ },
+ "routes": [
+  [
+   "ostmarch",
+   "fenwick_span",
+   120
+  ],
+  [
+   "ostmarch",
+   "brennhaven",
+   260
+  ],
+  [
+   "fenwick_span",
+   "aldrin_hollow",
+   180
+  ],
+  [
+   "fenwick_span",
+   "brennhaven",
+   210
+  ],
+  [
+   "brennhaven",
+   "kessmoor",
+   340
+  ],
+  [
+   "aldrin_hollow",
+   "kessmoor",
+   290
+  ],
+  [
+   "kessmoor",
+   "calderis",
+   520
+  ],
+  [
+   "aldrin_hollow",
+   "calderis",
+   610
+  ],
+  [
+   "calderis",
+   "vantor_reach",
+   480
+  ]
+ ],
+ "places": [
+  {
+   "code": "city_centre",
+   "fa": "مرکز شهر",
+   "en": "City centre",
+   "walk": 10,
+   "energy": 0,
+   "services": []
+  },
+  {
+   "code": "bazaar",
+   "fa": "بازار",
+   "en": "Bazaar",
+   "walk": 15,
+   "energy": 0,
+   "services": [
+    "market"
+   ]
+  },
+  {
+   "code": "business_district",
+   "fa": "منطقهٔ تجاری",
+   "en": "Business district",
+   "walk": 15,
+   "energy": 0,
+   "services": [
+    "bank",
+    "auction_house"
+   ]
+  },
+  {
+   "code": "university",
+   "fa": "محلهٔ دانشگاه",
+   "en": "University quarter",
+   "walk": 20,
+   "energy": 0,
+   "services": [
+    "university",
+    "training_center"
+   ]
+  },
+  {
+   "code": "city_hall",
+   "fa": "ساختمان شهرداری",
+   "en": "Civic centre",
+   "walk": 10,
+   "energy": 0,
+   "services": [
+    "city_hall"
+   ]
+  },
+  {
+   "code": "police_station",
+   "fa": "کلانتری",
+   "en": "Police station",
+   "walk": 15,
+   "energy": 0,
+   "services": [
+    "police"
+   ]
+  },
+  {
+   "code": "bus_terminal",
+   "fa": "پایانهٔ اتوبوس",
+   "en": "Bus terminal",
+   "walk": 15,
+   "energy": 0,
+   "services": [],
+   "requires": "bus_terminal",
+   "departures": [
+    "bus"
+   ]
+  },
+  {
+   "code": "train_station",
+   "fa": "ایستگاه قطار",
+   "en": "Train station",
+   "walk": 20,
+   "energy": 0,
+   "services": [],
+   "requires": "rail_station",
+   "departures": [
+    "train"
+   ]
+  },
+  {
+   "code": "airport",
+   "fa": "فرودگاه",
+   "en": "Airport",
+   "walk": 45,
+   "energy": 2,
+   "services": [],
+   "requires": "airport",
+   "departures": [
+    "flight"
+   ]
+  },
+  {
+   "code": "industrial_zone",
+   "fa": "منطقهٔ صنعتی",
+   "en": "Industrial zone",
+   "walk": 30,
+   "energy": 0,
+   "services": []
+  },
+  {
+   "code": "farmland",
+   "fa": "زمین‌های کشاورزی",
+   "en": "Farmland",
+   "walk": 40,
+   "energy": 1,
+   "services": []
+  },
+  {
+   "code": "hospital",
+   "fa": "بیمارستان",
+   "en": "Hospital",
+   "walk": 20,
+   "energy": 0,
+   "services": []
+  },
+  {
+   "code": "barracks",
+   "fa": "پادگان",
+   "en": "Barracks",
+   "walk": 30,
+   "energy": 0,
+   "services": []
+  },
+  {
+   "code": "residential_area",
+   "fa": "محلهٔ مسکونی",
+   "en": "Residential area",
+   "walk": 25,
+   "energy": 0,
+   "services": []
+  },
+  {
+   "code": "park",
+   "fa": "پارک شهر",
+   "en": "City park",
+   "walk": 15,
+   "energy": 0,
+   "services": []
+  }
+ ],
+ "services": {
+  "fa": {
+   "bank": "بانک",
+   "police": "پلیس",
+   "city_hall": "شهرداری",
+   "market": "بازار معاملات",
+   "auction_house": "حراجی",
+   "university": "دانشگاه",
+   "training_center": "آموزشگاه"
+  },
+  "en": {
+   "bank": "Bank",
+   "police": "Police",
+   "city_hall": "City hall",
+   "market": "Market",
+   "auction_house": "Auction house",
+   "university": "University",
+   "training_center": "Training centre"
+  }
+ },
+ "modes": [
+  {
+   "code": "bus",
+   "fa": "اتوبوس",
+   "en": "Bus",
+   "speed": 60,
+   "boarding": 20,
+   "base": 80,
+   "per": 4,
+   "energy": 8,
+   "requires": "bus_terminal"
+  },
+  {
+   "code": "car",
+   "fa": "خودرو",
+   "en": "Car",
+   "speed": 90,
+   "boarding": 5,
+   "base": 0,
+   "per": 5,
+   "energy": 14,
+   "requires": ""
+  },
+  {
+   "code": "train",
+   "fa": "قطار",
+   "en": "Train",
+   "speed": 140,
+   "boarding": 30,
+   "base": 160,
+   "per": 6,
+   "energy": 6,
+   "requires": "rail_station"
+  },
+  {
+   "code": "flight",
+   "fa": "هواپیما",
+   "en": "Flight",
+   "speed": 600,
+   "boarding": 60,
+   "base": 400,
+   "per": 8,
+   "energy": 4,
+   "requires": "airport"
+  }
+ ],
+ "inventory": [
+  {
+   "code": "bread",
+   "fa": "نان",
+   "en": "Bread",
+   "category": "food",
+   "qty": 4
+  },
+  {
+   "code": "water_bottle",
+   "fa": "بطری آب",
+   "en": "Water bottle",
+   "category": "food",
+   "qty": 2
+  },
+  {
+   "code": "first_aid_kit",
+   "fa": "جعبهٔ کمک‌های اولیه",
+   "en": "First aid kit",
+   "category": "medical",
+   "qty": 1
+  },
+  {
+   "code": "toolbox",
+   "fa": "جعبه‌ابزار",
+   "en": "Toolbox",
+   "category": "tools",
+   "qty": 1,
+   "durability": 72
+  },
+  {
+   "code": "smartphone",
+   "fa": "گوشی هوشمند",
+   "en": "Smartphone",
+   "category": "electronics",
+   "qty": 1,
+   "quality": 3
+  },
+  {
+   "code": "lockpick",
+   "fa": "شاه‌کلید",
+   "en": "Lockpick",
+   "category": "tools",
+   "qty": 3,
+   "uses_left": 5
+  }
+ ],
+ "job": {
+  "career_code": "commerce",
+  "career_fa": "تجارت",
+  "career_en": "Commerce",
+  "rank": 2,
+  "title_fa": "فروشندهٔ ارشد",
+  "title_en": "Senior sales clerk",
+  "employer_fa": "فروشگاه‌های آلبرز",
+  "employer_en": "Alborz Stores",
+  "pay": 1850,
+  "energy_cost": 10,
+  "performance": 64,
+  "workplace": "bazaar",
+  "shift": 60
+ },
+ "announcements": {
+  "fa": [
+   "📣 شهردار فنویک اسپن مالیات بازار را برای یک روز نصف کرد.",
+   "🚆 قطار ویژهٔ برنهاون امشب ساعت ۲۱:۰۰ حرکت می‌کند.",
+   "🏛 انتخابات شورای شهر فردا آغاز می‌شود."
+  ],
+  "en": [
+   "📣 The mayor of Fenwick Span halved the market tax for a day.",
+   "🚆 A special train to Brennhaven leaves tonight at 21:00.",
+   "🏛 City council elections open tomorrow."
+  ]
+ }
+}
