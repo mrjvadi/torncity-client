@@ -88,7 +88,7 @@ func _run() -> void:
 				continue
 			if not logged:
 				await Api.auth_link("K7Q2M9AX")
-				await Api.bootstrap()
+				await Game.start_playing()
 				shell = main.show_shell()
 				await _frames(6)
 				logged = true
