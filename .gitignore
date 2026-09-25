@@ -1,0 +1,33 @@
+# Godot 4
+.godot/
+*.translation
+export_credentials.cfg
+.import/
+*.tmp
+
+# Builds and exports
+build/
+exports/
+*.apk
+*.aab
+*.pck
+*.x86_64
+
+# Downloaded tools (Godot, Blender, Xvfb) — see docs/tooling.md
+tools/
+
+# Local runtime overrides and secrets
+config/client.local.cfg
+*.keystore
+*.jks
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor/OS
+.DS_Store
+*.swp
+.vscode/
+.idea/
