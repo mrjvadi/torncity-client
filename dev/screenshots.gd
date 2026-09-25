@@ -1,0 +1,118 @@
+extends Control
+## Renders the key screens to PNG (docs/screenshots/<lang>/<name>.png) in mock
+## mode. Needs a real renderer (not --headless): run through dev/screenshots.sh,
+## which starts a virtual X display when there is none.
+##   godot --path . --resolution 720x1280 res://dev/screenshots.tscn -- --out=docs/screenshots --langs=fa,en
+
+const SHOTS := [
+	["splash", "", {}],
+	["login", "", {}],
+	["city", "map.list", {}],
+	["city_walking", "place.go", {"place": "bazaar"}],
+	["profile", "player.profile.get", {}],
+	["bank", "bank.show", {}],
+	["card", "skills.list", {}],
+	["inventory", "inventory.show", {}],
+	["job", "job.status", {}],
+	["life", "life.me", {}],
+	["cities", "map.cities", {}],
+	["travel_options", "travel.options", {"city": "brennhaven"}],
+	["more", "@more", {}],
+	["notifications", "@notifications", {}],
+	["settings", "@settings", {}],
+	["city_night", "map.list", {}],
+]
+
+var out_dir := "docs/screenshots"
+var langs := ["fa", "en"]
+var only := []
+
+
+func _ready() -> void:
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--out="):
+			out_dir = a.substr(6)
+		elif a.begins_with("--langs="):
+			langs = Array(a.substr(8).split(","))
+		elif a.begins_with("--only="):
+			only = Array(a.substr(7).split(","))
+	Config.headless_capture = true
+	Config.mock = true
+	Mock.latency = 0.0
+	await _run()
+	get_tree().quit()
+
+
+func _frames(n := 3) -> void:
+	for i in n:
+		await get_tree().process_frame
+
+
+func _save(lang: String, name: String) -> void:
+	await _frames(4)
+	await RenderingServer.frame_post_draw
+	var img := get_viewport().get_texture().get_image()
+	var dir := "%s/%s" % [out_dir, lang]
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("res://" + dir) if not dir.begins_with("/") else dir)
+	var path := ("res://%s/%s.png" % [dir, name]) if not dir.begins_with("/") else "%s/%s.png" % [dir, name]
+	img.save_png(path)
+	print("shot ", path)
+
+
+func _run() -> void:
+	var main: Control = load("res://src/scenes/main.tscn").instantiate()
+	add_child(main)
+	for lang in langs:
+		I18n.set_lang(lang, false)
+		Mock.reset()
+		Session.clear()
+		Session.notices.clear()
+		CityMapView.force_hour = 11.0
+		var logged := false
+		var shell: Control = null
+		for s in SHOTS:
+			var name: String = s[0]
+			if not only.is_empty() and not only.has(name):
+				continue
+			var cmd: String = s[1]
+			if name == "splash":
+				main.show_splash()
+				await _frames(10)
+				await _save(lang, name)
+				continue
+			if name == "login":
+				var l: Control = main.show_login()
+				await _frames(2)
+				l.prefill("K7Q2M9AX")
+				await _save(lang, name)
+				continue
+			if not logged:
+				await Api.auth_link("K7Q2M9AX")
+				await Api.bootstrap()
+				shell = main.show_shell()
+				await _frames(6)
+				logged = true
+				# some realtime history for the feed
+				Session.add_notice({"type": "notice", "kind": "arrived", "text": Mock.L("📍 به بازار رسیدید.", "📍 You reached the bazaar.")})
+				Session.add_notice({"type": "announce", "kind": "announce", "text": Mock.fx["announcements"][lang][0]})
+				Session.add_notice({"type": "notice", "kind": "shift_paid", "text": Mock.L("💰 شیفت تمام شد و ۱٬۸۵۰ نیل دستمزد گرفتید.", "💰 Your shift is over: you were paid 1,850 Nil.")})
+			if name == "city_night":
+				CityMapView.force_hour = 22.0
+			if cmd.begins_with("@"):
+				shell.open_local(cmd.substr(1))
+			else:
+				await Game.run(cmd, s[2])
+			if name == "city_walking":
+				# show the walker a third of the way there
+				var scr = shell.current
+				await _frames(3)
+				if scr and scr.get("map"):
+					var m: CityMapView = scr.map
+					m._walk_left = m._walk_total * 0.55
+					m._update_walker()
+			await _frames(8)
+			await _save(lang, name)
+			if name == "city_walking":
+				Mock.st["walk"] = null
+				Mock.st["place"] = "city_centre"
+		CityMapView.force_hour = -1.0
