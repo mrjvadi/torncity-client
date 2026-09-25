@@ -716,3 +716,91 @@ ICONS = {
 
 def build():
     return [fn().save("icons/%s.svg" % name) for name, fn in ICONS.items()]
+
+
+# -- items (configs/content/items.yml codes): 64 x 64, same language -------------------------------
+def it_food():
+    s = ico()
+    s.path("M8 34 C8 20 20 12 32 12 C44 12 56 20 56 34 Z", P["saffron_dk"])
+    s.path("M12 30 C14 22 22 17 32 17", "none", stroke=light(P["saffron"], 0.5), sw=4)
+    s.rect(6, 34, 52, 7, P["leaf"], rx=3)
+    s.rect(8, 40, 48, 6, P["pomegranate"], rx=3)
+    s.path(rrect_path(6, 45, 52, 11, 5), P["saffron_dk"])
+    return s
+
+
+def it_drink():
+    s = ico()
+    s.path("M16 14 H48 L44 58 H20 Z", light(P["sky"], 0.35))
+    s.path("M18 28 H46 L44 58 H20 Z", P["pomegranate"])
+    s.path("M22 32 V52", "none", stroke=light(P["pomegranate"], 0.45), sw=3)
+    s.path("M36 14 L42 4", "none", stroke=P["white"], sw=4)
+    s.rect(14, 10, 36, 6, P["stone"], rx=3)
+    return s
+
+
+def it_medicine():
+    s = ico()
+    s.path(rrect_path(18, 16, 28, 42, 6), P["white"])
+    s.rect(16, 8, 32, 10, P["pomegranate"], rx=3)
+    s.path("M28 28 H36 V34 H42 V42 H36 V48 H28 V42 H22 V34 H28 Z", P["pomegranate"])
+    return s
+
+
+def it_tool():
+    s = ico()
+    s.path("M16 50 L40 26", "none", stroke=P["earth"], sw=8)
+    s.path("M36 14 A12 12 0 1 0 52 30 L46 32 L38 24 L40 18 Z", P["stone_dk"])
+    s.circle(14, 52, 4, P["earth_dk"])
+    return s
+
+
+def it_gadget():
+    return phone()
+
+
+def it_lockpick_set():
+    s = ico()
+    s.path(rrect_path(6, 20, 52, 34, 6), P["earth"])
+    s.path(rrect_path(10, 24, 44, 26, 4), dark(P["earth"], 0.3))
+    for k, x in enumerate((16, 26, 36, 46)):
+        s.path("M%d 46 V30 l4 -4" % x, "none", stroke=P["stone"], sw=3)
+    return s
+
+
+def it_crowbar():
+    s = ico()
+    s.path("M14 54 L44 14 Q48 8 54 12", "none", stroke=P["pomegranate"], sw=7)
+    s.path("M14 54 L8 50", "none", stroke=P["pomegranate"], sw=7)
+    return s
+
+
+def it_running_shoes():
+    s = ico()
+    s.path("M6 42 C6 30 16 24 22 22 L30 30 C36 34 46 34 56 38 C60 40 60 48 56 50 H10 C7 50 6 46 6 42 Z", P["sky"])
+    s.rect(6, 48, 52, 6, P["white"], rx=3)
+    s.path("M22 30 L30 26 M26 34 L34 30", "none", stroke=P["white"], sw=2.5)
+    return s
+
+
+def it_jewel():
+    return gem_small()
+
+
+def gem_small():
+    s, t = ico(), P["turquoise"]
+    s.poly([(18, 12), (46, 12), (58, 26), (32, 56), (6, 26)], t)
+    s.poly([(18, 12), (32, 12), (24, 26), (6, 26)], light(t, 0.45))
+    s.poly([(24, 26), (40, 26), (32, 56)], light(t, 0.15))
+    s.poly([(40, 26), (58, 26), (32, 56)], dark(t, 0.2))
+    return s
+
+
+ITEMS = {"food": it_food, "drink": it_drink, "medicine": it_medicine, "tool": it_tool, "gadget": it_gadget,
+         "lockpick_set": it_lockpick_set, "crowbar": it_crowbar, "running_shoes": it_running_shoes, "jewel": it_jewel}
+
+_build_icons = build
+
+
+def build():
+    return _build_icons() + [fn().save("items/%s.svg" % code) for code, fn in ITEMS.items()]

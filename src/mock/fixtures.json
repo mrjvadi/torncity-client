@@ -331,49 +331,70 @@
  ],
  "inventory": [
   {
-   "code": "bread",
-   "fa": "نان",
-   "en": "Bread",
-   "category": "food",
+   "code": "food",
+   "fa": "غذا",
+   "en": "Food",
+   "category": "consumable",
    "qty": 4
   },
   {
-   "code": "water_bottle",
-   "fa": "بطری آب",
-   "en": "Water bottle",
-   "category": "food",
+   "code": "drink",
+   "fa": "نوشیدنی",
+   "en": "Drink",
+   "category": "consumable",
    "qty": 2
   },
   {
-   "code": "first_aid_kit",
-   "fa": "جعبهٔ کمک‌های اولیه",
-   "en": "First aid kit",
-   "category": "medical",
+   "code": "medicine",
+   "fa": "دارو",
+   "en": "Medicine",
+   "category": "consumable",
    "qty": 1
   },
   {
-   "code": "toolbox",
-   "fa": "جعبه‌ابزار",
-   "en": "Toolbox",
-   "category": "tools",
+   "code": "tool",
+   "fa": "ابزار",
+   "en": "Tool",
+   "category": "tool",
    "qty": 1,
    "durability": 72
   },
   {
-   "code": "smartphone",
-   "fa": "گوشی هوشمند",
-   "en": "Smartphone",
+   "code": "gadget",
+   "fa": "گجت",
+   "en": "Gadget",
    "category": "electronics",
    "qty": 1,
    "quality": 3
   },
   {
-   "code": "lockpick",
-   "fa": "شاه‌کلید",
-   "en": "Lockpick",
-   "category": "tools",
-   "qty": 3,
+   "code": "lockpick_set",
+   "fa": "جعبهٔ شاه‌کلید",
+   "en": "Lockpick set",
+   "category": "crime",
+   "qty": 1,
    "uses_left": 5
+  },
+  {
+   "code": "crowbar",
+   "fa": "دیلم",
+   "en": "Crowbar",
+   "category": "crime",
+   "qty": 1
+  },
+  {
+   "code": "running_shoes",
+   "fa": "کفش دو",
+   "en": "Running shoes",
+   "category": "apparel",
+   "qty": 1
+  },
+  {
+   "code": "jewel",
+   "fa": "جواهر",
+   "en": "Jewel",
+   "category": "valuable",
+   "qty": 2
   }
  ],
  "job": {
