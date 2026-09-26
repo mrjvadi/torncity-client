@@ -1,8 +1,8 @@
 class_name BottomNav
 extends GlassPanel
 ## The tab bar, floating on glass: line icons with labels; behind the active
-## tab a glowing blue pill that slides (spring) from tab to tab, the active
-## icon lifts and brightens. Tabs: the content catalogue's ui.tabs when the
+## tab a soft turquoise pill with a bright top bar slides (spring) from tab
+## to tab, and the active icon and label turn turquoise. Tabs: the content catalogue's ui.tabs when the
 ## server sends them, else the client's default set (ViewRouter.TABS).
 
 signal tab_pressed(tab: String)
@@ -20,16 +20,12 @@ class _Pill extends Control:
 	func _draw() -> void:
 		if x < 0:
 			return
-		var blue := Color("#2F80ED")
+		var c := AppTheme.col("primary")
 		var r := Rect2(Vector2(x - w / 2.0, 4), Vector2(w, size.y - 8))
-		for i in 4:
-			draw_colored_polygon(GlowPanel.rounded_rect(r.grow(i * 3.0), 20 + i * 3.0, 6), Color(blue, 0.06))
-		var pts := GlowPanel.rounded_rect(r, 20, 6)
-		var cols := PackedColorArray()
-		for p in pts:
-			cols.append(Color("#3D8BF0").lerp(Color("#2566C4"), (p.y - r.position.y) / r.size.y))
-		draw_polygon(pts, cols)
-		draw_line(Vector2(r.position.x + 16, r.position.y + 1.5), Vector2(r.end.x - 16, r.position.y + 1.5), Color(1, 1, 1, 0.3), 1.5)
+		draw_colored_polygon(GlowPanel.rounded_rect(r, 22, 8), Color(c, 0.14))
+		# a short bright bar on the top edge marks the tab
+		var bw := minf(36.0, w * 0.4)
+		draw_colored_polygon(GlowPanel.rounded_rect(Rect2(x - bw / 2.0, 0, bw, 5), 2.5, 3), c)
 
 
 func _init() -> void:
@@ -104,9 +100,12 @@ func select(tab: String) -> void:
 		var on: bool = t == tab
 		var b: Button = _buttons[t]
 		b.set_pressed_no_signal(on)
-		b.modulate = Color(1, 1, 1) if on else Color(0.78, 0.84, 0.94)
-		b.add_theme_color_override("font_color", Color.WHITE if on else Color("#B8C6DC"))
-		b.add_theme_color_override("font_pressed_color", Color.WHITE)
+		var ic := AppTheme.col("primary") if on else AppTheme.col("text_2")
+		for k in ["icon_normal_color", "icon_pressed_color", "icon_hover_color", "icon_hover_pressed_color", "icon_focus_color"]:
+			b.add_theme_color_override(k, ic)
+		b.add_theme_color_override("font_color", ic)
+		b.add_theme_color_override("font_pressed_color", ic)
+		b.add_theme_color_override("font_hover_pressed_color", ic)
 	_move_pill(true)
 
 

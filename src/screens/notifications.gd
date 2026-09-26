@@ -29,7 +29,7 @@ func build() -> void:
 		p.add_child(row)
 		var swipe := SwipeRow.make(p, [])
 		swipe.actions = [{"label": I18n.t("feed.dismiss"), "key": "action:dismiss",
-			"color": AppTheme.col("red"), "fn": func(): _dismiss(swipe, n)}]
+			"color": AppTheme.col("danger"), "fn": func(): _dismiss(swipe, n)}]
 		content.add_child(swipe)
 	Fx.stagger_in(content, 0.03)
 

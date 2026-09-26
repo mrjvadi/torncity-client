@@ -54,7 +54,7 @@ func _ready() -> void:
 	col.add_child(UI.gap(10))
 
 	var card := GlowPanel.new()
-	card.accent = AppTheme.col("blue")
+	card.accent = AppTheme.col("primary")
 	card.padding = 28
 	var box := UI.vbox(18)
 	box.add_child(UI.hbox(12, [UI.icon("phone", 48), UI.label(I18n.t("login.title"), "HeadLabel")]))

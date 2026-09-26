@@ -1,5 +1,5 @@
 {
- "version": "mock-4",
+ "version": "mock-5",
  "langs": [
   "fa",
   "en"
@@ -801,24 +801,6 @@
     },
     "command": "market.list",
     "icon": "nav:market"
-   },
-   {
-    "key": "inventory",
-    "label": {
-     "fa": "انبار",
-     "en": "Inventory"
-    },
-    "command": "inventory.show",
-    "icon": "nav:inventory"
-   },
-   {
-    "key": "messages",
-    "label": {
-     "fa": "پیام‌ها",
-     "en": "Messages"
-    },
-    "command": "@notifications",
-    "icon": "nav:messages"
    },
    {
     "key": "profile",

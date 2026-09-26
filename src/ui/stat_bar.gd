@@ -2,7 +2,7 @@ class_name StatBar
 extends Control
 ## A stat as a bar. Two layouts:
 ##  * labelled (label_text set): icon, name at the start, value at the end, and
-##    a thin glossy bar underneath — the player-card look;
+##    a thin bar underneath — the player-card look;
 ##  * inline: icon and a thick capsule with the value written inside.
 ## `invert` marks a need where more is worse: its colour warms as it fills.
 
@@ -45,7 +45,7 @@ func _fill_color() -> Color:
 		return color
 	var f := clampf(value / maxf(1.0, max_value), 0, 1)
 	if f >= 0.9:
-		return AppTheme.col("red")
+		return AppTheme.col("danger")
 	if f >= 0.7:
 		return AppTheme.col("orange")
 	return color
@@ -53,7 +53,7 @@ func _fill_color() -> Color:
 
 func _bar(r: Rect2) -> void:
 	var h := r.size.y
-	draw_colored_polygon(GlowPanel.rounded_rect(r, h / 2, 6), Color("#08101B"))
+	draw_colored_polygon(GlowPanel.rounded_rect(r, h / 2, 6), Color("#0A0F1E"))
 	var f := clampf(_shown / maxf(1.0, max_value), 0, 1)
 	if f <= 0.001:
 		return
@@ -64,12 +64,8 @@ func _bar(r: Rect2) -> void:
 	var pts := GlowPanel.rounded_rect(fr, h / 2, 6)
 	var cols := PackedColorArray()
 	for p in pts:
-		cols.append(c.lightened(0.25).lerp(c.darkened(0.15), (p.y - fr.position.y) / h))
+		cols.append(c.lightened(0.12).lerp(c, (p.y - fr.position.y) / h))
 	draw_polygon(pts, cols)
-	if h >= 8:
-		var gloss := Rect2(fr.position + Vector2(h * 0.4, h * 0.16), Vector2(maxf(0.0, fr.size.x - h * 0.8), h * 0.24))
-		if gloss.size.x > 2:
-			draw_colored_polygon(GlowPanel.rounded_rect(gloss, gloss.size.y / 2, 4), Color(1, 1, 1, 0.25))
 
 
 func _draw() -> void:

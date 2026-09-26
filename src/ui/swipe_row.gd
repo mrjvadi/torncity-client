@@ -163,7 +163,7 @@ func _draw() -> void:
 		return
 	for i in actions.size():
 		var r := _btn_rect(i).grow(-4)
-		var c: Color = actions[i].get("color", Color("#2F80ED"))
+		var c: Color = actions[i].get("color", Color("#2EC4B6"))
 		draw_colored_polygon(GlowPanel.rounded_rect(r, 18, 6), c)
 		var g := AssetLib.glyph(str(actions[i].get("key", "")))
 		var tex: Texture2D = g.get("texture")

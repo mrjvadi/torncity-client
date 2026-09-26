@@ -27,10 +27,7 @@ const WIDE_FROM := 1100.0
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
-	var bg := ColorRect.new()
-	bg.color = AppTheme.col("night")
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(bg)
+	add_child(AppTheme.backdrop())
 	_safe = MarginContainer.new()
 	_safe.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_safe)
@@ -65,7 +62,7 @@ func _ready() -> void:
 	nav.resized.connect(func(): insets_changed.emit())
 	hud.resized.connect(func(): insets_changed.emit())
 	_busy = ColorRect.new()
-	_busy.color = AppTheme.col("blue")
+	_busy.color = AppTheme.col("primary")
 	_busy.custom_minimum_size = Vector2(0, 4)
 	_busy.visible = false
 	host.add_child(_busy)
@@ -184,13 +181,22 @@ func toggle_drawer() -> void:
 	_drawer.add_child(dim)
 	side.size_flags_vertical = Control.SIZE_FILL
 	_drawer.add_child(side)
-	var w := minf(size.x * 0.78, 520.0)
-	side.size = Vector2(w, size.y - 40)
-	var x := size.x - w - 10 if I18n.is_rtl() else 10.0
-	side.position = Vector2(x, 20)
 	add_child(_drawer)
+	# The panel is placed in literal screen x, so the overlay and the panel lay
+	# out LTR (under the RTL shell Godot mirrors a child's position, and put
+	# the panel off screen in Persian); the menu inside keeps the reading
+	# direction. Anchors are reset: the desktop sidebar may have left others.
+	_drawer.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	side.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	side.content_direction(I18n.direction())
+	side.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	side.show_header(true)
+	var w := minf(size.x * 0.8, 540.0)
+	var x := size.x - w - 12 if I18n.is_rtl() else 12.0
+	side.size = Vector2(w, size.y - 24)
+	side.position = Vector2(x, 12)
 	if not Config.headless_capture:
-		var from := x + (w if I18n.is_rtl() else -w)
+		var from := x + (w + 12 if I18n.is_rtl() else -w - 12)
 		side.position.x = from
 		side.create_tween().tween_property(side, "position:x", x, 0.28).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 		Fx.fade_in(dim, 0.2)
@@ -199,6 +205,9 @@ func toggle_drawer() -> void:
 func close_drawer() -> void:
 	if _drawer:
 		_drawer.remove_child(side)
+		side.layout_direction = Control.LAYOUT_DIRECTION_INHERITED
+		side.content_direction(Control.LAYOUT_DIRECTION_INHERITED)
+		side.show_header(false)
 		_drawer.queue_free()
 		_drawer = null
 
@@ -224,7 +233,7 @@ func open_tab(tab: String) -> void:
 ## Screens that live only in the client.
 func open_local(name: String) -> void:
 	var key: String = {"bell": "notifications", "settings": "settings", "notifications": "notifications"}.get(name, name)
-	nav.select("messages" if key == "notifications" else "")
+	nav.select(ViewRouter.tab_for(key))
 	_show(key, {"ok": true, "screen": key, "text": "", "view": {}, "actions": []}, {"command": "", "args": {}})
 
 
@@ -327,7 +336,7 @@ func _ask(action: Dictionary) -> void:
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(dim)
 	var p := GlowPanel.new()
-	p.accent = AppTheme.col("blue")
+	p.accent = AppTheme.col("primary")
 	p.padding = 28
 	var box := UI.vbox(18)
 	box.add_child(UI.rich(str(input.get("text", ""))))

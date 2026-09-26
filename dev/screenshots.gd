@@ -107,6 +107,10 @@ func _run() -> void:
 				Session.add_notice({"type": "notice", "kind": "shift_paid", "text": Mock.L("💰 شیفت تمام شد و 1٬850 نیل دستمزد گرفتید.", "💰 Your shift is over: you were paid 1,850 Nil.")})
 			shell.toasts.clear()
 			shell.close_drawer()
+			# the "confirm" shot leaves its sheet open over the next screens
+			for n in get_tree().root.find_children("*", "", true, false):
+				if n is ConfirmSheet:
+					n.free()
 			var saved_inventory = null
 			var saved_notices = null
 			if name == "inventory_empty":
