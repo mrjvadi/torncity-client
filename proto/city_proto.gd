@@ -11,9 +11,10 @@ const Builders := preload("res://proto/city/builders.gd")
 const ROAD := preload("res://proto/city/road.gdshader")
 const OUTLINE := preload("res://proto/city/outline.gdshader")
 
-const P := 11.0                 # block pitch: a roomy lot and a wide road
-const ROAD_W := 1.8
+const P := 15.0                 # block pitch: a roomy lot and a wide road
+const ROAD_W := 2.2
 const F := P / 7.4              # how much bigger the big sites are than the first draft
+const Q := 3.7                  # a building's offset from its block's centre, four to a block
 ## One letter per block: Military, Airport, Residential, Industrial, Park,
 ## Centre, Bazaar, Villas. Rows run north to south.
 const LAYOUT := ["MMRRRRAA", "MMRRRRAA", "IIPCCBAA", "IICCCBAA", "IICCCBAA", "RRPPVVVV", "RRRPVVVV", "RRRPVVVV"]
@@ -92,7 +93,7 @@ func _block_center(i: int, j: int) -> Vector3:
 func _ground() -> void:
 	var g := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
-	pm.size = Vector2(400, 400)
+	pm.size = Vector2(600, 600)
 	g.mesh = pm
 	g.material_override = kit.mat(Color("#355E44"))
 	g.position.y = -0.03
@@ -154,27 +155,27 @@ func _block(i: int, j: int, kind: String) -> void:
 	kit.box(world, Vector3(lot - 1.1, 0.03, lot - 1.1), c + Vector3(0, 0.08, 0), kit.mat(Color(base_c)))
 	if kind != "P":
 		var e := lot / 2.0 - 0.3
-		for k in 5:
-			var u := -e + 0.9 + k * (2.0 * e - 1.8) / 4.0
+		for k in 7:
+			var u := -e + 0.9 + k * (2.0 * e - 1.8) / 6.0
 			for side in [Vector3(u, 0, -e), Vector3(u, 0, e), Vector3(-e, 0, u), Vector3(e, 0, u)]:
 				_street_tree(c + side + Vector3(0, 0.08, 0), rng.randf_range(0.9, 1.2))
 	var y := Vector3(0, 0.11, 0)
 	match kind:
 		"C":
 			if i == 3 and j == 3:
-				kit.city_hall(world, c + y + Vector3(0, 0, -1.4))
-				_site("city_hall", c + Vector3(0, 0, -1.4), "place", {"name": "شهرداری", "icon": "rank", "pal": "gold"})
-				_char_bagh(c + y + Vector3(0, 0, 2.6))
+				kit.city_hall(world, c + y + Vector3(0, 0, -2.6))
+				_site("city_hall", c + Vector3(0, 0, -2.6), "place", {"name": "شهرداری", "icon": "rank", "pal": "gold"})
+				_char_bagh(c + y + Vector3(0, 0, 3.4))
 			elif i == 4 and j == 3:
 				kit.bank(world, c + y)
 				_site("bank", c, "place", {"name": "بانک مرکزی", "icon": "bank", "pal": "sapphire"})
-				for x in [-3.0, 3.0]:
-					for z in [-3.0, 3.0]:
+				for x in [-4.6, 4.6]:
+					for z in [-4.6, 4.6]:
 						_street_tree(c + y + Vector3(x, 0, z), 1.4)
 			else:
 				var walls := [Color("#8C95B8"), Color("#A7A0C8"), Color("#7FA3B8"), Color("#B3A58E")]
-				for dx in [-2.3, 2.3]:
-					for dz in [-2.3, 2.3]:
+				for dx in [-Q, Q]:
+					for dz in [-Q, Q]:
 						var h := rng.randf_range(3.5, 9.5) if (i + j) % 2 == 0 else rng.randf_range(2.4, 6.0)
 						kit.tower(world, c + y + Vector3(dx, 0, dz), h, 2.3, 2.3, walls[rng.randi() % 4], rng.randf() * 10.0)
 				# a small plaza with a fountain between the towers
@@ -183,37 +184,37 @@ func _block(i: int, j: int, kind: String) -> void:
 				wm.shader = kit.WATER
 				kit.cyl(world, 0.58, 0.2, c + y + Vector3(0, 0.02, 0), wm)
 		"B":
-			kit.bazaar(world, c + y + Vector3(-2.3, 0, 0), 7.6, 90.0)
+			kit.bazaar(world, c + y + Vector3(-3.6, 0, 0), 10.8, 90.0)
 			if j == 3:
-				kit.shop(world, c + y + Vector3(2.5, 0, -2.4), Color("#E5484D"))
-				_site("shop", c + Vector3(2.5, 0, -2.4), "shop", {})
-				kit.shop(world, c + y + Vector3(2.5, 0, 2.4), Color("#2BC4B2"))
+				kit.shop(world, c + y + Vector3(3.8, 0, -3.6), Color("#E5484D"))
+				_site("shop", c + Vector3(3.8, 0, -3.6), "shop", {})
+				kit.shop(world, c + y + Vector3(3.8, 0, 3.6), Color("#2BC4B2"))
 			else:
-				kit.shop(world, c + y + Vector3(2.5, 0, -1.6), Color("#F5A623"))
-				kit.shop(world, c + y + Vector3(2.5, 0, 2.2), Color("#8E6CF0"))
+				kit.shop(world, c + y + Vector3(3.8, 0, -3.0), Color("#F5A623"))
+				kit.shop(world, c + y + Vector3(3.8, 0, 3.2), Color("#8E6CF0"))
 		"I":
 			var names := {Vector2i(0, 2): ["فولاد البرز", "سارا", true], Vector2i(1, 2): ["پرواز نو", "مینا", false],
 				Vector2i(0, 3): ["داروسازی مهر", "رضا", false], Vector2i(1, 3): ["گجت دانا", "دانا", false],
 				Vector2i(0, 4): ["نان آفتاب", "علی", false], Vector2i(1, 4): ["زمین خالی", "", false]}
 			var accents := [Color("#E5484D"), Color("#2BC4B2"), Color("#8E6CF0"), Color("#F5A623")]
 			var info: Array = names.get(Vector2i(i, j), ["", "", false])
-			for dz in [-2.3, 2.3]:
+			for dz in [-Q, Q]:
 				if info[1] == "" and dz > 0:
 					_empty_lot(c + y + Vector3(0, 0, dz))
 					continue
-				kit.box(world, Vector3(4.4, 0.02, 3.6), c + y + Vector3(0, 0, dz), kit.mat(Color("#5C606C")))
+				kit.box(world, Vector3(5.0, 0.02, 4.2), c + y + Vector3(0, 0, dz), kit.mat(Color("#5C606C")))
 				kit.factory(world, c + y + Vector3(0, 0, dz), accents[(i + j * 2 + int(dz > 0)) % 4])
 				if dz < 0 and info[1] != "":
 					var id := "company" if info[2] else "company_%d_%d" % [i, j]
 					_site(id, c + Vector3(0, 0, dz), "company", {"name": info[0], "owner": info[1], "mine": info[2]})
 		"P":
-			for n in 34:
-				_street_tree(c + y + Vector3(rng.randf_range(-4.0, 4.0), 0, rng.randf_range(-4.0, 4.0)), rng.randf_range(1.3, 2.1))
+			for n in 60:
+				_street_tree(c + y + Vector3(rng.randf_range(-6.0, 6.0), 0, rng.randf_range(-6.0, 6.0)), rng.randf_range(1.3, 2.1))
 			if i == 3 and j == 6:
 				var lake := MeshInstance3D.new()
 				var cm := CylinderMesh.new()
-				cm.top_radius = 3.2
-				cm.bottom_radius = 3.2
+				cm.top_radius = 4.4
+				cm.bottom_radius = 4.4
 				cm.height = 0.05
 				lake.mesh = cm
 				var wm := ShaderMaterial.new()
@@ -224,9 +225,9 @@ func _block(i: int, j: int, kind: String) -> void:
 				world.add_child(lake)
 		"R":
 			var sale := (i + j) % 3 == 0
-			for dx in [-2.3, 2.3]:
-				for dz in [-2.3, 2.3]:
-					kit.box(world, Vector3(3.2, 0.02, 3.2), c + y + Vector3(dx, 0, dz), kit.mat(Color("#5DA862")))
+			for dx in [-Q, Q]:
+				for dz in [-Q, Q]:
+					kit.box(world, Vector3(4.6, 0.02, 4.6), c + y + Vector3(dx, 0, dz), kit.mat(Color("#5DA862")))
 					var h: String = HOUSES[rng.randi() % HOUSES.size()]
 					var scn: PackedScene = load(ART + "models/%s.glb" % h)
 					var m: Node3D = scn.instantiate()
@@ -234,19 +235,19 @@ func _block(i: int, j: int, kind: String) -> void:
 					m.rotation_degrees.y = [0.0, 90.0, 180.0, 270.0][rng.randi() % 4]
 					m.scale = Vector3(1.9, 1.9, 1.9)
 					world.add_child(m)
-					_street_tree(c + y + Vector3(dx + 1.2, 0, dz + 1.2), 1.1)
+					_street_tree(c + y + Vector3(dx + 2.0, 0, dz + 2.0), 1.1)
 			if sale:
-				_sale_marker(c + Vector3(2.3, 2.0, -2.3), "خانه", "%d,000" % rng.randi_range(180, 420))
+				_sale_marker(c + Vector3(Q, 2.0, -Q), "خانه", "%d,000" % rng.randi_range(180, 420))
 		"V":
 			var walls := [Color("#F4EFE6"), Color("#EADBC4"), Color("#DDE6EE"), Color("#F1E1D0")]
-			for dx in [-2.35, 2.35]:
-				for dz in [-2.35, 2.35]:
+			for dx in [-Q, Q]:
+				for dz in [-Q, Q]:
 					kit.villa(world, c + y + Vector3(dx, 0, dz), [0.0, 90.0, 180.0, 270.0][rng.randi() % 4], walls[rng.randi() % 4])
 			if i == 5 and j == 6:
-				_site("villa", c + Vector3(2.35, 0, -2.35), "villa", {})
-				_sale_marker(c + Vector3(2.35, 2.0, -2.35), "ویلا", "2.4M")
+				_site("villa", c + Vector3(Q, 0, -Q), "villa", {})
+				_sale_marker(c + Vector3(Q, 2.0, -Q), "ویلا", "2.4M")
 			elif (i * 3 + j) % 5 == 0:
-				_sale_marker(c + Vector3(-2.35, 2.0, 2.35), "ویلا", "%.1fM" % rng.randf_range(1.6, 3.8))
+				_sale_marker(c + Vector3(-Q, 2.0, Q), "ویلا", "%.1fM" % rng.randf_range(1.6, 3.8))
 
 
 ## A Persian garden in front of the city hall: a long pool and a cross
@@ -358,6 +359,11 @@ func _site(id: String, pos: Vector3, kind: String, info: Dictionary) -> void:
 # -- the view -------------------------------------------------------------------------------------
 func _frame_view() -> void:
 	match _view:
+		"hall":
+			_zoom = 17.0
+			_target = sites["city_hall"].pos
+			_place_camera()
+			_center_on(sites["city_hall"].pos + Vector3(0, 0, 1.6), Vector2(360, 640))
 		"shop", "villa", "company", "military":
 			_zoom = {"military": 20.0, "company": 16.0}.get(_view, 15.0)
 			_target = sites[_view].pos
@@ -365,7 +371,7 @@ func _frame_view() -> void:
 			_center_on(sites[_view].pos, Vector2(360, 570))
 		_:
 			_target = Vector3(2.0, 0, 0)
-			_zoom = 78.0
+			_zoom = 84.0
 	_place_camera()
 
 
@@ -396,7 +402,7 @@ func _tour(t: float) -> void:
 	var air: Vector3 = sites["airport"].pos + Vector3(2.0, 0, 0)
 	var vil: Vector3 = sites["villa"].pos
 	var baz: Vector3 = sites["shop"].pos
-	var pts := [[Vector3(2.0, 0, 0), 80.0], [mil, 34.0], [air, 44.0], [vil, 24.0], [baz, 20.0]]
+	var pts := [[Vector3(2.0, 0, 0), 96.0], [mil, 46.0], [air, 62.0], [vil, 28.0], [baz, 22.0]]
 	var seg := 2.2
 	var i := mini(int(t / seg), pts.size() - 2)
 	var f := clampf((t - i * seg) / seg, 0.0, 1.0)
@@ -437,7 +443,7 @@ func _unhandled_input(e: InputEvent) -> void:
 			_zoom = maxf(10.0, _zoom * 0.9)
 			_place_camera()
 		elif e.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_zoom = minf(110.0, _zoom * 1.1)
+			_zoom = minf(140.0, _zoom * 1.1)
 			_place_camera()
 		elif e.button_index == MOUSE_BUTTON_LEFT:
 			if e.pressed:
