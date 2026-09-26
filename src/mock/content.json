@@ -1,5 +1,5 @@
 {
- "version": "mock-3",
+ "version": "mock-4",
  "langs": [
   "fa",
   "en"
@@ -626,6 +626,140 @@
     },
     "asset": {
      "icon": "crime:burglary"
+    }
+   }
+  ],
+  "service": [
+   {
+    "code": "bank",
+    "name": {
+     "fa": "بانک",
+     "en": "Bank"
+    },
+    "asset": {
+     "icon": "service:bank"
+    }
+   },
+   {
+    "code": "market",
+    "name": {
+     "fa": "بازار معاملات",
+     "en": "Market"
+    },
+    "asset": {
+     "icon": "service:market"
+    }
+   },
+   {
+    "code": "auction_house",
+    "name": {
+     "fa": "حراج",
+     "en": "Auction house"
+    },
+    "asset": {
+     "icon": "service:auction_house"
+    }
+   },
+   {
+    "code": "university",
+    "name": {
+     "fa": "دانشگاه",
+     "en": "University"
+    },
+    "asset": {
+     "icon": "service:university"
+    }
+   },
+   {
+    "code": "training_center",
+    "name": {
+     "fa": "مرکز آموزش",
+     "en": "Training centre"
+    },
+    "asset": {
+     "icon": "service:training_center"
+    }
+   },
+   {
+    "code": "city_hall",
+    "name": {
+     "fa": "شهرداری",
+     "en": "City hall"
+    },
+    "asset": {
+     "icon": "service:city_hall"
+    }
+   },
+   {
+    "code": "police",
+    "name": {
+     "fa": "پلیس",
+     "en": "Police"
+    },
+    "asset": {
+     "icon": "service:police"
+    }
+   },
+   {
+    "code": "hospital",
+    "name": {
+     "fa": "بیمارستان",
+     "en": "Hospital"
+    },
+    "asset": {
+     "icon": "service:hospital"
+    }
+   },
+   {
+    "code": "rooftop_bar",
+    "name": {
+     "fa": "کافهٔ پشت‌بام",
+     "en": "Rooftop bar"
+    },
+    "asset": {
+     "icon": "service:rooftop_bar"
+    }
+   }
+  ],
+  "mode": [
+   {
+    "code": "bus",
+    "name": {
+     "fa": "اتوبوس",
+     "en": "Bus"
+    },
+    "asset": {
+     "icon": "vehicle:bus"
+    }
+   },
+   {
+    "code": "car",
+    "name": {
+     "fa": "خودرو",
+     "en": "Car"
+    },
+    "asset": {
+     "icon": "vehicle:sedan"
+    }
+   },
+   {
+    "code": "train",
+    "name": {
+     "fa": "قطار",
+     "en": "Train"
+    },
+    "asset": {
+     "icon": "vehicle:train"
+    }
+   },
+   {
+    "code": "flight",
+    "name": {
+     "fa": "هواپیما",
+     "en": "Flight"
+    },
+    "asset": {
+     "icon": "vehicle:airliner"
     }
    }
   ]

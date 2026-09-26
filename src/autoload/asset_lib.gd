@@ -15,11 +15,13 @@ const LIBRARY := "res://assets/library.json"
 
 var models := {}
 var roads := {}
+var road_open := {}
 var icons := {}
 var actions := {}
 var glyph_dir := "res://assets/icons/game-icons/"
 var _scene_cache := {}
 var _tex_cache := {}
+var _bounds_cache := {}
 
 
 func _ready() -> void:
@@ -27,6 +29,7 @@ func _ready() -> void:
 	if d is Dictionary:
 		models = d.get("models", {})
 		roads = d.get("roads", {})
+		road_open = d.get("road_open", {})
 		icons = d.get("icons", {})
 		actions = d.get("actions", {})
 		glyph_dir = str(d.get("glyph_dir", glyph_dir))
@@ -60,6 +63,34 @@ func scene(path: String) -> PackedScene:
 	return _scene_cache[path]
 
 
+## A scene's bounds (measured once): used to fit and centre model parts.
+func scene_bounds(path: String) -> AABB:
+	if _bounds_cache.has(path):
+		return _bounds_cache[path]
+	var ps := scene(path)
+	var box := AABB(Vector3(-0.5, 0, -0.5), Vector3.ONE)
+	if ps:
+		var n := ps.instantiate()
+		var acc: Array = [null]
+		_measure(n, Transform3D.IDENTITY, acc)
+		if acc[0] != null:
+			box = acc[0]
+		n.free()
+	_bounds_cache[path] = box
+	return box
+
+
+func _measure(n: Node, xf: Transform3D, acc: Array) -> void:
+	var t := xf
+	if n is Node3D:
+		t = xf * (n as Node3D).transform
+	if n is MeshInstance3D and (n as MeshInstance3D).mesh:
+		var a: AABB = t * (n as MeshInstance3D).mesh.get_aabb()
+		acc[0] = a if acc[0] == null else acc[0].merge(a)
+	for c in n.get_children():
+		_measure(c, t, acc)
+
+
 ## Build the model for an asset key: a Node3D holding its parts. Null only if
 ## the library has nothing at all (not even "*").
 func instantiate(key: String) -> Node3D:
@@ -77,11 +108,20 @@ func instantiate(key: String) -> Node3D:
 		if n == null:
 			continue
 		var at: Array = p.get("at", [0, 0])
-		n.position = Vector3(float(at[0]), 0.0, float(at[1]))
-		n.rotation_degrees.y = float(p.get("rotate", 0))
+		var box := scene_bounds(str(p.get("scene", "")))
+		# "size": the footprint wanted, in plot units (a plot is 2 across);
+		# the model is scaled to it and centred on "at", whatever its origin.
 		var sc := float(p.get("scale", 1.0))
+		if p.has("size"):
+			sc = float(p["size"]) / maxf(0.01, maxf(box.size.x, box.size.z))
+		var c := box.get_center()
+		var holder := Node3D.new()
+		holder.position = Vector3(float(at[0]), 0.0, float(at[1]))
+		holder.rotation_degrees.y = float(p.get("rotate", 0))
 		n.scale = Vector3(sc, sc, sc)
-		root.add_child(n)
+		n.position = Vector3(-c.x * sc, -box.position.y * sc, -c.z * sc)
+		holder.add_child(n)
+		root.add_child(holder)
 	return root if root.get_child_count() > 0 else null
 
 

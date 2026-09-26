@@ -261,6 +261,16 @@
    "walk": 15,
    "energy": 0,
    "services": []
+  },
+  {
+   "code": "sky_garden",
+   "fa": "باغ آسمان",
+   "en": "Sky garden",
+   "walk": 25,
+   "energy": 0,
+   "services": [
+    "rooftop_bar"
+   ]
   }
  ],
  "services": {

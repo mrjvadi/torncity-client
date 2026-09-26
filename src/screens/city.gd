@@ -2,13 +2,7 @@ extends GameScreen
 ## «City»: the map of the player's own city. Tap a building to see it; walk
 ## there with one button. Realtime arrival notices land the walker.
 
-const SERVICE_ICON := {"bank": "bank", "police": "police", "city_hall": "office", "market": "market",
-	"auction_house": "auction", "university": "study", "training_center": "book"}
-const SERVICE_CMD := {"bank": "bank.show", "police": "crime.jail", "city_hall": "gov.city", "market": "market.list",
-	"auction_house": "auction.list", "university": "education.list", "training_center": "education.list"}
-const MODE_ICON := {"bus": "bus", "car": "car", "train": "train", "flight": "plane"}
-
-var map: CityMapView
+var map: CityWorldView
 var _status: GlowPanel
 var _status_label: Label
 var _sheet: GlowPanel
@@ -18,7 +12,7 @@ var _walk_to := ""
 
 
 func build() -> void:
-	map = CityMapView.new()
+	map = CityWorldView.new()
 	map.set_anchors_preset(Control.PRESET_FULL_RECT)
 	map.place_tapped.connect(_show_place)
 	add_child(map)
@@ -50,9 +44,13 @@ func build() -> void:
 	brow.add_child(bcol)
 	banner.add_child(brow)
 	bar.add_child(banner)
-	var travel := round_button("travel", func(): Game.run("map.cities"))
-	travel.custom_minimum_size = Vector2(84, 84)
-	bar.add_child(travel)
+	# the server's "other cities" action, if it offers one
+	for a in resp.get("actions", []):
+		if a is Dictionary and str(a.get("command", "")) == "map.cities":
+			var travel := round_button("travel", func(): Game.run_action(a))
+			travel.custom_minimum_size = Vector2(84, 84)
+			bar.add_child(travel)
+			break
 	top.add_child(bar)
 
 	# bottom sheet for the selected place
@@ -115,10 +113,9 @@ func _show_place(code: String) -> void:
 		_sheet.visible = false
 		return
 	_sheet.visible = true
-	var name := I18n.name_of("place", code, str(p["place"].get("name", code)))
+	var name := Content.name_of("place", code, str(p["place"].get("name", code)))
 	var head := UI.hbox(14)
-	var thumb := UI.tex(AppTheme.tex("place/" + code), Vector2(118, 118))
-	head.add_child(thumb)
+	head.add_child(IconBadge.make(AssetLib.glyph_for("place", code), 104))
 	var col := UI.vbox(4)
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.add_child(UI.label(name, "TitleLabel"))
@@ -142,10 +139,10 @@ func _show_place(code: String) -> void:
 	var tags := HFlowContainer.new()
 	tags.add_theme_constant_override("h_separation", 8)
 	tags.add_theme_constant_override("v_separation", 8)
-	for s in p.get("services", []):
-		tags.add_child(UI.chip(SERVICE_ICON.get(s, "info"), I18n.t("service." + str(s))))
+	for sv in p.get("services", []):
+		tags.add_child(_tag("service", str(sv)))
 	for d in p.get("departures", []):
-		tags.add_child(UI.chip(MODE_ICON.get(d, "travel"), I18n.name_of("mode", str(d), str(d).capitalize())))
+		tags.add_child(_tag("mode", str(d)))
 	for sh in p.get("shops", []):
 		if sh is Dictionary:
 			tags.add_child(UI.chip("cart", str(sh.get("name", ""))))
@@ -154,31 +151,38 @@ func _show_place(code: String) -> void:
 	head.add_child(col)
 	_sheet_box.add_child(head)
 
+	# the server's own buttons for this place (walk there, its shops...)
 	var buttons := UI.hbox(12)
 	if _walk_to == code:
 		var l := UI.button(I18n.t("map.on_the_way"), "walk", "GhostButton")
 		l.disabled = true
 		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		buttons.add_child(l)
-	elif not p.get("here", false):
-		var go := UI.button(I18n.t("map.walk_here"), "walk", "", func(): _go(code))
-		go.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		go.disabled = _walk_to != ""
-		buttons.add_child(go)
-	for s in p.get("services", []):
-		if SERVICE_CMD.has(s) and p.get("here", false):
-			var b := UI.button(I18n.t("service." + str(s)), SERVICE_ICON.get(s, "info"), "GoldButton", func(): Game.run(SERVICE_CMD[s]))
-			b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			buttons.add_child(b)
-	if not (p.get("departures", []) as Array).is_empty() and p.get("here", false):
-		var t := UI.button(I18n.t("map.depart"), "travel", "GoldButton", func(): Game.run("map.cities"))
-		t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		buttons.add_child(t)
+	else:
+		for a in resp.get("actions", []):
+			if a is Dictionary and _action_place(a) == code:
+				var b := UI.action_button(a, "Button" if str(a.get("command", "")) == "place.go" else "GoldButton")
+				b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				b.disabled = _walk_to != ""
+				buttons.add_child(b)
 	if buttons.get_child_count() > 0:
 		_sheet_box.add_child(buttons)
 	if not Config.headless_capture:
 		_sheet.modulate.a = 0.0
 		_sheet.create_tween().tween_property(_sheet, "modulate:a", 1.0, 0.2)
+
+
+## A chip for a service or departure mode: name from the content catalogue,
+## badge icon from the asset library (unknown codes get the category's look).
+func _tag(table: String, code: String) -> Control:
+	var g := AssetLib.glyph("%s:%s" % [table, code])
+	var row := UI.hbox(6, [IconBadge.make(g, 34, false), UI.label(Content.name_of(table, code), "SmallLabel")])
+	return UI.panel(row, "ChipPanel")
+
+
+static func _action_place(a: Dictionary) -> String:
+	var args = a.get("args", {})
+	return str(args.get("place", "")) if args is Dictionary else ""
 
 
 func _go(code: String) -> void:

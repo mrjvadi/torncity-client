@@ -5,7 +5,7 @@ extends "res://tests/test_case.gd"
 func test_catalogue_lookup_and_fallbacks() -> void:
 	var cat = JSON.parse_string(FileAccess.get_file_as_string("res://src/mock/content.json"))
 	Content._apply(cat, false)
-	eq(Content.version, "mock-3")
+	eq(Content.version, str(cat["version"]))
 	I18n.set_lang("en")
 	eq(Content.name_of("item", "quantum_toaster"), "Quantum toaster")
 	eq(Content.name_of("item", "never_heard_of"), "never heard of")

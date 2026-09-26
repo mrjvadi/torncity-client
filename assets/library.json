@@ -544,6 +544,62 @@
   "action:finance": {
    "glyph": "chart",
    "tint": "green"
+  },
+  "service:*": {
+   "glyph": "shop",
+   "tint": "blue"
+  },
+  "service:bank": {
+   "glyph": "bank",
+   "tint": "cyan"
+  },
+  "service:market": {
+   "glyph": "trade",
+   "tint": "green"
+  },
+  "service:auction_house": {
+   "glyph": "gavel",
+   "tint": "orange"
+  },
+  "service:university": {
+   "glyph": "graduate-cap",
+   "tint": "violet"
+  },
+  "service:training_center": {
+   "glyph": "open-book",
+   "tint": "violet"
+  },
+  "service:city_hall": {
+   "glyph": "clock-tower",
+   "tint": "yellow"
+  },
+  "service:police": {
+   "glyph": "police-badge",
+   "tint": "blue"
+  },
+  "service:hospital": {
+   "glyph": "hospital-cross",
+   "tint": "red"
+  },
+  "mode:*": {
+   "glyph": "walk",
+   "tint": "cyan"
+  },
+  "mode:bus": {
+   "glyph": "bus",
+   "tint": "yellow"
+  },
+  "mode:car": {
+   "glyph": "city-car",
+   "tint": "blue"
+  },
+  "mode:train": {
+   "glyph": "subway-train",
+   "tint": "blue"
+  },
+  "mode:flight": {
+   "glyph": "airplane",
+   "tint": "cyan"
   }
  },
  "models": {
@@ -556,7 +612,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.2
+     "size": 1.5
     }
    ]
   },
@@ -569,7 +625,7 @@
       -0.2
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/tree-large.glb",
@@ -578,7 +634,7 @@
       0.6
      ],
      "rotate": 0,
-     "scale": 1.2
+     "size": 0.45
     }
    ]
   },
@@ -591,7 +647,7 @@
       -0.35
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 0.9
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/building-skyscraper-e.glb",
@@ -600,7 +656,7 @@
       -0.4
      ],
      "rotate": 0,
-     "scale": 1.1
+     "size": 0.8
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-parasol-a.glb",
@@ -609,7 +665,7 @@
       0.55
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.4
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-parasol-b.glb",
@@ -618,7 +674,7 @@
       0.6
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.4
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/planter.glb",
@@ -627,7 +683,7 @@
       0.1
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     }
    ]
   },
@@ -640,7 +696,7 @@
       -0.3
      ],
      "rotate": 0,
-     "scale": 1.25
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/building-d.glb",
@@ -649,7 +705,7 @@
       -0.35
      ],
      "rotate": 0,
-     "scale": 1.2
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-awning-wide.glb",
@@ -658,7 +714,7 @@
       0.3
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 1.0
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-parasol-a.glb",
@@ -667,7 +723,7 @@
       0.55
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.4
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-parasol-b.glb",
@@ -676,7 +732,7 @@
       0.7
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.4
     }
    ]
   },
@@ -689,7 +745,7 @@
       -0.4
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 0.9
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/building-skyscraper-d.glb",
@@ -698,7 +754,7 @@
       -0.3
      ],
      "rotate": 0,
-     "scale": 1.2
+     "size": 0.8
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/building-skyscraper-c.glb",
@@ -707,7 +763,7 @@
       0.45
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.7
     }
    ]
   },
@@ -720,7 +776,7 @@
       -0.3
      ],
      "rotate": 0,
-     "scale": 1.5
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/tree-large.glb",
@@ -729,7 +785,7 @@
       0.5
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/tree-small.glb",
@@ -738,7 +794,7 @@
       0.6
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/planter.glb",
@@ -747,7 +803,7 @@
       0.65
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     }
    ]
   },
@@ -760,7 +816,7 @@
       -0.2
      ],
      "rotate": 0,
-     "scale": 1.6
+     "size": 1.8
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/tree-small.glb",
@@ -769,7 +825,7 @@
       0.6
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/tree-small.glb",
@@ -778,7 +834,7 @@
       0.6
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     }
    ]
   },
@@ -791,7 +847,7 @@
       -0.35
      ],
      "rotate": 0,
-     "scale": 1.4
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/car-kit/police.glb",
@@ -800,7 +856,7 @@
       0.5
      ],
      "rotate": 90,
-     "scale": 0.9
+     "size": 0.55
     },
     {
      "scene": "res://assets/kenney/car-kit/police.glb",
@@ -809,7 +865,7 @@
       0.55
      ],
      "rotate": 90,
-     "scale": 0.9
+     "size": 0.55
     }
    ]
   },
@@ -822,7 +878,7 @@
       -0.3
      ],
      "rotate": 0,
-     "scale": 1.45
+     "size": 1.7
     },
     {
      "scene": "res://assets/kenney/car-kit/ambulance.glb",
@@ -831,7 +887,7 @@
       0.55
      ],
      "rotate": 90,
-     "scale": 0.9
+     "size": 0.55
     }
    ]
   },
@@ -841,37 +897,28 @@
      "scene": "res://assets/kenney/city-kit-commercial/low-detail-building-wide-a.glb",
      "at": [
       0,
-      -0.45
+      -0.5
      ],
      "rotate": 0,
-     "scale": 1.2
+     "size": 1.5
     },
     {
-     "scene": "res://assets/kenney/train-kit/railroad-straight.glb",
+     "scene": "res://assets/kenney/city-kit-commercial/detail-overhang-wide.glb",
      "at": [
-      -0.5,
-      0.45
+      0,
+      0.1
      ],
-     "rotate": 90,
-     "scale": 1.0
-    },
-    {
-     "scene": "res://assets/kenney/train-kit/railroad-straight.glb",
-     "at": [
-      0.5,
-      0.45
-     ],
-     "rotate": 90,
-     "scale": 1.0
+     "rotate": 0,
+     "size": 1.0
     },
     {
      "scene": "res://assets/kenney/train-kit/train-electric-city-a.glb",
      "at": [
-      0.0,
-      0.45
+      0,
+      0.6
      ],
      "rotate": 90,
-     "scale": 0.8
+     "size": 1.6
     }
    ]
   },
@@ -884,7 +931,7 @@
       -0.2
      ],
      "rotate": 0,
-     "scale": 1.4
+     "size": 1.0
     },
     {
      "scene": "res://assets/kenney/car-kit/van.glb",
@@ -893,7 +940,7 @@
       0.45
      ],
      "rotate": 90,
-     "scale": 1.0
+     "size": 0.55
     },
     {
      "scene": "res://assets/kenney/car-kit/delivery.glb",
@@ -902,7 +949,7 @@
       0.45
      ],
      "rotate": 90,
-     "scale": 1.0
+     "size": 0.55
     }
    ]
   },
@@ -915,7 +962,7 @@
       -0.4
      ],
      "rotate": 0,
-     "scale": 1.2
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/racing-kit/radarEquipment.glb",
@@ -924,7 +971,7 @@
       -0.5
      ],
      "rotate": 0,
-     "scale": 0.9
+     "size": 0.5
     },
     {
      "scene": "res://assets/kenney/racing-kit/overheadLights.glb",
@@ -933,7 +980,7 @@
       0.5
      ],
      "rotate": 0,
-     "scale": 0.8
+     "size": 0.9
     }
    ]
   },
@@ -946,7 +993,7 @@
       -0.25
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-industrial/chimney-large.glb",
@@ -955,7 +1002,7 @@
       -0.55
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     },
     {
      "scene": "res://assets/kenney/city-kit-industrial/shipping-container-a.glb",
@@ -964,7 +1011,7 @@
       0.5
      ],
      "rotate": 90,
-     "scale": 0.8
+     "size": 0.7
     },
     {
      "scene": "res://assets/kenney/city-kit-industrial/detail-tank.glb",
@@ -973,7 +1020,17 @@
       0.6
      ],
      "rotate": 0,
-     "scale": 0.8
+     "size": 0.7
+    }
+   ],
+   "fx": [
+    {
+     "type": "smoke",
+     "at": [
+      0.6,
+      -0.55
+     ],
+     "y": 1.9
     }
    ]
   },
@@ -986,7 +1043,7 @@
       -0.35
      ],
      "rotate": 0,
-     "scale": 0.9
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-industrial/windmill.glb",
@@ -995,7 +1052,7 @@
       -0.4
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.8
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/fence-3x3.glb",
@@ -1004,7 +1061,7 @@
       0.35
      ],
      "rotate": 0,
-     "scale": 0.6
+     "size": 1.6
     },
     {
      "scene": "res://assets/kenney/car-kit/tractor.glb",
@@ -1013,7 +1070,7 @@
       0.5
      ],
      "rotate": 45,
-     "scale": 0.9
+     "size": 0.55
     }
    ]
   },
@@ -1026,7 +1083,7 @@
       -0.4
      ],
      "rotate": 0,
-     "scale": 0.8
+     "size": 0.95
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/building-type-h.glb",
@@ -1035,7 +1092,7 @@
       -0.4
      ],
      "rotate": 0,
-     "scale": 0.8
+     "size": 0.95
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/building-type-m.glb",
@@ -1044,7 +1101,7 @@
       0.45
      ],
      "rotate": 180,
-     "scale": 0.8
+     "size": 0.95
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/tree-large.glb",
@@ -1053,7 +1110,7 @@
       0.45
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     }
    ]
   },
@@ -1066,7 +1123,7 @@
       -0.4
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 0.45
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/tree-small.glb",
@@ -1075,7 +1132,7 @@
       -0.5
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 0.45
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/tree-large.glb",
@@ -1084,7 +1141,7 @@
       0.4
      ],
      "rotate": 0,
-     "scale": 1.1
+     "size": 0.45
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/path-stones-long.glb",
@@ -1093,7 +1150,7 @@
       0
      ],
      "rotate": 45,
-     "scale": 1.0
+     "size": 0.7
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/planter.glb",
@@ -1102,7 +1159,7 @@
       0.5
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-parasol-a.glb",
@@ -1111,7 +1168,7 @@
       0.0
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.4
     }
    ]
   },
@@ -1124,7 +1181,7 @@
       -0.35
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/pirate-kit/tower-watch.glb",
@@ -1133,7 +1190,7 @@
       -0.5
      ],
      "rotate": 0,
-     "scale": 0.35
+     "size": 0.7
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/fence-3x3.glb",
@@ -1142,7 +1199,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 1.6
     },
     {
      "scene": "res://assets/kenney/car-kit/truck.glb",
@@ -1151,7 +1208,7 @@
       0.5
      ],
      "rotate": 90,
-     "scale": 0.9
+     "size": 0.55
     }
    ]
   },
@@ -1164,7 +1221,7 @@
       0.3
      ],
      "rotate": 0,
-     "scale": 0.35
+     "size": 1.6
     },
     {
      "scene": "res://assets/kenney/pirate-kit/ship-medium.glb",
@@ -1173,7 +1230,7 @@
       0.6
      ],
      "rotate": 90,
-     "scale": 0.18
+     "size": 1.8
     },
     {
      "scene": "res://assets/kenney/city-kit-industrial/shipping-container-b.glb",
@@ -1182,7 +1239,7 @@
       -0.4
      ],
      "rotate": 0,
-     "scale": 0.8
+     "size": 0.7
     }
    ]
   },
@@ -1195,7 +1252,7 @@
       -0.15
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-awning.glb",
@@ -1204,7 +1261,7 @@
       0.4
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 1.0
     }
    ]
   },
@@ -1217,7 +1274,7 @@
       -0.1
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-industrial/chimney-medium.glb",
@@ -1226,7 +1283,17 @@
       -0.55
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
+    }
+   ],
+   "fx": [
+    {
+     "type": "smoke",
+     "at": [
+      0.6,
+      -0.55
+     ],
+     "y": 1.9
     }
    ]
   },
@@ -1239,7 +1306,7 @@
       -0.1
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/car-kit/tractor-shovel.glb",
@@ -1248,7 +1315,7 @@
       0.55
      ],
      "rotate": 45,
-     "scale": 0.9
+     "size": 0.55
     }
    ]
   },
@@ -1261,7 +1328,7 @@
       -0.2
      ],
      "rotate": 0,
-     "scale": 0.9
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-industrial/windmill-low.glb",
@@ -1270,7 +1337,7 @@
       -0.5
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.8
     },
     {
      "scene": "res://assets/kenney/city-kit-suburban/fence-2x2.glb",
@@ -1279,7 +1346,7 @@
       0.4
      ],
      "rotate": 0,
-     "scale": 0.6
+     "size": 1.6
     }
    ]
   },
@@ -1292,7 +1359,7 @@
       -0.15
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-awning.glb",
@@ -1301,7 +1368,7 @@
       0.4
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 1.0
     }
    ]
   },
@@ -1314,7 +1381,7 @@
       -0.2
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-parasol-a.glb",
@@ -1323,7 +1390,7 @@
       0.55
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.4
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-parasol-b.glb",
@@ -1332,7 +1399,7 @@
       0.55
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.4
     }
    ]
   },
@@ -1345,7 +1412,7 @@
       -0.1
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 1.5
     }
    ]
   },
@@ -1358,7 +1425,7 @@
       -0.1
      ],
      "rotate": 0,
-     "scale": 1.3
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/city-kit-commercial/detail-overhang.glb",
@@ -1367,7 +1434,7 @@
       0.4
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 1.0
     }
    ]
   },
@@ -1380,7 +1447,7 @@
       -0.25
      ],
      "rotate": 0,
-     "scale": 0.9
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/car-kit/delivery.glb",
@@ -1389,7 +1456,7 @@
       0.5
      ],
      "rotate": 90,
-     "scale": 0.9
+     "size": 0.55
     }
    ]
   },
@@ -1402,7 +1469,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.1
+     "size": 1.0
     }
    ]
   },
@@ -1415,7 +1482,7 @@
       -0.2
      ],
      "rotate": 0,
-     "scale": 0.9
+     "size": 1.5
     },
     {
      "scene": "res://assets/kenney/car-kit/sedan.glb",
@@ -1424,7 +1491,7 @@
       0.5
      ],
      "rotate": 90,
-     "scale": 0.9
+     "size": 0.55
     }
    ]
   },
@@ -1437,7 +1504,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 0.9
+     "size": 1.7
     }
    ]
   },
@@ -1450,7 +1517,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 2.0
     }
    ]
   },
@@ -1463,7 +1530,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 2.0
     }
    ]
   },
@@ -1476,7 +1543,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 2.0
     }
    ]
   },
@@ -1489,7 +1556,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 2.0
     }
    ]
   },
@@ -1502,7 +1569,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 2.0
     }
    ]
   },
@@ -1515,7 +1582,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 2.0
     }
    ]
   },
@@ -1528,7 +1595,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.2
+     "size": 0.45
     }
    ]
   },
@@ -1541,7 +1608,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.2
+     "size": 0.45
     }
    ]
   },
@@ -1554,7 +1621,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.2
+     "size": 0.45
     }
    ]
   },
@@ -1567,7 +1634,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 1.0
+     "size": 0.45
     }
    ]
   },
@@ -1580,7 +1647,7 @@
       0
      ],
      "rotate": 0,
-     "scale": 0.9
+     "size": 0.7
     }
    ]
   }
@@ -1595,5 +1662,13 @@
   "single": "res://assets/kenney/city-kit-roads/road-end-round.glb",
   "ground": "res://assets/kenney/city-kit-roads/tile-low.glb",
   "light": "res://assets/kenney/city-kit-roads/light-square.glb"
+ },
+ "road_open": {
+  "straight": 10,
+  "end": 2,
+  "corner": 3,
+  "t": 7,
+  "cross": 15,
+  "single": 0
  }
 }
