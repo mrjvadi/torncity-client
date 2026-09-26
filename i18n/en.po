@@ -460,3 +460,30 @@ msgstr "Happiness"
 
 msgid "menu.title"
 msgstr "Menu"
+
+msgid "credits.title"
+msgstr "Credits"
+
+msgid "credits.models"
+msgstr "3D models"
+
+msgid "credits.kenney"
+msgstr "City, cars, trains, factory and more by Kenney (kenney.nl), released under CC0 1.0. Thank you!"
+
+msgid "credits.icons"
+msgstr "Icons"
+
+msgid "credits.game_icons"
+msgstr "Icons from game-icons.net, CC BY 3.0. Icons made by:"
+
+msgid "credits.icons_by"
+msgstr "Icons made by {author} ({count})"
+
+msgid "credits.font"
+msgstr "Font"
+
+msgid "credits.vazirmatn"
+msgstr "Vazirmatn by Saber Rastikerdar, SIL Open Font License 1.1."
+
+msgid "settings.app"
+msgstr "App settings"

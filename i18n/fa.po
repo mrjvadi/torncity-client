@@ -460,3 +460,30 @@ msgstr "شادی"
 
 msgid "menu.title"
 msgstr "منو"
+
+msgid "credits.title"
+msgstr "سازندگان"
+
+msgid "credits.models"
+msgstr "مدل‌های سه‌بعدی"
+
+msgid "credits.kenney"
+msgstr "شهر، خودروها، قطار، کارخانه و بیشتر، کار Kenney (kenney.nl) با مجوز CC0 1.0. سپاس!"
+
+msgid "credits.icons"
+msgstr "آیکون‌ها"
+
+msgid "credits.game_icons"
+msgstr "آیکون‌ها از game-icons.net با مجوز CC BY 3.0. آیکون‌ها ساختهٔ:"
+
+msgid "credits.icons_by"
+msgstr "آیکون‌ها ساختهٔ {author} ({count})"
+
+msgid "credits.font"
+msgstr "قلم"
+
+msgid "credits.vazirmatn"
+msgstr "وزیرمتن اثر صابر راستی‌کردار، با مجوز SIL OFL 1.1."
+
+msgid "settings.app"
+msgstr "تنظیمات برنامه"

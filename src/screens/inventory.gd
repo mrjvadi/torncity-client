@@ -1,10 +1,6 @@
 extends GameScreen
 ## The backpack: every item as a tile with its quantity and condition.
 
-const CATEGORY_ICON := {"food": "food", "medical": "hospital", "tools": "skills", "electronics": "phone",
-	"weapon": "crime", "vehicle": "car", "material": "company", "goods": "market", "document": "certificate"}
-
-
 func build() -> void:
 	scroll_body(18)
 	content.add_child(title_row(I18n.t("more.inventory"), "inventory"))
@@ -41,35 +37,40 @@ func _item(l: Dictionary) -> Control:
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var code := str(item.get("code", ""))
-	var t := AppTheme.tex("item/" + code)
-	var ic := UI.tex(t, Vector2(76, 76)) if t else UI.icon(CATEGORY_ICON.get(str(l.get("category", "")), "inventory"), 70)
+	# the icon: the catalogue's asset key, else the item's category look
+	var cat := str(Content.entry("item", code).get("category", l.get("category", "")))
+	var ic := IconBadge.make(AssetLib.glyph(Content.asset("item", code, "icon"), cat), 92)
 	ic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	box.add_child(ic)
-	var name := UI.label(str(item.get("name", code)), "SmallLabel", HORIZONTAL_ALIGNMENT_CENTER)
+	var name := UI.label(Content.name_of("item", code, str(item.get("name", code))), "SmallLabel", HORIZONTAL_ALIGNMENT_CENTER)
 	name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	box.add_child(name)
 	b.add_child(box)
 	var qty := int(l.get("qty", 1))
 	if qty > 1:
-		var badge := UI.chip("", "×" + I18n.num(qty), AppTheme.col("saffron_dk"))
+		var badge := UI.chip("", "×" + I18n.num(qty), AppTheme.col("blue_dk"))
 		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		badge.position = Vector2(10, 10)
 		b.add_child(badge)
 	var dura := int(l.get("durability", 0))
 	if dura > 0:
 		var bar := StatBar.new()
-		bar.icon_name = "skills"
+		bar.icon_name = ""
 		bar.compact = true
 		bar.show_text = false
-		bar.color = AppTheme.col("leaf")
+		bar.color = AppTheme.col("green")
 		bar.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-		bar.offset_top = -38
+		bar.offset_top = -22
 		bar.offset_bottom = -12
 		bar.offset_left = 14
 		bar.offset_right = -14
 		bar.set_value(dura, 100)
 		b.add_child(bar)
 	Fx.press_feedback(b)
-	b.pressed.connect(func(): Game.run("inventory.item", {"item": code}))
+	# the server's own button for this item, if it sent one
+	for a in resp.get("actions", []):
+		if a is Dictionary and a.get("args") is Dictionary and str(a["args"].get("item", "")) == code:
+			b.pressed.connect(func(): Game.run_action(a))
+			break
 	return b

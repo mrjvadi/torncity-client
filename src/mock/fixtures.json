@@ -405,6 +405,21 @@
    "en": "Jewel",
    "category": "valuable",
    "qty": 2
+  },
+  {
+   "code": "quantum_toaster",
+   "fa": "توستر کوانتومی",
+   "en": "Quantum toaster",
+   "category": "electronics",
+   "qty": 1
+  },
+  {
+   "code": "pistol",
+   "fa": "کلت",
+   "en": "Pistol",
+   "category": "weapon",
+   "qty": 1,
+   "durability": 90
   }
  ],
  "job": {

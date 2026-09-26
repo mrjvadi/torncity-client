@@ -34,7 +34,7 @@ func build() -> void:
 	for a in Session.hub_actions:
 		if a is Dictionary:
 			_rows.add_child(_row(AssetLib.action_icon(str(a.get("command", ""))), TextIcons.strip(str(a.get("label", ""))), a))
-	_rows.add_child(_row("ln_settings", I18n.t("more.settings"), {"command": "@settings"}))
+	_rows.add_child(_row("ln_settings", I18n.t("settings.app"), {"command": "@settings"}))
 
 
 func _row(icon_name: String, label: String, action: Dictionary) -> Button:

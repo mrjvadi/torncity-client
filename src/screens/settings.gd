@@ -53,6 +53,9 @@ func build() -> void:
 	acct.add_child(UI.button(I18n.t("settings.game_settings"), "settings", "GhostButton", func(): Game.run("player.settings")))
 	acct.add_child(UI.button(I18n.t("settings.logout"), "close", "DangerButton", func(): await Api.logout()))
 
+	var cred := card(I18n.t("credits.title"), "info")
+	cred.add_child(UI.button(I18n.t("credits.title"), "info", "GhostButton", func(): shell.open_local("credits")))
+
 	var about := card(I18n.t("settings.about"), "info")
 	about.add_child(UI.label(I18n.t("settings.version", {"v": Config.VERSION}), "DimLabel", -1, true))
 	about.add_child(UI.label(I18n.t("settings.credits"), "DimLabel", -1, true))

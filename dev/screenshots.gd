@@ -9,18 +9,21 @@ const SHOTS := [
 	["login", "", {}],
 	["city", "map.list", {}],
 	["city_walking", "place.go", {"place": "bazaar"}],
+	["company", "company.show", {"id": 1027}],
+	["companies", "company.list", {}],
+	["market", "market.list", {}],
+	["inventory", "inventory.show", {}],
 	["profile", "player.profile.get", {}],
 	["bank", "bank.show", {}],
-	["card", "skills.list", {}],
-	["inventory", "inventory.show", {}],
 	["job", "job.status", {}],
 	["life", "life.me", {}],
+	["card", "skills.list", {}],
 	["cities", "map.cities", {}],
 	["travel_options", "travel.options", {"city": "brennhaven"}],
-	["more", "@more", {}],
 	["notifications", "@notifications", {}],
 	["settings", "@settings", {}],
-	["city_night", "map.list", {}],
+	["credits", "@credits", {}],
+	["menu", "@menu", {}],
 ]
 
 var out_dir := "docs/screenshots"
@@ -67,7 +70,6 @@ func _run() -> void:
 		Mock.reset()
 		Session.clear()
 		Session.notices.clear()
-		CityMapView.force_hour = 11.0
 		var logged := false
 		var shell: Control = null
 		for s in SHOTS:
@@ -96,10 +98,13 @@ func _run() -> void:
 				Session.add_notice({"type": "notice", "kind": "arrived", "text": Mock.L("📍 به بازار رسیدید.", "📍 You reached the bazaar.")})
 				Session.add_notice({"type": "announce", "kind": "announce", "text": Mock.fx["announcements"][lang][0]})
 				Session.add_notice({"type": "notice", "kind": "shift_paid", "text": Mock.L("💰 شیفت تمام شد و ۱٬۸۵۰ نیل دستمزد گرفتید.", "💰 Your shift is over: you were paid 1,850 Nil.")})
-			if name == "city_night":
-				CityMapView.force_hour = 22.0
 			shell.toasts.clear()
-			if cmd.begins_with("@"):
+			shell.close_drawer()
+			if cmd == "@menu":
+				await Game.run("map.list", {})
+				await _frames(4)
+				shell.toggle_drawer()
+			elif cmd.begins_with("@"):
 				shell.open_local(cmd.substr(1))
 			else:
 				await Game.run(cmd, s[2])
@@ -107,10 +112,9 @@ func _run() -> void:
 				# show the walker a third of the way there
 				var scr = shell.current
 				await _frames(3)
-				if scr and scr.get("map"):
-					var m: CityMapView = scr.map
-					m._walk_left = m._walk_total * 0.55
-					m._update_walker()
+				if scr and scr.get("map") and not scr.map.world._walk.is_empty():
+					scr.map.world._walk["left"] = float(scr.map.world._walk["total"]) * 0.55
+					scr.map.world.focus(scr.map.slots.get("bazaar", ""), 7.0)
 			await _frames(8)
 			if OS.get_environment("SHOT_DEBUG") != "":
 				_debug(shell)
@@ -118,7 +122,6 @@ func _run() -> void:
 			if name == "city_walking":
 				Mock.st["walk"] = null
 				Mock.st["place"] = "city_centre"
-		CityMapView.force_hour = -1.0
 
 
 func _debug(n: Node, depth := 0) -> void:

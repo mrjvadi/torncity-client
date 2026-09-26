@@ -600,6 +600,22 @@
   "mode:flight": {
    "glyph": "airplane",
    "tint": "cyan"
+  },
+  "action:settings": {
+   "glyph": "gears",
+   "tint": "blue"
+  },
+  "action:credits": {
+   "glyph": "open-book",
+   "tint": "blue"
+  },
+  "action:notifications": {
+   "glyph": "ringing-bell",
+   "tint": "yellow"
+  },
+  "action:more": {
+   "glyph": "gears",
+   "tint": "blue"
   }
  },
  "models": {

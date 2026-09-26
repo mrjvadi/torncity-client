@@ -42,7 +42,9 @@ func scroll_body(sep := 18) -> VBoxContainer:
 
 func title_row(title: String, icon_name: String, refresh := true) -> HBoxContainer:
 	var row := UI.hbox(14)
-	row.add_child(UI.icon(icon_name, 52))
+	# the badge for the screen's command domain; local screens use their key
+	var cmd := str(req.get("command", ""))
+	row.add_child(IconBadge.make(AssetLib.action_glyph(cmd if cmd != "" else icon_name), 58))
 	var t := UI.label(title, "TitleLabel")
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	t.clip_text = true

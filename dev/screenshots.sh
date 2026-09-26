@@ -11,5 +11,5 @@ if ! [ -e /tmp/.X11-unix/X${DISP#:} ]; then
   sleep 2
 fi
 "$GODOT" --headless --path . --import >/dev/null 2>&1
-DISPLAY=$DISP "$GODOT" --path . --rendering-driver opengl3 --resolution 720x1280 --position 0,0 res://dev/screenshots.tscn -- "$@" 2>&1 | grep -vE "triangulation|^Godot|^OpenGL|^$" | head -60
+DISPLAY=$DISP "$GODOT" --path . --rendering-driver opengl3 --resolution ${SIZE:-720x1280} --position 0,0 res://dev/screenshots.tscn -- "$@" 2>&1 | grep -vE "triangulation|^Godot|^OpenGL|^$" | head -60
 [ -n "$XPID" ] && kill $XPID

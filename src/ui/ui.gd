@@ -145,8 +145,9 @@ static func chip(icon_name: String, text: String, color := Color.TRANSPARENT) ->
 		h.move_child(ic, 0)
 	var p := panel(h, "ChipPanel")
 	if color.a > 0:
-		var sb: StyleBoxFlat = AppTheme.theme.get_stylebox("panel", "ChipPanel").duplicate()
-		sb.bg_color = color
+		var sb := AppTheme.box(color, 8, Color(color.lightened(0.25), 0.8), 1, 0, 12)
+		sb.content_margin_top = 6
+		sb.content_margin_bottom = 6
 		p.add_theme_stylebox_override("panel", sb)
 	return p
 
