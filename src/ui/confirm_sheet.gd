@@ -12,8 +12,19 @@ static func ask(host: Node, title: String, text: String, on_yes: Callable, dange
 
 
 func _build(title: String, text: String, on_yes: Callable, danger: bool) -> void:
-	set_anchors_preset(Control.PRESET_FULL_RECT)
 	layout_direction = I18n.direction()
+	# set_anchors_preset(FULL_RECT) collapses to a zero-size rect pinned to
+	# the right edge on a fresh node whose layout_direction is RTL (a plain
+	# top-level overlay, not inheriting RTL the way a screen already parented
+	# under the RTL shell does) - set the anchors/offsets directly instead.
+	anchor_left = 0.0
+	anchor_top = 0.0
+	anchor_right = 1.0
+	anchor_bottom = 1.0
+	offset_left = 0.0
+	offset_top = 0.0
+	offset_right = 0.0
+	offset_bottom = 0.0
 	var dim := ColorRect.new()
 	dim.color = Color(0.02, 0.04, 0.08, 0.62)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)

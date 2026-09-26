@@ -47,22 +47,36 @@ func _section(title: String, icon_name: String, acts: Array, cmd: String, enable
 	g.add_theme_constant_override("h_separation", 12)
 	g.add_theme_constant_override("v_separation", 12)
 	var custom: Array = []
+	var full_width: Array = []
 	for a in acts:
 		if str(a.get("command", "")) != cmd:
 			continue
 		if a.get("input") is Dictionary:
 			custom.append(a)
 			continue
+		# "deposit/withdraw all - <amount>" reads longer than a fixed preset
+		# (and its own amount grows with the balance): give it the full row
+		# so its label never has to be squeezed down to an ellipsis.
+		var nonce := str(a.get("args", {}).get("nonce", ""))
+		if nonce == "nall":
+			full_width.append(a)
+			continue
 		var b := UI.action_button(a, "GoldButton" if icon_name == "deposit" else "Button")
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.add_theme_font_size_override("font_size", 22)
 		b.disabled = not enabled
 		g.add_child(b)
+	if g.get_child_count() == 0 and full_width.is_empty():
+		box.add_child(UI.label(I18n.t("bank.nothing"), "DimLabel", -1, true))
+		return
+	if g.get_child_count() > 0:
+		box.add_child(g)
+	for a in full_width:
+		var b := UI.action_button(a, "GoldButton" if icon_name == "deposit" else "Button")
+		b.add_theme_font_size_override("font_size", 22)
+		b.disabled = not enabled
+		box.add_child(b)
 	for a in custom:
 		var b := UI.action_button(a, "GhostButton")
 		b.disabled = not enabled
 		box.add_child.call_deferred(b)
-	if g.get_child_count() == 0:
-		box.add_child(UI.label(I18n.t("bank.nothing"), "DimLabel", -1, true))
-	else:
-		box.add_child(g)

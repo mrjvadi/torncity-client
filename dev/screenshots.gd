@@ -10,6 +10,7 @@ const SHOTS := [
 	["city", "map.list", {}],
 	["city_walking", "place.go", {"place": "bazaar"}],
 	["company", "company.show", {"id": 1027}],
+	["confirm", "company.show", {"id": 1027}],
 	["companies", "company.list", {}],
 	["market", "market.list", {}],
 	["crime", "crime.hub", {}],
@@ -23,6 +24,7 @@ const SHOTS := [
 	["card", "skills.list", {}],
 	["cities", "map.cities", {}],
 	["travel_options", "travel.options", {"city": "brennhaven"}],
+	["toast", "map.list", {}],
 	["notifications", "@notifications", {}],
 	["notifications_empty", "@notifications", {}],
 	["settings", "@settings", {}],
@@ -131,6 +133,19 @@ func _run() -> void:
 				if scr and scr.get("map") and not scr.map.world._walk.is_empty():
 					scr.map.world._walk["left"] = float(scr.map.world._walk["total"]) * 0.55
 					scr.map.world.focus(scr.map.slots.get("bazaar", ""), 7.0)
+			if name == "confirm":
+				await _frames(4)
+				# Trigger it exactly the way a real tap does: a danger/confirm
+				# action goes through ActionKit.run(), which calls
+				# ConfirmSheet.ask() with the screen itself as host.
+				var scr: GameScreen = shell.current
+				for a in scr.resp.get("actions", []):
+					if str(a.get("command", "")) == "company.close":
+						ActionKit.run(a, scr)
+						break
+			if name == "toast":
+				await _frames(4)
+				shell.toast(Mock.L("💰 شیفت تمام شد و 1٬850 نیل دستمزد گرفتید.", "💰 Your shift is over: you were paid 1,850 Nil."), "ok")
 			await _frames(8)
 			await _assets_settle()
 			if OS.get_environment("SHOT_DEBUG") != "":
