@@ -7,7 +7,12 @@ func build() -> void:
 	maybe_notice()
 	var lines: Array = view.get("lines", []) if view.get("lines") is Array else []
 	if lines.is_empty():
-		content.add_child(notice_banner(I18n.t("inventory.empty"), "warn"))
+		content.add_child(UI.gap(60))
+		content.add_child(StateView.make("empty", I18n.t("inventory.empty_title"), I18n.t("inventory.empty")))
+		var rest0 := actions_grid(resp.get("actions", []))
+		if rest0.get_child_count() > 0:
+			content.add_child(rest0)
+		return
 	var g := GridContainer.new()
 	g.columns = 3
 	g.add_theme_constant_override("h_separation", 14)

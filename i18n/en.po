@@ -49,11 +49,17 @@ msgstr "The server could not answer (code {status}). Try again in a moment."
 msgid "feed.ago"
 msgstr "{when} ago"
 
+msgid "feed.empty_title"
+msgstr "All quiet"
+
 msgid "feed.empty"
 msgstr "Nothing yet. City news and what happens to you will appear here."
 
 msgid "feed.dismiss"
 msgstr "Dismiss"
+
+msgid "inventory.empty_title"
+msgstr "Empty backpack"
 
 msgid "inventory.empty"
 msgstr "Your backpack is empty."

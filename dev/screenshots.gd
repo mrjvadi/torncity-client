@@ -15,6 +15,7 @@ const SHOTS := [
 	["crime", "crime.hub", {}],
 	["education", "education.list", {}],
 	["inventory", "inventory.show", {}],
+	["inventory_empty", "inventory.show", {}],
 	["profile", "player.profile.get", {}],
 	["bank", "bank.show", {}],
 	["job", "job.status", {}],
@@ -23,6 +24,7 @@ const SHOTS := [
 	["cities", "map.cities", {}],
 	["travel_options", "travel.options", {"city": "brennhaven"}],
 	["notifications", "@notifications", {}],
+	["notifications_empty", "@notifications", {}],
 	["settings", "@settings", {}],
 	["credits", "@credits", {}],
 	["menu", "@menu", {}],
@@ -102,6 +104,14 @@ func _run() -> void:
 				Session.add_notice({"type": "notice", "kind": "shift_paid", "text": Mock.L("💰 شیفت تمام شد و 1٬850 نیل دستمزد گرفتید.", "💰 Your shift is over: you were paid 1,850 Nil.")})
 			shell.toasts.clear()
 			shell.close_drawer()
+			var saved_inventory = null
+			var saved_notices = null
+			if name == "inventory_empty":
+				saved_inventory = Mock.fx["inventory"]
+				Mock.fx["inventory"] = []
+			elif name == "notifications_empty":
+				saved_notices = Session.notices.duplicate()
+				Session.notices.clear()
 			if cmd == "@menu":
 				await Game.run("map.list", {})
 				await _frames(4)
@@ -110,6 +120,10 @@ func _run() -> void:
 				shell.open_local(cmd.substr(1))
 			else:
 				await Game.run(cmd, s[2])
+			if saved_inventory != null:
+				Mock.fx["inventory"] = saved_inventory
+			if saved_notices != null:
+				Session.notices = saved_notices
 			if name == "city_walking":
 				# show the walker a third of the way there
 				var scr = shell.current

@@ -7,15 +7,8 @@ func build() -> void:
 	scroll_body(12)
 	content.add_child(title_row(I18n.t("more.notifications"), "bell", false))
 	if Session.notices.is_empty():
-		var empty := UI.vbox(10)
-		empty.alignment = BoxContainer.ALIGNMENT_CENTER
-		var ic := UI.icon("bell", 120)
-		ic.modulate = Color(1, 1, 1, 0.35)
-		ic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-		empty.add_child(UI.gap(80))
-		empty.add_child(ic)
-		empty.add_child(UI.label(I18n.t("feed.empty"), "DimLabel", HORIZONTAL_ALIGNMENT_CENTER, true))
-		content.add_child(empty)
+		content.add_child(UI.gap(60))
+		content.add_child(StateView.make("empty", I18n.t("feed.empty_title"), I18n.t("feed.empty")))
 		return
 	var now := Time.get_unix_time_from_system()
 	for n in Session.notices:
@@ -45,8 +38,12 @@ func _dismiss(row: SwipeRow, n: Dictionary) -> void:
 	Session.dismiss_notice(n)
 	if Config.headless_capture:
 		row.queue_free()
+		if Session.notices.is_empty():
+			shell.open_local("notifications")
 		return
 	var t := create_tween()
 	t.tween_property(row, "modulate:a", 0.0, 0.16)
 	t.parallel().tween_property(row, "collapse", 0.0, 0.16).set_delay(0.05)
 	t.tween_callback(row.queue_free)
+	if Session.notices.is_empty():
+		t.tween_callback(func(): shell.open_local("notifications"))

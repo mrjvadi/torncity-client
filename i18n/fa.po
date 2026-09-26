@@ -49,11 +49,17 @@ msgstr "سرور پاسخ نداد (کد {status}). چند لحظهٔ دیگر �
 msgid "feed.ago"
 msgstr "{when} پیش"
 
+msgid "feed.empty_title"
+msgstr "فعلاً خبری نیست"
+
 msgid "feed.empty"
 msgstr "هنوز خبری نیست. خبرهای شهر و اتفاق‌هایی که برایتان می‌افتد اینجا می‌آید."
 
 msgid "feed.dismiss"
 msgstr "پاک کردن"
+
+msgid "inventory.empty_title"
+msgstr "کوله‌پشتی خالی"
 
 msgid "inventory.empty"
 msgstr "کوله‌پشتی شما خالی است."
