@@ -23,6 +23,11 @@ try:
 except ImportError:
     pass
 try:
+    import line_icons
+    GROUPS["line"] = line_icons.build
+except ImportError:
+    pass
+try:
     import misc
     GROUPS["character"] = misc.build_character
     GROUPS["brand"] = misc.build_brand
