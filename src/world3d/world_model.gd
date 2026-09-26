@@ -1,102 +1,103 @@
 class_name WorldModel
 extends RefCounted
 ## The city as the server describes it (GET /api/v1/world/city?code=), plus
-## live {type:"world.plot"} updates. Pure data and geometry, no nodes, so it is
-## unit-tested.
+## live {type:"world.plot"} updates. Pure data and geometry, no nodes; unit-
+## tested in tests/test_world_model.gd. World units: 1 = one road tile (~10 m);
+## a point (x, y) of the layout is (x, 0, y) in 3D.
 ##
-##   {city, version, grid: {w, h}, ground?, water?: {side, width},
-##    roads: [[x, y], ...],
-##    plots: [{id, x, y, w, h, kind, model, rot?, ref?: {table, code, company_id?...}, name?: {fa, en}}]}
-##
-## Tiles are 1 x 1 world units; tile (x, y) spans x..x+1 and z = y..y+1,
-## shifted so the grid is centred on the origin. North is -z.
+## Schema v2:
+##   {city, version, bounds: [x0, y0, x1, y1],
+##    districts: [{id, kind, name: {fa, en}, rect: [x0, y0, x1, y1]}],
+##    roads: [{id, class: street|avenue|boulevard|highway, pts: [[x, y], ...]}],
+##    rails: [{id, pts}], water: [{id, rect: [x, y, w, h]}],
+##    features: [{type: runway|apron|plane|pier|ship|field, ...}],
+##    plots: [{id, x, y, w, h, kind: place|company|home|decor|green, model, rot?, district?, ref?, name?}]}
 
-const N := 1
-const E := 2
-const S := 4
-const W := 8
+const WIDTH := {"street": 1.3, "avenue": 1.9, "boulevard": 3.6, "highway": 2.6}
+const SIDEWALK := {"street": 0.4, "avenue": 0.45, "boulevard": 0.5, "highway": 0.0}
 
 var city := ""
 var version := 0
-var w := 0
-var h := 0
-var ground := "grass"
-var water := {}
-var roads := {}      # Vector2i -> true
-var plots := {}      # id -> plot
-var _tile_plot := {} # Vector2i -> plot id
+var bounds := Rect2(-10, -10, 20, 20)
+var districts: Array = []
+var roads: Array = []          # [{id, class, pts: PackedVector2Array}]
+var rails: Array = []
+var water: Array = []
+var features: Array = []
+var plots := {}                # id -> plot
+
+# road graph: nodes are segment ends and crossings; edges run along roads
+var nodes: Array = []          # Vector2
+var edges := {}                # node index -> [[other index, length]]
+var node_class := {}           # node index -> widest road class through it
+var _edge_list: Array = []     # [a, b, class]
 
 
 func load_world(d: Dictionary) -> void:
 	city = str(d.get("city", ""))
 	version = int(d.get("version", 0))
-	var g = d.get("grid", {})
-	w = int(g.get("w", 0))
-	h = int(g.get("h", 0))
-	ground = str(d.get("ground", "grass"))
-	water = d.get("water", {}) if d.get("water") is Dictionary else {}
+	var b: Array = d.get("bounds", [-10, -10, 10, 10])
+	bounds = Rect2(Vector2(b[0], b[1]), Vector2(b[2] - b[0], b[3] - b[1]))
+	districts = d.get("districts", [])
+	water = d.get("water", [])
+	features = d.get("features", [])
 	roads.clear()
 	for r in d.get("roads", []):
-		if r is Array and r.size() >= 2:
-			roads[Vector2i(int(r[0]), int(r[1]))] = true
+		roads.append({"id": str(r.get("id", "")), "class": str(r.get("class", "street")), "pts": _pts(r.get("pts", []))})
+	rails.clear()
+	for r in d.get("rails", []):
+		rails.append({"id": str(r.get("id", "")), "pts": _pts(r.get("pts", []))})
 	plots.clear()
-	_tile_plot.clear()
 	for p in d.get("plots", []):
 		if p is Dictionary and p.has("id"):
-			_put(p)
+			plots[str(p["id"])] = p
+	_build_graph()
 
 
-## Apply a realtime update: {op: "upsert"|"remove", plot?, id?}. Returns the
-## id that changed ("" if nothing did).
-func apply(update: Dictionary) -> String:
-	var op := str(update.get("op", "upsert"))
-	if op == "remove":
-		var id := str(update.get("id", ""))
-		if plots.has(id):
-			_drop(id)
-			return id
-		return ""
-	var p = update.get("plot")
-	if not (p is Dictionary) or not p.has("id"):
-		return ""
-	if plots.has(str(p["id"])):
-		_drop(str(p["id"]))
-	_put(p)
-	return str(p["id"])
-
-
-func _put(p: Dictionary) -> void:
-	var id := str(p["id"])
-	# a new plot replaces whatever stood on its tiles (a home becomes a company)
-	for t in tiles_of(p):
-		if _tile_plot.has(t) and _tile_plot[t] != id:
-			_drop(_tile_plot[t])
-	plots[id] = p
-	for t in tiles_of(p):
-		_tile_plot[t] = id
-
-
-func _drop(id: String) -> void:
-	var p: Dictionary = plots.get(id, {})
-	for t in tiles_of(p):
-		if _tile_plot.get(t) == id:
-			_tile_plot.erase(t)
-	plots.erase(id)
-
-
-static func tiles_of(p: Dictionary) -> Array:
-	var out := []
-	for dy in int(p.get("h", 1)):
-		for dx in int(p.get("w", 1)):
-			out.append(Vector2i(int(p.get("x", 0)) + dx, int(p.get("y", 0)) + dy))
+static func _pts(a: Array) -> PackedVector2Array:
+	var out := PackedVector2Array()
+	for p in a:
+		out.append(Vector2(float(p[0]), float(p[1])))
 	return out
 
 
-func plot_at(t: Vector2i) -> Dictionary:
-	return plots.get(_tile_plot.get(t, ""), {})
+## Apply a realtime update: {op: "upsert"|"remove", plot?, id?}. Returns the
+## id that changed ("" if nothing did). A plot replaces any plot it overlaps.
+func apply(update: Dictionary) -> String:
+	if str(update.get("op", "upsert")) == "remove":
+		var id := str(update.get("id", ""))
+		return id if plots.erase(id) else ""
+	var p = update.get("plot")
+	if not (p is Dictionary) or not p.has("id"):
+		return ""
+	var r := plot_rect(p)
+	for oid in plots.keys():
+		if oid != str(p["id"]) and plot_rect(plots[oid]).grow(-0.05).intersects(r.grow(-0.05)):
+			plots.erase(oid)
+	plots[str(p["id"])] = p
+	return str(p["id"])
 
 
-## The plot that shows a game place (by place code).
+static func plot_rect(p: Dictionary) -> Rect2:
+	return Rect2(float(p.get("x", 0)), float(p.get("y", 0)), float(p.get("w", 1)), float(p.get("h", 1)))
+
+
+func plot_center(p: Dictionary) -> Vector3:
+	var c := plot_rect(p).get_center()
+	return Vector3(c.x, 0, c.y)
+
+
+func plot_at(pt: Vector2) -> Dictionary:
+	var best := {}
+	var area := INF
+	for p in plots.values():
+		var r := plot_rect(p)
+		if r.has_point(pt) and r.get_area() < area:
+			area = r.get_area()
+			best = p
+	return best
+
+
 func plot_for_place(code: String) -> Dictionary:
 	for p in plots.values():
 		var ref = p.get("ref", {})
@@ -105,97 +106,165 @@ func plot_for_place(code: String) -> Dictionary:
 	return {}
 
 
-## World position of a tile's centre (y = 0).
-func tile_pos(t: Vector2i) -> Vector3:
-	return Vector3(t.x - w / 2.0 + 0.5, 0.0, t.y - h / 2.0 + 0.5)
-
-
-func world_to_tile(p: Vector3) -> Vector2i:
-	return Vector2i(floori(p.x + w / 2.0), floori(p.z + h / 2.0))
-
-
-func plot_center(p: Dictionary) -> Vector3:
-	return Vector3(float(p.get("x", 0)) + float(p.get("w", 1)) / 2.0 - w / 2.0, 0.0,
-		float(p.get("y", 0)) + float(p.get("h", 1)) / 2.0 - h / 2.0)
-
-
-## Road neighbours of a road tile as a bit set (N, E, S, W).
-func road_mask(t: Vector2i) -> int:
-	var m := 0
-	if roads.has(t + Vector2i(0, -1)): m |= N
-	if roads.has(t + Vector2i(1, 0)): m |= E
-	if roads.has(t + Vector2i(0, 1)): m |= S
-	if roads.has(t + Vector2i(-1, 0)): m |= W
-	return m
-
-
-## Rotate a side mask by quarter turns counter-clockwise seen from above
-## (Godot's +Y rotation): E -> N -> W -> S -> E.
-static func rotate_mask(m: int, quarters: int) -> int:
-	var out := m
-	for _i in posmod(quarters, 4):
-		var r := 0
-		if out & E: r |= N
-		if out & N: r |= W
-		if out & W: r |= S
-		if out & S: r |= E
-		out = r
-	return out
-
-
-## Which road piece a tile needs, and its rotation in degrees. `open` gives
-## each piece's open sides at rotation 0 (from the asset library, so the
-## model kit can change without code changes).
-static func road_piece(mask: int, open: Dictionary) -> Dictionary:
-	var n := 0
-	for b in [N, E, S, W]:
-		if mask & b:
-			n += 1
-	var kind := "single"
-	match n:
-		4: kind = "cross"
-		3: kind = "t"
-		2: kind = "straight" if mask == (N | S) or mask == (E | W) else "corner"
-		1: kind = "end"
-	var base := int(open.get(kind, 0))
-	for q in 4:
-		if rotate_mask(base, q) == mask:
-			return {"kind": kind, "rot": q * 90}
-	return {"kind": kind, "rot": 0}
-
-
-## The road tile a plot's door opens onto: the nearest road next to it.
-func entrance(p: Dictionary) -> Vector2i:
-	var best := Vector2i(int(p.get("x", 0)), int(p.get("y", 0)))
-	var best_d := INF
-	var c := Vector2(float(p.get("x", 0)) + float(p.get("w", 1)) / 2.0, float(p.get("y", 0)) + float(p.get("h", 1)) / 2.0)
-	for t in tiles_of(p):
-		for d in [Vector2i(0, 1), Vector2i(1, 0), Vector2i(0, -1), Vector2i(-1, 0)]:
-			var n: Vector2i = t + d
-			if roads.has(n):
-				var dist := (Vector2(n) + Vector2(0.5, 0.5)).distance_to(c) + (0.0 if d == Vector2i(0, 1) else 0.01)
-				if dist < best_d:
-					best_d = dist
-					best = n
+func district_at(pt: Vector2) -> Dictionary:
+	var best := {}
+	var area := INF
+	for d in districts:
+		var r := district_rect(d)
+		if r.has_point(pt) and r.get_area() < area:
+			area = r.get_area()
+			best = d
 	return best
 
 
-## Shortest road path between two road tiles (breadth-first).
-func route(from: Vector2i, to: Vector2i) -> Array:
-	if from == to:
-		return [from]
-	var prev := {from: from}
-	var q := [from]
-	while not q.is_empty():
-		var t: Vector2i = q.pop_front()
-		for d in [Vector2i(0, 1), Vector2i(1, 0), Vector2i(0, -1), Vector2i(-1, 0)]:
-			var n: Vector2i = t + d
-			if roads.has(n) and not prev.has(n):
-				prev[n] = t
-				if n == to:
-					var path := [n]
-					while path[0] != from:
-						path.push_front(prev[path[0]])
-					return path
-				q.append(n)
-	return [from, to]
+static func district_rect(d: Dictionary) -> Rect2:
+	var r: Array = d.get("rect", [0, 0, 0, 0])
+	return Rect2(Vector2(r[0], r[1]), Vector2(r[2] - r[0], r[3] - r[1]))
+
+
+# -- the road graph -------------------------------------------------------------------------------
+func _build_graph() -> void:
+	nodes.clear()
+	edges.clear()
+	node_class.clear()
+	_edge_list.clear()
+	# every straight piece, then split pieces where they cross
+	var segs: Array = []
+	for r in roads:
+		var pts: PackedVector2Array = r.pts
+		for i in pts.size() - 1:
+			segs.append([pts[i], pts[i + 1], r["class"]])
+	var cuts: Array = []
+	for s in segs:
+		cuts.append([0.0, 1.0])
+	for i in segs.size():
+		for j in range(i + 1, segs.size()):
+			var hit = Geometry2D.segment_intersects_segment(segs[i][0], segs[i][1], segs[j][0], segs[j][1])
+			if hit != null:
+				cuts[i].append(_t_on(segs[i], hit))
+				cuts[j].append(_t_on(segs[j], hit))
+	for i in segs.size():
+		var ts: Array = cuts[i]
+		ts.sort()
+		var prev := -1
+		for t in ts:
+			var p: Vector2 = (segs[i][0] as Vector2).lerp(segs[i][1], t)
+			var n := _node(p, segs[i][2])
+			if prev >= 0 and prev != n:
+				var L: float = (nodes[prev] as Vector2).distance_to(nodes[n])
+				edges.get_or_add(prev, []).append([n, L])
+				edges.get_or_add(n, []).append([prev, L])
+				_edge_list.append([prev, n, segs[i][2]])
+			prev = n
+
+
+static func _t_on(s: Array, p: Vector2) -> float:
+	var d: Vector2 = s[1] - s[0]
+	return clampf((p - s[0]).dot(d) / maxf(d.length_squared(), 1e-6), 0.0, 1.0)
+
+
+func _node(p: Vector2, cls: String) -> int:
+	for i in nodes.size():
+		if (nodes[i] as Vector2).distance_to(p) < 0.05:
+			if WIDTH.get(cls, 1.0) > WIDTH.get(node_class.get(i, "street"), 1.0):
+				node_class[i] = cls
+			return i
+	nodes.append(p)
+	node_class[nodes.size() - 1] = cls
+	return nodes.size() - 1
+
+
+## Crossings: nodes where three or more edge ends meet, with their widest class.
+func crossings() -> Array:
+	var out: Array = []
+	for i in nodes.size():
+		if edges.get(i, []).size() >= 3:
+			out.append([nodes[i], node_class.get(i, "street"), edges[i].size()])
+	return out
+
+
+func edge_list() -> Array:
+	return _edge_list
+
+
+## The nearest point on the road network: [point, edge index].
+func snap(pt: Vector2) -> Array:
+	var best := [pt, -1]
+	var bd := INF
+	for i in _edge_list.size():
+		var e: Array = _edge_list[i]
+		if str(e[2]) == "highway":
+			continue   # nobody walks on the highway
+		var q := Geometry2D.get_closest_point_to_segment(pt, nodes[e[0]], nodes[e[1]])
+		var d := q.distance_to(pt)
+		if d < bd:
+			bd = d
+			best = [q, i]
+	return best
+
+
+## Where a plot's door meets the street.
+func entrance(p: Dictionary) -> Vector2:
+	return snap(plot_rect(p).get_center())[0]
+
+
+## A path along the roads from one point to another (both snapped), as points.
+func route(a: Vector2, b: Vector2) -> PackedVector2Array:
+	var sa := snap(a)
+	var sb := snap(b)
+	var out := PackedVector2Array([sa[0]])
+	if sa[1] < 0 or sb[1] < 0 or sa[1] == sb[1]:
+		out.append(sb[0])
+		return out
+	var ea: Array = _edge_list[sa[1]]
+	var eb: Array = _edge_list[sb[1]]
+	var best: Array = []
+	var best_len := INF
+	for s in [ea[0], ea[1]]:
+		for t in [eb[0], eb[1]]:
+			var path := _dijkstra(s, t)
+			if path.is_empty():
+				continue
+			var L: float = (sa[0] as Vector2).distance_to(nodes[s]) + _len(path) + (nodes[t] as Vector2).distance_to(sb[0])
+			if L < best_len:
+				best_len = L
+				best = path
+	for n in best:
+		out.append(nodes[n])
+	out.append(sb[0])
+	return out
+
+
+func _len(path: Array) -> float:
+	var L := 0.0
+	for i in path.size() - 1:
+		L += (nodes[path[i]] as Vector2).distance_to(nodes[path[i + 1]])
+	return L
+
+
+func _dijkstra(s: int, t: int) -> Array:
+	var dist := {s: 0.0}
+	var prev := {}
+	var open := [s]
+	var closed := {}
+	while not open.is_empty():
+		var bi := 0
+		for i in open.size():
+			if dist[open[i]] < dist[open[bi]]:
+				bi = i
+		var u: int = open.pop_at(bi)
+		if closed.has(u):
+			continue
+		closed[u] = true
+		if u == t:
+			var path := [t]
+			while path[0] != s:
+				path.push_front(prev[path[0]])
+			return path
+		for e in edges.get(u, []):
+			var nd: float = dist[u] + float(e[1])
+			if nd < dist.get(e[0], INF):
+				dist[e[0]] = nd
+				prev[e[0]] = u
+				open.append(e[0])
+	return []

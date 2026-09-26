@@ -980,31 +980,31 @@
   "place:airport": {
    "parts": [
     {
+     "mesh": "city-kit-commercial/low-detail-building-wide-b",
      "at": [
-      -0.3,
-      -0.4
+      -0.2,
+      -0.2
      ],
      "rotate": 0,
-     "size": 1.5,
-     "mesh": "city-kit-industrial/building-j"
+     "size": 1.9
     },
     {
+     "mesh": "city-kit-commercial/building-skyscraper-e",
      "at": [
-      0.6,
-      -0.5
+      0.85,
+      -0.6
      ],
      "rotate": 0,
-     "size": 0.5,
-     "mesh": "racing-kit/radarEquipment"
+     "size": 0.35
     },
     {
+     "mesh": "racing-kit/radarEquipment",
      "at": [
-      0.3,
+      0.85,
       0.5
      ],
      "rotate": 0,
-     "size": 0.9,
-     "mesh": "racing-kit/overheadLights"
+     "size": 0.35
     }
    ]
   },
@@ -1674,6 +1674,116 @@
      "mesh": "city-kit-industrial/shipping-container-c"
     }
    ]
+  },
+  "decor:tower": {
+   "parts": [
+    {
+     "mesh": "city-kit-commercial/building-skyscraper-a",
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 1.1
+    }
+   ]
+  },
+  "decor:tower_b": {
+   "parts": [
+    {
+     "mesh": "city-kit-commercial/building-skyscraper-b",
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 1.1
+    }
+   ]
+  },
+  "decor:shop": {
+   "parts": [
+    {
+     "mesh": "city-kit-commercial/building-c",
+     "at": [
+      0,
+      -0.1
+     ],
+     "rotate": 0,
+     "size": 1.5
+    },
+    {
+     "mesh": "city-kit-commercial/detail-awning",
+     "at": [
+      0,
+      0.5
+     ],
+     "rotate": 0,
+     "size": 0.8
+    }
+   ]
+  },
+  "decor:shed": {
+   "parts": [
+    {
+     "mesh": "city-kit-industrial/building-e",
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 1.7
+    },
+    {
+     "mesh": "city-kit-industrial/shipping-container-b",
+     "at": [
+      0.75,
+      0.75
+     ],
+     "rotate": 90,
+     "size": 0.6
+    }
+   ]
+  },
+  "decor:yard": {
+   "parts": [
+    {
+     "mesh": "city-kit-industrial/shipping-container-a",
+     "at": [
+      -0.4,
+      -0.3
+     ],
+     "rotate": 0,
+     "size": 0.8
+    },
+    {
+     "mesh": "city-kit-industrial/shipping-container-b",
+     "at": [
+      0.3,
+      -0.3
+     ],
+     "rotate": 0,
+     "size": 0.8
+    },
+    {
+     "mesh": "city-kit-industrial/shipping-container-c",
+     "at": [
+      -0.1,
+      0.5
+     ],
+     "rotate": 90,
+     "size": 0.8
+    },
+    {
+     "mesh": "city-kit-industrial/detail-tank-large",
+     "at": [
+      0.6,
+      0.5
+     ],
+     "rotate": 0,
+     "size": 0.7
+    }
+   ]
   }
  },
  "roads": {
@@ -1695,8 +1805,11 @@
   "single": 0
  },
  "dressing": {
-  "dock": "pirate-kit/structure-platform-dock",
-  "ship": "pirate-kit/ship-medium"
+  "tree": "city-kit-suburban/tree-large",
+  "tree_small": "city-kit-suburban/tree-small",
+  "lamp": "city-kit-roads/light-square",
+  "planter": "city-kit-suburban/planter",
+  "fence": "city-kit-suburban/fence-3x3"
  },
  "extra_glyphs": [
   "cheerful",

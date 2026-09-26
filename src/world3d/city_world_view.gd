@@ -55,6 +55,7 @@ func set_view(v: Dictionary) -> void:
 	if code == "":
 		code = Session.city_code
 	_pending_view = v
+	var first := false
 	if code != _city and not _loading:
 		_loading = true
 		var r: Dictionary = await Api.get_json("/api/v1/world/city?code=" + code.uri_encode())
@@ -63,8 +64,10 @@ func set_view(v: Dictionary) -> void:
 			_city = code
 			world.build(r["data"])
 			_index_slots()
-			world.cam.look_at_point(Vector3.ZERO, clampf(world.model.w * 0.7, 6.0, 13.0), false)
+			first = true
 	_apply_view(_pending_view)
+	if first:
+		world.cam.look_at_point(home_point(), default_zoom(), false)
 
 
 func _index_slots() -> void:
@@ -148,8 +151,22 @@ func focus(code: String) -> void:
 
 
 func _relabel() -> void:
-	if world and not world.model.plots.is_empty():
-		world.build({"city": world.model.city, "version": world.model.version, "grid": {"w": world.model.w, "h": world.model.h},
-			"water": world.model.water, "roads": world.model.roads.keys().map(func(t): return [t.x, t.y]),
-			"plots": world.model.plots.values()})
+	if world and not world._world_desc.is_empty():
+		world.build(world._world_desc)
 		_apply_view(_pending_view)
+
+
+## Where the camera starts: where the player is, else downtown, else the middle.
+func home_point() -> Vector3:
+	if slots.has(here):
+		return world.model.plot_center(world.model.plots[slots[here]])
+	for d in world.model.districts:
+		if str(d.get("kind", "")) == "cbd":
+			var c := WorldModel.district_rect(d).get_center()
+			return Vector3(c.x, 0, c.y)
+	var b := world.model.bounds.get_center()
+	return Vector3(b.x, 0, b.y)
+
+
+func default_zoom() -> float:
+	return 20.0 if size.x < size.y else 26.0

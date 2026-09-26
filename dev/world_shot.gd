@@ -13,7 +13,14 @@ func _ready() -> void:
 	add_child(world)
 	await get_tree().process_frame
 	world.build(w)
-	var t := Vector3(float(a[2]), 0, float(a[3])) if a.size() > 3 else Vector3.ZERO
+	var t := Vector3(float(a[2]), 0, float(a[3])) if a.size() > 3 else Vector3(32, 0, 24)
+	# let the CDN art arrive first
+	var waited := 0.0
+	while (AssetService.manifest.is_empty() or not AssetService.idle()) and waited < 30.0:
+		await get_tree().create_timer(0.2).timeout
+		waited += 0.2
+	for _i in 4:
+		await get_tree().process_frame
 	world.cam.look_at_point(t, float(a[1]), false)
 	for _i in 10:
 		await get_tree().process_frame

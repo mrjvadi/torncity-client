@@ -38,7 +38,7 @@ func _ready() -> void:
 	projection = PROJECTION_ORTHOGONAL
 	rotation_degrees = Vector3(PITCH, YAW, 0)
 	near = 0.1
-	far = 400.0
+	far = 600.0
 	_apply()
 
 
@@ -59,7 +59,7 @@ func look_at_point(p: Vector3, z := -1.0, animate := true) -> void:
 func _apply() -> void:
 	size = zoom
 	# sit far back along the view direction; orthographic, so distance only matters for clipping
-	position = target + Basis.from_euler(rotation).z * 120.0
+	position = target + Basis.from_euler(rotation).z * 200.0
 
 
 func _clamp(p: Vector3) -> Vector3:
