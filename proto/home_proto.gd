@@ -136,7 +136,7 @@ func _build_world() -> void:
 				world.add_child(l)
 	# where the bubbles hang
 	bubbles_at = {
-		"work": Vector3(-1.25, 1.6, -1.25), "factory": Vector3(1.95, 1.3, -0.95),
+		"work": Vector3(-1.25, 1.6, -1.25), "factory": Vector3(1.4, 1.3, -0.4),
 		"market": Vector3(-0.1, 1.2, 2.8), "study": Vector3(4.3, 1.6, 2.5),
 	}
 
@@ -170,7 +170,26 @@ func _place(name: String, at: Vector3, rot: float) -> void:
 
 
 # -- the HUD --------------------------------------------------------------------------------------
+const PAL := {
+	"gold": ["#FFF3B0", "#D97C00", "#3A1C00"],
+	"amber": ["#FFF08A", "#E07000", "#3A1600"],
+	"ruby": ["#FFB0B4", "#B3121E", "#3A0006"],
+	"emerald": ["#C4FFD2", "#1E8F4A", "#03250F"],
+	"sapphire": ["#CFE0FF", "#2A4BC8", "#050C33"],
+	"violet": ["#E6DAFF", "#6A3FD0", "#1A0A3D"],
+	"steel": ["#F4F7FF", "#7C86A6", "#12161F"],
+	"fox": ["#FFD9AE", "#E0561B", "#3A1200"],
+	"teal": ["#E6FFFB", "#2BC4B2", "#042A26"],
+	"cream": ["#FFFFFF", "#FFEFCF", "#5A2E00"],
+}
+
+var _screen := "home"
+
+
 func _build_ui() -> void:
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--screen="):
+			_screen = a.substr(9)
 	var layer := CanvasLayer.new()
 	add_child(layer)
 	ui = Control.new()
@@ -180,153 +199,253 @@ func _build_ui() -> void:
 	ui.size = Vector2(W, H)
 	ui.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(ui)
-	# readability: the sky darkens behind the HUD, the street behind the dock
-	ui.add_child(_gradient(Rect2(0, 0, W, 300), Color(INK, 0.85), Color(INK, 0.0)))
-	ui.add_child(_gradient(Rect2(0, 900, W, 380), Color(INK, 0.0), Color(INK, 0.92)))
+	var vig := ColorRect.new()
+	vig.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	vig.size = Vector2(W, H)
+	vig.material = _mat("vignette")
+	vig.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui.add_child(vig)
+	ui.add_child(_gradient(Rect2(0, 0, W, 330), Color(INK, 0.8), Color(INK, 0.0)))
+	ui.add_child(_gradient(Rect2(0, 880, W, 400), Color(INK, 0.0), Color(INK, 0.9)))
 
-	_header()
+	_top_bar()
+	_stat_row()
 	_side_buttons()
 	_world_bubbles()
-	_ready_card()
+	_ready_toast()
 	_dock()
 	_coin_fx()
+	if _screen == "crime":
+		_crime_popup()
 
 
-func _header() -> void:
-	# avatar in a gold ring, a level gem under it
-	var av := _badge("person", Rect2(578, 30, 112, 112), LAPIS, GOLD)
-	(av.material as ShaderMaterial).set_shader_parameter("icon_scale", 0.62)
-	var ring := _ring(Rect2(570, 22, 128, 128), 0.83, FIROUZEH)
-	ui.move_child(ring, av.get_index())
-	ring.z_index = 0
-	var lvl := _frame(Rect2(560, 110, 56, 46), 14.0, Color("#4B2A08"), Color("#2A1604"), GOLD, 0.0, 6.0)
-	_in(lvl).add_child(_label("7", display_font, 28, Color.WHITE, Rect2(0, 2, 56, 40), HORIZONTAL_ALIGNMENT_CENTER, 6))
-	# name plate
-	var plate := _frame(Rect2(318, 32, 262, 92), 22.0, Color(0.10, 0.13, 0.28, 0.9), Color(0.05, 0.06, 0.14, 0.9), GOLD, 0.05)
-	_in(plate).add_child(_label("سارا", display_font, 34, Color.WHITE, Rect2(20, 12, 222, 44), HORIZONTAL_ALIGNMENT_RIGHT, 6))
-	_in(plate).add_child(_label("فروشنده‌ی ارشد · فنویک", body_font, 16, Color("#C9D2EE"), Rect2(20, 52, 222, 26), HORIZONTAL_ALIGNMENT_RIGHT, 3))
-	# cash
-	var cash := _frame(Rect2(20, 38, 250, 70), 35.0, Color(0.09, 0.07, 0.03, 0.92), Color(0.04, 0.03, 0.01, 0.92), GOLD, 0.0)
-	_in(cash).add_child(_label("12,450", display_font, 32, Color("#FFD66B"), Rect2(62, 12, 120, 46), HORIZONTAL_ALIGNMENT_RIGHT, 6))
-	_badge("coins", Rect2(212, 30, 84, 84), SAFFRON, GOLD)
-	var plus := _button(Rect2(28, 50, 50, 50), LEAF.lightened(0.25), LEAF.darkened(0.15), LEAF.darkened(0.55), 16.0, 5.0)
-	plus.add_child(_label("+", display_font, 34, Color.WHITE, Rect2(0, -4, 50, 50), HORIZONTAL_ALIGNMENT_CENTER, 5))
+func _top_bar() -> void:
+	var bar := _frame(Rect2(-24, -40, 768, 188), 44.0, Color(0.10, 0.12, 0.27, 0.96), Color(0.04, 0.05, 0.13, 0.96), GOLD, 0.06)
+	(bar.material as ShaderMaterial).set_shader_parameter("glow", Color(LAPIS, 0.35))
+	# avatar: a fox on a teal plate, the XP ring around it, a level gem
+	_ring(Rect2(582, 8, 128, 128), 0.83, FIROUZEH)
+	_badge("person", Rect2(592, 18, 108, 108), Color("#0E5E58"), GOLD)
+	var av: TextureRect = ui.get_child(ui.get_child_count() - 1)
+	(av.material as ShaderMaterial).set_shader_parameter("glyph_color", Color(0, 0, 0, 0))
+	_emboss("fox", Rect2(596, 20, 100, 100), "fox")
+	var gem := _frame(Rect2(566, 96, 50, 44), 13.0, Color("#3A2A8A"), Color("#1A1050"), GOLD, 0.0, 3.0)
+	_in(gem).add_child(_glabel("7", display_font, 28, "#FFFFFF", "#FFD66B", Rect2(0, 0, 50, 44), HORIZONTAL_ALIGNMENT_CENTER, 6))
+	ui.add_child(_glabel("سارا", display_font, 36, "#FFFFFF", "#BFEFFF", Rect2(330, 18, 244, 50), HORIZONTAL_ALIGNMENT_RIGHT, 7))
+	ui.add_child(_label("فروشنده‌ی ارشد  ·  تاجر", body_font, 17, Color("#C9D2EE"), Rect2(300, 66, 274, 28), HORIZONTAL_ALIGNMENT_RIGHT, 3))
+	var xp := _bar(Rect2(386, 100, 170, 14), 0.83, FIROUZEH, false)
+	(xp.material as ShaderMaterial).set_shader_parameter("outline", Color(GOLD, 0.7))
+	# money: cash and bank, each a recessed pill with its object on the end
+	var cash := _frame(Rect2(22, 22, 236, 56), 28.0, Color(0.02, 0.03, 0.08, 0.95), Color(0.05, 0.06, 0.14, 0.95), Color(GOLD, 0.9), 0.0, 2.5)
+	(cash.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
+	_in(cash).add_child(_glabel("12,450", display_font, 32, "#FFF6C8", "#FFB21F", Rect2(52, 2, 128, 52), HORIZONTAL_ALIGNMENT_RIGHT, 6))
+	_emboss("coins", Rect2(198, 4, 90, 90), "gold")
+	var plus := _button(Rect2(30, 30, 40, 40), LEAF.lightened(0.3), LEAF.darkened(0.1), LEAF.darkened(0.55), 12.0, 4.0)
+	plus.add_child(_label("+", display_font, 30, Color.WHITE, Rect2(0, -6, 40, 44), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	var bank := _frame(Rect2(22, 88, 236, 44), 22.0, Color(0.02, 0.03, 0.08, 0.95), Color(0.05, 0.06, 0.14, 0.95), Color("#9FB4FF", 0.7), 0.0, 2.0)
+	(bank.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
+	_in(bank).add_child(_glabel("86,300", display_font, 25, "#EAF1FF", "#8FB0FF", Rect2(40, 0, 140, 44), HORIZONTAL_ALIGNMENT_RIGHT, 5))
+	_emboss("bank", Rect2(206, 76, 68, 68), "sapphire")
 
-	# the four bars, each saying when it is full
+
+func _stat_row() -> void:
 	var bars := [
-		["energy", "96/100", 0.96, SAFFRON, "پر: 19:30", true],
-		["nerve", "14/20", 0.70, ANAR, "پر: 19:55", false],
-		["health", "88/100", 0.88, LEAF, "پر: 21:10", false],
+		["energy", "96", "/100", 0.96, SAFFRON, "amber", "پر 19:30", true],
+		["nerve", "14", "/20", 0.70, ANAR, "ruby", "پر 19:55", false],
+		["health", "88", "/100", 0.88, LEAF, "emerald", "پر 21:10", false],
 	]
 	for i in bars.size():
-		var bdef: Array = bars[i]
-		var x := 494.0 - i * 236.0
-		var bar := _bar(Rect2(x, 176, 190, 34), bdef[2], bdef[3], bdef[5])
-		bar.add_child(_label(bdef[1], display_font, 22, Color.WHITE, Rect2(0, 0, 150, 34), HORIZONTAL_ALIGNMENT_CENTER, 5))
-		_badge(bdef[0], Rect2(x + 160, 162, 62, 62), bdef[3], GOLD)
-		ui.add_child(_label(bdef[4], body_bold, 15, Color("#E8ECF8") if not bdef[5] else Color("#FFD66B"), Rect2(x, 212, 160, 24), HORIZONTAL_ALIGNMENT_CENTER, 3))
+		var d: Array = bars[i]
+		var x := 500.0 - i * 238.0
+		var b := _bar(Rect2(x, 178, 176, 32), d[3], d[4], d[7])
+		(b.material as ShaderMaterial).set_shader_parameter("outline", Color(GOLD, 0.75))
+		b.add_child(_label(d[1] + d[2], display_font, 22, Color.WHITE, Rect2(0, -1, 140, 34), HORIZONTAL_ALIGNMENT_CENTER, 5))
+		_emboss(d[0], Rect2(x + 138, 156, 76, 76), d[5])
+		var chip := _frame(Rect2(x + 22, 214, 110, 28), 14.0, Color(0.02, 0.03, 0.08, 0.85), Color(0.02, 0.03, 0.08, 0.85), Color(d[4], 0.8) if d[7] else Color(0, 0, 0, 0), 0.0, 2.0)
+		(chip.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
+		_in(chip).add_child(_label(d[6], body_bold, 15, Color("#FFD66B") if d[7] else Color("#DDE3F5"), Rect2(0, 0, 110, 28), HORIZONTAL_ALIGNMENT_CENTER, 0))
 
 
 func _side_buttons() -> void:
-	var right := [["missions", "مأموریت", VIOLET, 2], ["gift", "جایزه‌ی روز", ANAR, 1], ["trophy", "رتبه", SAFFRON, 0]]
+	var right := [["missions", "مأموریت", "violet", 2], ["gift", "جایزه‌ی روز", "ruby", 1], ["trophy", "رتبه", "gold", 0]]
 	for i in right.size():
 		var d: Array = right[i]
-		var y := 262.0 + i * 108.0
-		_badge(d[0], Rect2(628, y, 76, 76), d[2], GOLD, 1.0)
-		ui.add_child(_label(d[1], display_font, 17, Color.WHITE, Rect2(600, y + 72, 132, 26), HORIZONTAL_ALIGNMENT_CENTER, 5))
-		if d[3] > 0:
-			_count(Rect2(626, y - 4, 30, 30), d[3])
-	var left := [["inbox", "پیام‌ها", LAPIS, 3], ["society", "جناح", FIROUZEH, 0]]
+		_plate_icon(Vector2(664, 312 + i * 112), d[0], d[2], d[1], d[3])
+	var left := [["inbox", "پیام‌ها", "sapphire", 3], ["society", "جناح", "teal", 0]]
 	for i in left.size():
 		var d: Array = left[i]
-		var y := 262.0 + i * 108.0
-		_badge(d[0], Rect2(16, y, 76, 76), d[2], GOLD, 1.0)
-		ui.add_child(_label(d[1], display_font, 17, Color.WHITE, Rect2(-12, y + 72, 132, 26), HORIZONTAL_ALIGNMENT_CENTER, 5))
-		if d[3] > 0:
-			_count(Rect2(62, y - 4, 30, 30), d[3])
+		_plate_icon(Vector2(56, 312 + i * 112), d[0], d[2], d[1], d[3])
+
+
+## An icon on a dark round plate with a gold rim, a caption ribbon under it,
+## and an optional count.
+func _plate_icon(c: Vector2, icon: String, pal: String, text: String, count: int) -> void:
+	_badge("person", Rect2(c.x - 40, c.y - 40, 80, 80), Color("#18204A"), GOLD)
+	var plate: TextureRect = ui.get_child(ui.get_child_count() - 1)
+	(plate.material as ShaderMaterial).set_shader_parameter("glyph_color", Color(0, 0, 0, 0))
+	_emboss(icon, Rect2(c.x - 42, c.y - 46, 84, 84), pal)
+	var cap := _frame(Rect2(c.x - 58, c.y + 36, 116, 28), 14.0, Color(0.05, 0.06, 0.14, 0.92), Color(0.02, 0.03, 0.08, 0.92), Color(GOLD, 0.8), 0.0, 1.5)
+	(cap.material as ShaderMaterial).set_shader_parameter("shadow", 0.3)
+	_in(cap).add_child(_label(text, display_font, 17, Color.WHITE, Rect2(0, -1, 116, 30), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	if count > 0:
+		_count(Rect2(c.x + 14, c.y - 46, 30, 30), count)
 
 
 func _world_bubbles() -> void:
-	# a shift is ready at work: pulsing, with a check
-	_bubble("work", "شیفت آماده", FIROUZEH, -1.0, "check")
-	# the factory's order is running: a ring and a countdown
-	_bubble("factory", "14:02", LAPIS, 0.3, "")
-	# goods sold at the market: coins waiting
-	_bubble("market", "+48", SAFFRON, -1.0, "coins")
-	# a course finished at the university
-	_bubble("study", "مدرک آماده", VIOLET, -1.0, "study")
+	_bubble("work", "شیفت آماده", FIROUZEH, -1.0, "check", "teal")
+	_bubble("factory", "14:02", LAPIS, 0.3, "factory", "sapphire")
+	_bubble("market", "+48", SAFFRON, -1.0, "coins", "gold")
+	_bubble("study", "مدرک آماده", VIOLET, -1.0, "study", "violet")
 
 
-func _bubble(key: String, text: String, tint: Color, progress: float, icon: String) -> void:
+func _bubble(key: String, text: String, tint: Color, progress: float, icon: String, pal: String) -> void:
 	var box := Control.new()
 	box.layout_direction = Control.LAYOUT_DIRECTION_LTR
-	box.size = Vector2(150, 138)
+	box.size = Vector2(150, 140)
 	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	ui.add_child(box)
-	# the pin: a small pointer under the badge
 	var pin := Polygon2D.new()
-	pin.polygon = PackedVector2Array([Vector2(63, 86), Vector2(87, 86), Vector2(75, 100)])
+	pin.polygon = PackedVector2Array([Vector2(62, 84), Vector2(88, 84), Vector2(75, 102)])
 	pin.color = GOLD
 	box.add_child(pin)
 	if progress >= 0.0:
-		_ring(Rect2(29, 0, 92, 92), progress, tint, box)
-	var glyph: String = icon if icon != "" else key
-	_badge(glyph, Rect2(39, 10, 72, 72), tint, GOLD, 0.0, box)
-	var chip := _frame(Rect2(8, 96, 134, 38), 19.0, Color(tint.darkened(0.45), 0.95), Color(tint.darkened(0.7), 0.95), GOLD, 0.0, 3.0, box)
+		_ring(Rect2(27, -2, 96, 96), progress, tint, box)
+	_badge("person", Rect2(37, 8, 76, 76), tint.darkened(0.55), GOLD, 0.0, box)
+	var plate: TextureRect = box.get_child(box.get_child_count() - 1)
+	(plate.material as ShaderMaterial).set_shader_parameter("glyph_color", Color(0, 0, 0, 0))
+	_emboss(icon, Rect2(37, 6, 76, 76), pal, box)
+	var chip := _frame(Rect2(8, 98, 134, 38), 19.0, Color(tint.darkened(0.45), 0.95), Color(tint.darkened(0.72), 0.95), GOLD, 0.0, 2.5, box)
 	(chip.material as ShaderMaterial).set_shader_parameter("shadow", 0.35)
-	_in(chip).add_child(_label(text, display_font, 19, Color.WHITE, Rect2(0, 1, 134, 34), HORIZONTAL_ALIGNMENT_CENTER, 5))
+	_in(chip).add_child(_label(text, display_font, 20, Color.WHITE, Rect2(0, 0, 134, 36), HORIZONTAL_ALIGNMENT_CENTER, 5))
 	bubbles.append([box, bubbles_at[key], randf() * 6.0])
 
 
-func _ready_card() -> void:
-	var card := _frame(Rect2(12, 918, 696, 132), 26.0, Color(0.07, 0.20, 0.24, 0.94), Color(0.03, 0.08, 0.12, 0.94), GOLD, 0.06)
-	(card.material as ShaderMaterial).set_shader_parameter("glow", Color(FIROUZEH, 0.55))
-	_badge("energy", Rect2(592, 942, 88, 88), SAFFRON, GOLD)
-	ui.add_child(_label("انرژی 12 دقیقه دیگه پر میشه", display_font, 26, Color.WHITE, Rect2(244, 944, 340, 40), HORIZONTAL_ALIGNMENT_RIGHT, 6))
-	ui.add_child(_label("یه شیفت برو که هدر نره  ·  −20 انرژی  ·  +1,850", body_font, 16, Color("#BFE9E3"), Rect2(222, 988, 362, 30), HORIZONTAL_ALIGNMENT_RIGHT, 3))
-	var go := _button(Rect2(34, 948, 190, 78), Color("#FFE27A"), Color("#F5A623"), Color("#A5580A"), 22.0, 8.0)
-	go.add_child(_label("شروع شیفت", display_font, 27, Color("#4A2400"), Rect2(0, 8, 190, 50), HORIZONTAL_ALIGNMENT_CENTER, 0))
+func _ready_toast() -> void:
+	var card := _frame(Rect2(14, 950, 692, 100), 30.0, Color(0.06, 0.22, 0.25, 0.95), Color(0.02, 0.08, 0.11, 0.95), GOLD, 0.05)
+	(card.material as ShaderMaterial).set_shader_parameter("glow", Color(FIROUZEH, 0.5))
+	_emboss("energy", Rect2(598, 940, 104, 104), "amber")
+	ui.add_child(_glabel("انرژی 12 دقیقه دیگه پر میشه", display_font, 26, "#FFFFFF", "#CFF7F1", Rect2(226, 960, 364, 42), HORIZONTAL_ALIGNMENT_RIGHT, 6))
+	ui.add_child(_label("یه شیفت برو که هدر نره  ·  −20 انرژی  ·  +1,850", body_font, 16, Color("#BFE9E3"), Rect2(206, 1002, 384, 30), HORIZONTAL_ALIGNMENT_RIGHT, 3))
+	var go := _button(Rect2(30, 966, 182, 70), Color("#FFE680"), Color("#F5A11F"), Color("#9A4E06"), 22.0, 8.0)
+	go.add_child(_glabel("شروع شیفت", display_font, 27, "#5A2A00", "#3A1600", Rect2(0, 4, 182, 54), HORIZONTAL_ALIGNMENT_CENTER, 0))
 
 
 func _dock() -> void:
-	var dock := _frame(Rect2(4, 1122, 712, 156), 40.0, Color(0.10, 0.12, 0.26, 0.97), Color(0.04, 0.05, 0.12, 0.97), GOLD, 0.07)
-	dock.z_index = 0
-	var slots := [["city", "شهر", true, 624.0], ["activity", "فعالیت", false, 484.0], ["market", "اقتصاد", false, 164.0], ["society", "جامعه", false, 24.0]]
+	_frame(Rect2(-10, 1128, 740, 180), 40.0, Color(0.11, 0.13, 0.29, 0.98), Color(0.04, 0.05, 0.13, 0.98), GOLD, 0.07)
+	var slots := [["city", "شهر", true, 646.0], ["activity", "فعالیت", false, 506.0], ["market", "اقتصاد", false, 214.0], ["society", "جامعه", false, 74.0]]
 	for s in slots:
-		var x: float = s[3]
+		var cx: float = s[3]
 		if s[2]:
-			var hl := _frame(Rect2(x - 12, 1140, 96, 118), 24.0, Color(FIROUZEH, 0.35), Color(FIROUZEH, 0.08), GOLD, 0.0, 4.0)
+			var hl := _frame(Rect2(cx - 60, 1140, 120, 128), 26.0, Color(FIROUZEH, 0.40), Color(FIROUZEH, 0.06), GOLD, 0.0, 2.5)
 			(hl.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
-		var b := _badge(s[0], Rect2(x, 1150, 72, 72), FIROUZEH if s[2] else Color("#5A6488"), GOLD if s[2] else Color("#8A93B8"), 1.0)
-		(b.material as ShaderMaterial).set_shader_parameter("dim", 0.0 if s[2] else 0.35)
-		ui.add_child(_label(s[1], display_font, 20, Color.WHITE if s[2] else Color("#AEB6D6"), Rect2(x - 20, 1222, 112, 30), HORIZONTAL_ALIGNMENT_CENTER, 5))
+			(hl.material as ShaderMaterial).set_shader_parameter("glow", Color(FIROUZEH, 0.6))
+		var lift := 10.0 if s[2] else 0.0
+		var ic := _emboss(s[0], Rect2(cx - 46, 1146 - lift, 92, 92), "gold" if s[2] else "steel")
+		if not s[2]:
+			ic.modulate = Color(0.8, 0.84, 0.95)
+		if s[2]:
+			ui.add_child(_glabel(s[1], display_font, 22, "#FFFFFF", "#FFD66B", Rect2(cx - 60, 1228, 120, 34), HORIZONTAL_ALIGNMENT_CENTER, 5))
+		else:
+			ui.add_child(_label(s[1], display_font, 20, Color("#AEB6D6"), Rect2(cx - 60, 1230, 120, 32), HORIZONTAL_ALIGNMENT_CENTER, 4))
 	# the raised action in the middle: what the player does most, right now a shift
 	var holder := Control.new()
 	holder.layout_direction = Control.LAYOUT_DIRECTION_LTR
-	holder.position = Vector2(284, 1062)
+	holder.position = Vector2(284, 1070)
 	holder.size = Vector2(152, 152)
 	holder.pivot_offset = Vector2(76, 76)
 	ui.add_child(holder)
 	_dock_btn = holder
 	_ring(Rect2(0, 0, 152, 152), 1.0, Color("#FFD66B"), holder)
-	var b := _badge("work", Rect2(12, 12, 128, 128), Color("#F5A623"), Color("#FFF1B8"), 0.0, holder)
-	(b.material as ShaderMaterial).set_shader_parameter("rim_w", 0.07)
-	var cap := _frame(Rect2(20, 120, 112, 40), 20.0, Color("#7A3E00"), Color("#4A2400"), GOLD, 0.0, 3.0, holder)
-	_in(cap).add_child(_label("شیفت", display_font, 22, Color.WHITE, Rect2(0, 1, 112, 34), HORIZONTAL_ALIGNMENT_CENTER, 5))
+	_badge("person", Rect2(12, 12, 128, 128), Color("#F59A1F"), Color("#FFF1B8"), 0.0, holder)
+	var disc: TextureRect = holder.get_child(holder.get_child_count() - 1)
+	(disc.material as ShaderMaterial).set_shader_parameter("glyph_color", Color(0, 0, 0, 0))
+	(disc.material as ShaderMaterial).set_shader_parameter("rim_w", 0.07)
+	_emboss("work", Rect2(22, 14, 108, 108), "cream", holder)
+	var cap := _frame(Rect2(22, 120, 108, 40), 20.0, Color("#7A3E00"), Color("#4A2400"), GOLD, 0.0, 3.0, holder)
+	_in(cap).add_child(_glabel("شیفت", display_font, 23, "#FFFFFF", "#FFD66B", Rect2(0, 0, 108, 38), HORIZONTAL_ALIGNMENT_CENTER, 5))
+
+
+func _crime_popup() -> void:
+	var dim := ColorRect.new()
+	dim.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	dim.size = Vector2(W, H)
+	dim.color = Color(0.01, 0.01, 0.04, 0.72)
+	ui.add_child(dim)
+	var red := Color("#C8242C")
+	var panel := _frame(Rect2(34, 262, 652, 740), 34.0, Color(0.20, 0.07, 0.12, 0.98), Color(0.06, 0.03, 0.08, 0.98), GOLD, 0.07)
+	(panel.material as ShaderMaterial).set_shader_parameter("glow", Color(red, 0.45))
+	var rib := ColorRect.new()
+	rib.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	rib.position = Vector2(110, 212)
+	rib.size = Vector2(500, 104)
+	var rm := _mat("ribbon")
+	rm.set_shader_parameter("size", rib.size)
+	rib.material = rm
+	ui.add_child(rib)
+	ui.add_child(_glabel("جیب‌بری", display_font, 44, "#FFFFFF", "#FFD9B0", Rect2(160, 218, 400, 72), HORIZONTAL_ALIGNMENT_CENTER, 8))
+	var close := _button(Rect2(620, 268, 56, 56), ANAR.lightened(0.25), ANAR, ANAR.darkened(0.55), 28.0, 5.0)
+	close.add_child(_label("×", display_font, 40, Color.WHITE, Rect2(0, -8, 56, 60), HORIZONTAL_ALIGNMENT_CENTER, 5))
+
+	# the crime (right) and the odds (left)
+	_ring(Rect2(420, 338, 200, 200), 1.0, Color(red, 0.5))
+	_badge("person", Rect2(436, 354, 168, 168), Color("#3A0E1E"), GOLD)
+	var plate: TextureRect = ui.get_child(ui.get_child_count() - 1)
+	(plate.material as ShaderMaterial).set_shader_parameter("glyph_color", Color(0, 0, 0, 0))
+	_emboss("crime", Rect2(440, 350, 160, 160), "steel")
+	var where := _frame(Rect2(440, 532, 160, 34), 17.0, Color(0.02, 0.03, 0.08, 0.9), Color(0.02, 0.03, 0.08, 0.9), Color(GOLD, 0.6), 0.0, 1.5)
+	(where.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
+	_in(where).add_child(_label("بازار · همین‌جا", body_bold, 16, Color("#FFE3B0"), Rect2(0, 0, 160, 34), HORIZONTAL_ALIGNMENT_CENTER, 0))
+	_ring(Rect2(110, 344, 196, 196), 0.82, LEAF)
+	ui.add_child(_glabel("82٪", display_font, 54, "#E8FFE9", "#4CC47E", Rect2(110, 390, 196, 80), HORIZONTAL_ALIGNMENT_CENTER, 7))
+	ui.add_child(_label("شانس موفقیت", display_font, 20, Color("#CFE8D6"), Rect2(110, 460, 196, 34), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	ui.add_child(_label("مهارت جرم +3٪ این هفته", body_font, 15, Color("#9FB0A6"), Rect2(90, 536, 236, 28), HORIZONTAL_ALIGNMENT_CENTER, 0))
+
+	# what it costs, what it pays, what can go wrong
+	var tiles := [
+		["nerve", "ruby", "هزینه", "2 عصب", Vector2(366, 588)],
+		["money", "emerald", "پاداش", "300 تا 400", Vector2(58, 588)],
+		["handcuffs", "steel", "اگر گیر بیفتی", "زندان 1 ساعت · 18٪", Vector2(366, 686)],
+		["stopwatch", "sapphire", "دوباره", "15 دقیقه · 19:20", Vector2(58, 686)],
+	]
+	for t in tiles:
+		var at: Vector2 = t[4]
+		var tile := _frame(Rect2(at.x, at.y, 296, 84), 20.0, Color(0.02, 0.03, 0.08, 0.72), Color(0.05, 0.04, 0.10, 0.72), Color(GOLD, 0.35), 0.0, 1.5)
+		(tile.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
+		_emboss(t[0], Rect2(at.x + 214, at.y + 4, 76, 76), t[1])
+		ui.add_child(_label(t[2], body_font, 15, Color("#B9A8B8"), Rect2(at.x + 10, at.y + 8, 204, 26), HORIZONTAL_ALIGNMENT_RIGHT, 0))
+		ui.add_child(_label(t[3], display_font, 23, Color.WHITE, Rect2(at.x + 10, at.y + 34, 204, 40), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+
+	# side effects, then the heat it adds
+	var fx := [["+XP جرم", LEAF, 470.0], ["+6 داغی", SAFFRON, 330.0], ["+استرس", ANAR, 190.0]]
+	for f in fx:
+		var c := _frame(Rect2(f[2], 790, 124, 36), 18.0, Color(f[1].darkened(0.55), 0.95), Color(f[1].darkened(0.75), 0.95), Color(f[1], 0.9), 0.0, 2.0)
+		(c.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
+		_in(c).add_child(_label(f[0], display_font, 19, Color.WHITE, Rect2(0, 0, 124, 36), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	var heat := _bar(Rect2(186, 846, 400, 22), 0.18, SAFFRON, false)
+	(heat.material as ShaderMaterial).set_shader_parameter("outline", Color(GOLD, 0.6))
+	_emboss("heat", Rect2(590, 830, 54, 54), "amber")
+	ui.add_child(_label("داغی 12 ← 18", body_bold, 15, Color("#FFD9A0"), Rect2(70, 842, 112, 30), HORIZONTAL_ALIGNMENT_LEFT, 0))
+
+	# the one thing to do
+	var go := _button(Rect2(96, 894, 528, 88), LEAF.lightened(0.35), LEAF.darkened(0.05), LEAF.darkened(0.6), 26.0, 9.0)
+	go.add_child(_glabel("انجام بده", display_font, 38, "#FFFFFF", "#E2FFE6", Rect2(150, 2, 330, 70), HORIZONTAL_ALIGNMENT_CENTER, 7))
+	var cost := _frame(Rect2(116, 910, 110, 50), 25.0, Color(0.03, 0.18, 0.08, 0.85), Color(0.02, 0.10, 0.05, 0.85), Color(1, 1, 1, 0.5), 0.0, 1.5)
+	(cost.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
+	_in(cost).add_child(_label("−2", display_font, 26, Color.WHITE, Rect2(8, 2, 54, 46), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	_emboss("nerve", Rect2(174, 906, 56, 56), "ruby")
 
 
 func _coin_fx() -> void:
 	_coins = CPUParticles2D.new()
 	_coins.texture = _icon_tex("coins")
 	_coins.amount = 9
-	_coins.lifetime = 1.6
+	_coins.lifetime = 0.9
 	_coins.one_shot = false
 	_coins.explosiveness = 0.9
 	_coins.direction = Vector2(0, -1)
-	_coins.spread = 55.0
-	_coins.initial_velocity_min = 220.0
-	_coins.initial_velocity_max = 380.0
-	_coins.gravity = Vector2(0, 520)
+	_coins.spread = 35.0
+	_coins.initial_velocity_min = 140.0
+	_coins.initial_velocity_max = 230.0
+	_coins.gravity = Vector2(0, 640)
 	_coins.scale_amount_min = 0.06
 	_coins.scale_amount_max = 0.08
 	_coins.color = Color("#FFD66B")
@@ -477,6 +596,37 @@ func _label(text: String, font: Font, px: int, color: Color, r: Rect2, align: in
 		l.add_theme_constant_override("shadow_offset_y", 3)
 		l.add_theme_constant_override("shadow_offset_x", 0)
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return l
+
+
+func _emboss(icon: String, r: Rect2, pal: String, parent: Node = null) -> TextureRect:
+	var t := TextureRect.new()
+	t.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	t.texture = _icon_tex(icon)
+	t.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	t.stretch_mode = TextureRect.STRETCH_SCALE
+	t.position = r.position
+	t.size = r.size
+	t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var m := _mat("emboss")
+	var c: Array = PAL[pal]
+	m.set_shader_parameter("light_c", Color(c[0]))
+	m.set_shader_parameter("dark_c", Color(c[1]))
+	m.set_shader_parameter("outline_c", Color(c[2]))
+	t.material = m
+	(parent if parent else ui).add_child(t)
+	return t
+
+
+func _glabel(text: String, font: Font, px: int, top: String, bottom: String, r: Rect2, align: int, outline: int) -> Label:
+	var l := _label(text, font, px, Color.WHITE, r, align, outline)
+	var m := _mat("grad_text")
+	m.set_shader_parameter("top_c", Color(top))
+	m.set_shader_parameter("bottom_c", Color(bottom))
+	# Lalezar sits its glyphs a little low in the line box
+	m.set_shader_parameter("y0", (r.size.y - px) / 2.0)
+	m.set_shader_parameter("h", px * 1.05)
+	l.material = m
 	return l
 
 
