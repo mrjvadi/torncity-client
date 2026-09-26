@@ -156,6 +156,9 @@ func http(method: String, path: String, body, token: String) -> Dictionary:
 		["GET", "/api/v1/realtime/subscribe"]:
 			var ch := path.split("channel=")[1].uri_decode() if path.contains("channel=") else ""
 			return {"status": 200, "data": {"token": jwt({"sub": str(fx["player"]["id"]), "channel": ch, "exp": int(now()) + 900})}, "error": ""}
+		["GET", "/api/v1/world/city"]:
+			var code := path.split("code=")[1].split("&")[0].uri_decode() if path.contains("code=") else str(st["city"])
+			return {"status": 200, "data": world_fixture(code), "error": ""}
 		["GET", "/api/v1/content"]:
 			var since := path.split("since=")[1].uri_decode() if path.contains("since=") else ""
 			var cat: Dictionary = content_fixture()
@@ -168,6 +171,31 @@ func http(method: String, path: String, body, token: String) -> Dictionary:
 
 
 var _content := {}
+
+
+var _world := {}
+
+
+## The city layout: the same template for every city (the real server builds
+## it from its content and the city's companies).
+func world_fixture(code: String) -> Dictionary:
+	if _world.is_empty():
+		_world = JSON.parse_string(FileAccess.get_file_as_string("res://src/mock/world.json"))
+	var w: Dictionary = _world.duplicate(true)
+	w["city"] = code
+	return w
+
+
+## A company opened, closed or changed: {type:"world.plot"} on city:<code>.
+func push_plot(plot: Dictionary, op := "upsert") -> void:
+	var ch := "city:" + str(st["city"])
+	var data := {"type": "world.plot", "city": st["city"], "op": op}
+	if op == "remove":
+		data["id"] = plot.get("id", "")
+	else:
+		data["plot"] = plot
+	if _rt and _rt_subs.has(ch):
+		_rt.deliver(JSON.stringify({"push": {"channel": ch, "pub": {"data": data}}}))
 
 
 func content_fixture() -> Dictionary:
@@ -260,6 +288,7 @@ func command(cmd: String, args: Dictionary) -> Dictionary:
 		"bank.deposit": return _bank_move(int(str(args.get("amount", "0"))), true)
 		"bank.withdraw": return _bank_move(int(str(args.get("amount", "0"))), false)
 		"inventory.show": return _inventory()
+		"company.show": return _company_show(int(str(args.get("id", "0"))))
 		"job.status": return _job()
 		"job.work": return _job_work()
 		"life.me": return _life()
@@ -585,6 +614,19 @@ func _life() -> Dictionary:
 		"spots": [], "sleep_in_seconds": 0, "home": false, "notice": "", "notice_args": {}}
 	var text := L("🧬 زندگی من\n🎂 %s ساله - بزرگسال\n🍞 گرسنگی: %s\n🛏 خواب: %s\n😣 استرس: %s\n😊 شادی: %s", "🧬 My life\n🎂 Age %s - Adult\n🍞 Hunger: %s\n🛏 Sleep: %s\n😣 Stress: %s\n😊 Happiness: %s") % [num(st["age"]), num(n["hunger"]), num(n["sleep"]), num(n["stress"]), num(n["happiness"])]
 	return _resp("life", text, v, [_act(L("🛏 خوابیدن", "🛏 Sleep"), "life.sleep"), _act(L("🪪 کارت من", "🪪 My card"), "life.card"), _act(L("🏆 برترین‌ها", "🏆 Leaderboards"), "life.top"), _back()])
+
+
+func _company_show(id: int) -> Dictionary:
+	for p in world_fixture(str(st["city"]))["plots"]:
+		if p.get("kind") == "company" and int(p["ref"].get("company_id", 0)) == id:
+			var nm: Dictionary = p["name"]
+			var t := str(p["ref"]["code"])
+			var tname := Content.name_of("company_type", t)
+			var text := L("🏢 %s\n%s · مالک: %s\n\n📈 تولید امروز: ۱۲۰ واحد\n👥 کارمندان: ۸" % [nm["fa"], tname, p["ref"]["owner"]],
+				"🏢 %s\n%s · Owner: %s\n\n📈 Output today: 120 units\n👥 Staff: 8" % [nm["en"], tname, p["ref"]["owner"]])
+			return _resp("company", text, {"company": {"id": id, "type": t, "name": nm[st["lang"]], "owner": p["ref"]["owner"], "staff": 8}},
+				[_act(L("📦 انبار", "📦 Stock"), "company.stock", {"id": id}), _act(L("👥 کارمندان", "👥 Staff"), "company.staff", {"id": id}), _back()])
+	return _resp("error", L("این شرکت پیدا نشد.", "Company not found."), null, [_back()])
 
 
 func _settings() -> Dictionary:
