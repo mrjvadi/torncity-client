@@ -625,6 +625,10 @@
    "glyph": "broken-shield",
    "tint": "red"
   },
+  "action:dismiss": {
+   "glyph": "trash-can",
+   "tint": "red"
+  },
   "action:confirm": {
    "glyph": "scales",
    "tint": "yellow"

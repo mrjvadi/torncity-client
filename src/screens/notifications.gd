@@ -34,5 +34,19 @@ func build() -> void:
 		col.add_child(UI.label(I18n.t("feed.ago", {"when": I18n.dur(int(now - float(n.get("at", now))))}), "DimLabel"))
 		row.add_child(col)
 		p.add_child(row)
-		content.add_child(p)
+		var swipe := SwipeRow.make(p, [])
+		swipe.actions = [{"label": I18n.t("feed.dismiss"), "key": "action:dismiss",
+			"color": AppTheme.col("red"), "fn": func(): _dismiss(swipe, n)}]
+		content.add_child(swipe)
 	Fx.stagger_in(content, 0.03)
+
+
+func _dismiss(row: SwipeRow, n: Dictionary) -> void:
+	Session.dismiss_notice(n)
+	if Config.headless_capture:
+		row.queue_free()
+		return
+	var t := create_tween()
+	t.tween_property(row, "modulate:a", 0.0, 0.16)
+	t.parallel().tween_property(row, "collapse", 0.0, 0.16).set_delay(0.05)
+	t.tween_callback(row.queue_free)

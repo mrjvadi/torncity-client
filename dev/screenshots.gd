@@ -99,7 +99,7 @@ func _run() -> void:
 				# some realtime history for the feed
 				Session.add_notice({"type": "notice", "kind": "arrived", "text": Mock.L("📍 به بازار رسیدید.", "📍 You reached the bazaar.")})
 				Session.add_notice({"type": "announce", "kind": "announce", "text": Mock.fx["announcements"][lang][0]})
-				Session.add_notice({"type": "notice", "kind": "shift_paid", "text": Mock.L("💰 شیفت تمام شد و ۱٬۸۵۰ نیل دستمزد گرفتید.", "💰 Your shift is over: you were paid 1,850 Nil.")})
+				Session.add_notice({"type": "notice", "kind": "shift_paid", "text": Mock.L("💰 شیفت تمام شد و 1٬850 نیل دستمزد گرفتید.", "💰 Your shift is over: you were paid 1,850 Nil.")})
 			shell.toasts.clear()
 			shell.close_drawer()
 			if cmd == "@menu":

@@ -52,6 +52,9 @@ msgstr "{when} ago"
 msgid "feed.empty"
 msgstr "Nothing yet. City news and what happens to you will appear here."
 
+msgid "feed.dismiss"
+msgstr "Dismiss"
+
 msgid "inventory.empty"
 msgstr "Your backpack is empty."
 

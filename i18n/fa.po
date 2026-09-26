@@ -52,6 +52,9 @@ msgstr "{when} پیش"
 msgid "feed.empty"
 msgstr "هنوز خبری نیست. خبرهای شهر و اتفاق‌هایی که برایتان می‌افتد اینجا می‌آید."
 
+msgid "feed.dismiss"
+msgstr "پاک کردن"
+
 msgid "inventory.empty"
 msgstr "کوله‌پشتی شما خالی است."
 
@@ -113,7 +116,7 @@ msgid "life.worth"
 msgstr "دارایی خالص"
 
 msgid "login.bad_format"
-msgstr "کد ۸ حرف و رقم دارد."
+msgstr "کد 8 حرف و رقم دارد."
 
 msgid "login.checking"
 msgstr "در حال بررسی…"
@@ -122,7 +125,7 @@ msgid "login.enter"
 msgstr "ورود به بازی"
 
 msgid "login.mock_hint"
-msgstr "نسخهٔ آزمایشی آفلاین: هر ۸ حرف یا رقمی کار می‌کند."
+msgstr "نسخهٔ آزمایشی آفلاین: هر 8 حرف یا رقمی کار می‌کند."
 
 msgid "login.rejected"
 msgstr "این کد پذیرفته نشد. از ربات کد تازه بگیرید."
@@ -134,7 +137,7 @@ msgid "login.step2"
 msgstr "«/link» یا «اتصال» را بفرستید."
 
 msgid "login.step3"
-msgstr "کد ۸ حرفی را اینجا وارد کنید."
+msgstr "کد 8 حرفی را اینجا وارد کنید."
 
 msgid "login.subtitle"
 msgstr "این دستگاه را به حساب بازی‌تان وصل کنید."

@@ -10,6 +10,11 @@ var content: VBoxContainer
 var shell: Node
 var _body_margin: MarginContainer
 var _cta_bar: Control
+var _scroll: ScrollContainer
+var _pull: PullIndicator
+var _pull_start := Vector2.INF
+var _pull_amt := 0.0
+const PULL_AT := 110.0
 
 
 func setup(r: Dictionary, q: Dictionary, sh: Node) -> void:
@@ -53,6 +58,7 @@ func scroll_body(sep := 18) -> VBoxContainer:
 	var s := UI.scroll(m)
 	s.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(s)
+	_scroll = s
 	return content
 
 
@@ -121,6 +127,59 @@ func actions_grid(actions: Array, skip := [], _cols := 0) -> Control:
 func tile_columns() -> int:
 	var w := size.x if size.x > 0 else get_viewport_rect().size.x
 	return clampi(int(w / 175.0), 3, 6)
+
+
+# -- pull to refresh ---------------------------------------------------------------------------------------
+func _input(e: InputEvent) -> void:
+	if _scroll == null or not is_visible_in_tree() or not can_refresh():
+		return
+	var pressed_ev: bool = (e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT) or e is InputEventScreenTouch
+	if pressed_ev:
+		if e.pressed:
+			var gp: Vector2 = e.position
+			if get_global_rect().has_point(gp) and gp.y > global_position.y + insets().top and _scroll.scroll_vertical <= 0:
+				_pull_start = gp
+				_pull_amt = 0.0
+		else:
+			if _pull_amt >= PULL_AT:
+				_pull.spinning = true
+				TelegramApp.haptic("medium")
+				Game.refresh_current()
+			elif _pull:
+				_hide_pull()
+			_pull_start = Vector2.INF
+	elif (e is InputEventMouseMotion or e is InputEventScreenDrag) and _pull_start != Vector2.INF:
+		var dy: float = e.position.y - _pull_start.y
+		if _scroll.scroll_vertical > 0 or dy < 0:
+			_pull_amt = 0.0
+			if _pull:
+				_hide_pull()
+			return
+		_pull_amt = dy * 0.55
+		show_pull(_pull_amt / PULL_AT)
+
+
+## Show the pull bubble at `f` (0..1 of the threshold); also for screenshots.
+func show_pull(f: float, spinning := false) -> void:
+	if _pull == null:
+		_pull = PullIndicator.new()
+		add_child(_pull)
+	_pull.pull = f
+	_pull.spinning = spinning
+	_pull.position = Vector2((size.x - 64) / 2.0, insets().top - 40 + minf(f, 1.2) * 90.0)
+	_pull.modulate.a = clampf(f * 1.5, 0, 1)
+	_pull.queue_redraw()
+
+
+func _hide_pull() -> void:
+	if _pull:
+		_pull.queue_free()
+		_pull = null
+
+
+## Screens built from a server command can be refreshed by pulling.
+func can_refresh() -> bool:
+	return str(req.get("command", "")) != ""
 
 
 func insets() -> Dictionary:

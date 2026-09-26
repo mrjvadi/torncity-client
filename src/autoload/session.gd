@@ -139,6 +139,15 @@ func mark_read() -> void:
 	changed.emit()
 
 
+## Swipe-to-dismiss on the notifications feed removes it locally; the server
+## keeps no read/unread state for feed entries beyond `unread`.
+func dismiss_notice(entry: Dictionary) -> void:
+	var i := notices.find(entry)
+	if i >= 0:
+		notices.remove_at(i)
+		changed.emit()
+
+
 # -- storage ---------------------------------------------------------------------------------
 func _key() -> String:
 	return TokenLogic.storage_key(OS.get_unique_id())
