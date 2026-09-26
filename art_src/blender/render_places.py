@@ -20,7 +20,7 @@ from mathutils import Vector  # noqa: E402
 
 import places  # noqa: E402
 from svgkit import P, ROOT  # noqa: E402
-from iso3d import Iso3D, NullSvg, hex_rgba  # noqa: E402
+from iso3d import Iso3D, hex_rgba  # noqa: E402
 
 ART = 256.0          # art-space canvas, px
 ORIGIN = (128.0, 150.0)  # where world (0,0,0) sits in art space
@@ -152,7 +152,7 @@ def render_place(sc, code, fn, out_dir, mats):
     coll = bpy.data.collections.new(code)
     sc.collection.children.link(coll)
     iso = Iso3D()
-    places.FACTORY = lambda: (NullSvg(), iso)
+    places.FACTORY = lambda: (iso.svg, iso)
     fn()
     iso.build(coll, mats)
     sc.render.filepath = os.path.join(out_dir, code + ".png")

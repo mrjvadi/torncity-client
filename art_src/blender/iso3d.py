@@ -33,11 +33,39 @@ def hex_rgba(h, alpha=1.0):
     return tuple(srgb_to_linear(int(h[i:i + 2], 16)) for i in (0, 2, 4)) + (alpha,)
 
 
+class P2(tuple):
+    """A projected 2D point that remembers the 3D point it came from."""
+
+    def __new__(cls, xy, w):
+        t = super().__new__(cls, xy)
+        t.w = w
+        return t
+
+
 class NullSvg:
     """Swallows the 2D-only drawing calls places.py makes directly."""
 
     def __getattr__(self, name):
         return lambda *a, **k: ""
+
+
+class RecoverSvg(NullSvg):
+    """Rebuilds 2D polygons and lines drawn from projected points as 3D
+    geometry; anything drawn from plain screen coordinates is dropped."""
+
+    def __init__(self, iso):
+        self.iso = iso
+
+    def poly(self, points, fill, opacity=None, **kw):
+        if points and all(hasattr(q, "w") for q in points):
+            self.iso.face([q.w for q in points], fill, opacity=opacity or 1.0)
+
+    def line(self, points, stroke, sw, opacity=None, **kw):
+        pts = [q.w for q in points if hasattr(q, "w")]
+        if len(pts) != len(points):
+            return
+        for a, b in zip(pts, pts[1:]):
+            self.iso.rod(a, b, sw * 0.55, stroke)
 
 
 class MeshBatch:
@@ -57,9 +85,35 @@ class Iso3D(Iso):
     is3d = True
 
     def __init__(self):
-        super().__init__(NullSvg(), 0, 0, 1.0)
+        super().__init__(None, 0, 0, 1.0)
+        self.svg = RecoverSvg(self)
         self.batches = {}  # (colour, kind, opacity) -> MeshBatch
         self.glass = False
+
+    def p(self, x, y, z=0.0):
+        return P2(Iso.p(self, x, y, z), (x, y, z))
+
+    def rod(self, a, b, w, color):
+        """A thin square bar from a to b (rails, poles, ribs)."""
+        ax, ay, az = a
+        bx, by, bz = b
+        dx, dy, dz = bx - ax, by - ay, bz - az
+        n = math.sqrt(dx * dx + dy * dy + dz * dz) or 1.0
+        if abs(dz) > 0.7 * n:
+            u, v = (w / 2, 0, 0), (0, w / 2, 0)
+        else:
+            hx, hy = -dy, dx
+            hn = math.sqrt(hx * hx + hy * hy) or 1.0
+            u, v = (hx / hn * w / 2, hy / hn * w / 2, 0), (0, 0, w / 2 / Z_SCALE)
+        corners = [(-1, -1), (1, -1), (1, 1), (-1, 1)]
+
+        def ring(p):
+            return [(p[0] + i * u[0] + j * v[0], p[1] + i * u[1] + j * v[1], p[2] + i * u[2] + j * v[2]) for i, j in corners]
+
+        ra, rb = ring(a), ring(b)
+        for k in range(4):
+            k2 = (k + 1) % 4
+            self.face([ra[k], ra[k2], rb[k2], rb[k]], color, "metal" if color in (P["steel"], P["stone_dk"]) else "solid")
 
     # -- geometry sinks -------------------------------------------------------------------
     @staticmethod

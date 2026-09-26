@@ -33,7 +33,12 @@ def lights(B, x_front, x_back, y0, y1, z):
 
 
 def glass_band(B, pts_xz, y0, width):
-    B.part("glass", "#16202C").profile(pts_xz, y0, width)
+    """Windows: the cabin profile grown a little out of the body, across the
+    full width, so the windscreen and side windows sit on the paint."""
+    cx = sum(p[0] for p in pts_xz) / len(pts_xz)
+    cz = sum(p[1] for p in pts_xz) / len(pts_xz)
+    grown = [(cx + (x - cx) * 1.05, cz + (z - cz) * 1.08 + 0.25) for x, z in pts_xz]
+    B.part("glass", "#1A2838").profile(grown, -0.2, width + 2 * y0 + 0.4)
 
 
 def sports_car(B, color="#D62828"):
