@@ -39,7 +39,7 @@ func build() -> void:
 	bcol.add_child(cname)
 	_status_label = UI.label("", "DimLabel")
 	_status_label.add_theme_font_size_override("font_size", 19)
-	_status_label.add_theme_color_override("font_color", Color("#C9D5E8"))
+	_status_label.add_theme_color_override("font_color", AppTheme.col("text_2"))
 	_status_label.clip_text = true
 	bcol.add_child(_status_label)
 	brow.add_child(bcol)

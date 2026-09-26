@@ -63,7 +63,7 @@ func _row(r: Dictionary, zebra: bool) -> Control:
 	var code := str(item.get("code", ""))
 	var p := PanelContainer.new()
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color("#16243A", 0.55) if zebra else Color(0, 0, 0, 0)
+	sb.bg_color = AppTheme.col("surface_2", 0.45) if zebra else Color(0, 0, 0, 0)
 	sb.set_corner_radius_all(8)
 	sb.content_margin_left = 12
 	sb.content_margin_right = 12

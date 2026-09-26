@@ -30,10 +30,9 @@ func _card(c: Dictionary) -> Control:
 	var gl := AssetLib.glyph_for("company_type", t)
 	var tint: Color = gl.get("tint", AppTheme.col("primary"))
 	var p := GlowPanel.new()
-	p.radius = 14
 	p.padding = 20
-	p.top_color = Color("#1A2A43").lerp(tint, 0.14)
-	p.accent = Color(tint, 0.8)
+	p.tint_with(tint, 0.1)
+	p.accent = tint
 	var box := UI.vbox(14)
 	p.add_child(box)
 	var head := UI.hbox(16)
@@ -43,7 +42,7 @@ func _card(c: Dictionary) -> Control:
 	col.add_child(UI.label(str(c.get("name", "")), "HeadLabel"))
 	var sub := UI.hbox(8)
 	sub.add_child(UI.chip("", Content.name_of("company_type", t), Color(tint, 0.25)))
-	sub.add_child(UI.chip("", I18n.t("profile.level", {"level": I18n.num(int(c.get("level", 1)))}), Color("#2B4468")))
+	sub.add_child(UI.chip("", I18n.t("profile.level", {"level": I18n.num(int(c.get("level", 1)))}), AppTheme.col("surface_3")))
 	col.add_child(sub)
 	head.add_child(col)
 	box.add_child(head)

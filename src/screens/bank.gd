@@ -11,9 +11,8 @@ func build() -> void:
 		content.add_child(notice_banner(I18n.t("bank.closed"), "warn"))
 	# balance hero
 	var hero := GlowPanel.new()
-	hero.top_color = Color("#1E4E9A")
-	hero.bottom_color = Color("#12305F")
-	hero.accent = AppTheme.col("sky", 0.9)
+	hero.tint_with(AppTheme.col("lapis"), 0.3)
+	hero.accent = AppTheme.col("info")
 	hero.padding = 26
 	var hv := UI.vbox(8)
 	hv.add_child(UI.hbox(10, [UI.icon("bank", 44), UI.label(I18n.t("stat.bank"), "SmallLabel")]))
@@ -61,7 +60,9 @@ func _section(title: String, icon_name: String, acts: Array, cmd: String, enable
 		if nonce == "nall":
 			full_width.append(a)
 			continue
-		var b := UI.action_button(a, "GoldButton" if icon_name == "deposit" else "Button")
+		# the presets are quick picks: tonal, so the one full-width
+		# "everything" button below stays the obvious one
+		var b := UI.action_button(a, "TonalGold" if icon_name == "deposit" else "TonalPrimary")
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.add_theme_font_size_override("font_size", 22)
 		b.disabled = not enabled

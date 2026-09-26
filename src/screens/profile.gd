@@ -8,9 +8,8 @@ func build() -> void:
 	scroll_body(18)
 	var v := view
 	var hero := GlowPanel.new()
-	hero.top_color = Color("#1F3150")
-	hero.bottom_color = Color("#132139")
-	hero.accent = AppTheme.col("primary", 0.8)
+	hero.tint_with(AppTheme.col("primary"), 0.12)
+	hero.accent = AppTheme.col("primary")
 	hero.padding = 24
 	var hbox := UI.hbox(20)
 	var av := AvatarBadge.new()
