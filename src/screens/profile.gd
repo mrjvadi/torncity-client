@@ -101,19 +101,10 @@ func build() -> void:
 			b.set_value(float(needs.get(n[0], 0)), 100.0, "%s - %s" % [I18n.t("need." + n[0]), I18n.num(int(needs.get(n[0], 0)))])
 			nc.add_child(b)
 
-	# shortcuts
-	var links := GridContainer.new()
-	links.columns = 3
-	links.add_theme_constant_override("h_separation", 12)
-	links.add_theme_constant_override("v_separation", 12)
-	for s in [["life", "more.life", "life.me"], ["inventory", "more.inventory", "inventory.show"], ["skills", "more.skills", "skills.list"],
-			["friends", "more.friends", "social.friend.list"], ["achievement", "more.achievements", "achievement.list"], ["settings", "more.settings", ""]]:
-		links.add_child(Tiles.feature(s[0], I18n.t(s[1]), s[2], shell))
-	content.add_child(links)
-	var acts: Array = resp.get("actions", [])
-	var extra := actions_grid(acts, ["map.list", "bank.show", "skills.list", "social.friend.list", "player.settings"])
-	if extra.get_child_count() > 0:
-		content.add_child(extra)
+	# everything the server offers from here, as an action grid (its hub menu)
+	var g := actions_grid(resp.get("actions", []), ["map.list"])
+	if g.get_child_count() > 0:
+		content.add_child(g)
 	Fx.stagger_in(content)
 
 

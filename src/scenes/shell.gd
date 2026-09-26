@@ -32,7 +32,7 @@ func _ready() -> void:
 	var row := UI.hbox(0)
 	_safe.add_child(row)
 	_sidebar = UI.vbox(12)
-	_sidebar.custom_minimum_size = Vector2(470, 0)
+	_sidebar.custom_minimum_size = Vector2(500, 0)
 	_sidebar.visible = false
 	row.add_child(_sidebar)
 	var col := UI.vbox(0)
@@ -107,12 +107,14 @@ func _relayout() -> void:
 		close_drawer()
 		_sidebar.visible = true
 		hud.radius = 10
+		hud.set_sidebar(true)
 		_sidebar.add_child(hud)
 		side.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		_sidebar.add_child(side)
 	else:
 		_sidebar.visible = false
 		hud.radius = 0
+		hud.set_sidebar(false)
 		_col.add_child(hud)
 		_col.move_child(hud, 0)
 	hud.queue_redraw()
@@ -172,7 +174,7 @@ func open_tab(tab: String) -> void:
 
 ## Screens that live only in the client.
 func open_local(name: String) -> void:
-	var key: String = {"bell": "notifications", "settings": "settings", "more": "more", "notifications": "notifications"}.get(name, name)
+	var key: String = {"bell": "notifications", "settings": "settings", "notifications": "notifications"}.get(name, name)
 	nav.select("messages" if key == "notifications" else "")
 	_show(key, {"ok": true, "screen": key, "text": "", "view": {}, "actions": []}, {"command": "", "args": {}})
 

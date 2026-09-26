@@ -37,6 +37,11 @@ func scroll_body(sep := 18) -> VBoxContainer:
 	content = UI.vbox(sep)
 	var m := UI.margin(content, 22, 20, 22, 28)
 	_body_margin = m
+	# keep a readable measure on wide screens: centre at most ~1040 px
+	resized.connect(func():
+		var side := maxi(22, int((size.x - 1040.0) / 2.0))
+		m.add_theme_constant_override("margin_left", side)
+		m.add_theme_constant_override("margin_right", side))
 	var s := UI.scroll(m)
 	s.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(s)

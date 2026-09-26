@@ -17,6 +17,13 @@ var _bank: ResourceChip
 var _energy: ResourceChip
 var _health: ResourceChip
 var _bell: Button
+var _chips: GridContainer
+
+
+## In the desktop sidebar the card is narrow: two chips per row.
+func set_sidebar(on: bool) -> void:
+	if _chips:
+		_chips.columns = 2 if on else 4
 
 
 func _init() -> void:
@@ -67,6 +74,7 @@ func _ready() -> void:
 
 	# resource chips (asset keys resolve to badge icons in the library)
 	var chips := GridContainer.new()
+	_chips = chips
 	chips.columns = 4
 	chips.add_theme_constant_override("h_separation", 8)
 	chips.add_theme_constant_override("v_separation", 8)
