@@ -13,6 +13,7 @@ const SHOTS := [
 	["confirm", "company.show", {"id": 1027}],
 	["companies", "company.list", {}],
 	["market", "market.list", {}],
+	["market_sell", "market.list", {}],
 	["crime", "crime.hub", {}],
 	["education", "education.list", {}],
 	["inventory", "inventory.show", {}],
@@ -133,6 +134,9 @@ func _run() -> void:
 				if scr and scr.get("map") and not scr.map.world._walk.is_empty():
 					scr.map.world._walk["left"] = float(scr.map.world._walk["total"]) * 0.55
 					scr.map.world.focus(scr.map.slots.get("bazaar", ""), 7.0)
+			if name == "market_sell":
+				shell.current.tab = 1
+				shell.current._fill()
 			if name == "confirm":
 				await _frames(4)
 				# Trigger it exactly the way a real tap does: a danger/confirm
