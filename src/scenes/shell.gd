@@ -17,6 +17,7 @@ var _busy: ColorRect
 var _safe: MarginContainer
 var side: SideMenu
 var _sidebar: VBoxContainer     # the desktop column: player card + menu
+var _sidebar_box: MarginContainer
 var _stage: Control             # the screen area: host + floating HUD, nav, FAB
 var _fab: Fab
 var _drawer: Control            # the phone drawer overlay
@@ -34,9 +35,10 @@ func _ready() -> void:
 	var row := UI.hbox(0)
 	_safe.add_child(row)
 	_sidebar = UI.vbox(12)
-	_sidebar.custom_minimum_size = Vector2(500, 0)
-	_sidebar.visible = false
-	row.add_child(_sidebar)
+	_sidebar.custom_minimum_size = Vector2(480, 0)
+	_sidebar_box = UI.margin(_sidebar, 12, 12, 12, 12)
+	_sidebar_box.visible = false
+	row.add_child(_sidebar_box)
 	_stage = Control.new()
 	_stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -113,14 +115,14 @@ func _relayout() -> void:
 		side.get_parent().remove_child(side)
 	if wide:
 		close_drawer()
-		_sidebar.visible = true
+		_sidebar_box.visible = true
 		hud.set_sidebar(true)
 		hud.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		_sidebar.add_child(hud)
 		side.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		_sidebar.add_child(side)
 	else:
-		_sidebar.visible = false
+		_sidebar_box.visible = false
 		hud.set_sidebar(false)
 		_stage.add_child(hud)
 		hud.set_anchors_preset(Control.PRESET_TOP_WIDE)

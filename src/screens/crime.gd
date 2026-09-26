@@ -42,7 +42,6 @@ func _card(c: Dictionary) -> Control:
 	var chance := int(c.get("chance", 0))
 	var col := AppTheme.col("success") if chance >= 60 else (AppTheme.col("gold") if chance >= 30 else AppTheme.col("danger"))
 	var p := GlowPanel.new()
-	p.radius = 14
 	p.padding = 16
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var box := UI.vbox(10)

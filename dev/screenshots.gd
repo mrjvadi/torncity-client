@@ -109,7 +109,7 @@ func _run() -> void:
 			shell.close_drawer()
 			# the "confirm" shot leaves its sheet open over the next screens
 			for n in get_tree().root.find_children("*", "", true, false):
-				if n is ConfirmSheet:
+				if is_instance_valid(n) and n is ConfirmSheet:
 					n.free()
 			var saved_inventory = null
 			var saved_notices = null

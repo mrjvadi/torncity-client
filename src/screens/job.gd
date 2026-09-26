@@ -17,8 +17,7 @@ func build() -> void:
 		return
 	var j: Dictionary = v.get("job", {}) if v.get("job") is Dictionary else {}
 	var hero := GlowPanel.new()
-	hero.top_color = Color("#1F3150")
-	hero.bottom_color = Color("#132139")
+	hero.tint_with(AppTheme.col("brick"), 0.14)
 	hero.accent = AppTheme.col("brick")
 	hero.padding = 24
 	var hv := UI.vbox(10)

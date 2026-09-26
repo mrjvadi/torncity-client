@@ -205,8 +205,13 @@ func pin_cta(a: Dictionary) -> void:
 	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var b := ActionKit.cta(a, self)
 	b.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	b.offset_left = 22
-	b.offset_right = -22
+	# as wide as the content column (the readable measure on wide screens)
+	var fit := func():
+		var side := maxi(AppTheme.GUTTER, int((size.x - 1040.0) / 2.0))
+		b.offset_left = side
+		b.offset_right = -side
+	fit.call()
+	resized.connect(fit)
 	b.offset_bottom = -18
 	b.offset_top = -106
 	bar.add_child(b)

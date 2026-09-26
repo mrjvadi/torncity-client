@@ -37,9 +37,8 @@ func _name(c: Dictionary) -> String:
 
 func _active(c: Dictionary) -> Control:
 	var p := GlowPanel.new()
-	p.radius = 14
 	p.padding = 22
-	p.top_color = Color("#1F3150").lerp(AppTheme.col("violet"), 0.2)
+	p.tint_with(AppTheme.col("violet"), 0.2)
 	p.accent = AppTheme.col("violet")
 	var box := UI.vbox(12)
 	p.add_child(box)
@@ -70,7 +69,6 @@ func _course(c: Dictionary) -> Control:
 	var status := str(c.get("status", ""))
 	var co: Dictionary = c.get("course", {})
 	var p := GlowPanel.new()
-	p.radius = 14
 	p.padding = 16
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var box := UI.vbox(10)
