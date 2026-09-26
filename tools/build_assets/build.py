@@ -271,6 +271,8 @@ def main():
                 continue
             cat = key.split(":")[0]
             out.put(key, data, ext, os.path.basename(stem), "x", fallback=cat + ":*")
+            if ext == "svg":
+                out.assets[key]["scale"] = 1.0   # full-size art (glyphs are drawn at 0.25)
     # the library itself, so the owner can remap keys without a client release
     out.put("data:library", json.dumps(lib, ensure_ascii=False, separators=(",", ":")).encode("utf-8"), "json", "library", "d")
     version = hashlib.sha256(json.dumps({k: v["sha256"] for k, v in out.assets.items()}, sort_keys=True).encode()).hexdigest()[:12]
