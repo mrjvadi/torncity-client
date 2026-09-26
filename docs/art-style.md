@@ -16,7 +16,7 @@ UI move together.
 
 | Role | Names |
 |---|---|
-| Interface | `ink` (deepest background), `night` (screen), `panel`, `panel_hi`, `line`, `text`, `text_dim` |
+| Interface | `ink`, `night`, `panel`, `panel_hi`, `line`, `text`, `text_dim`. These are the art's own names; the interface reads the `"ui"` block instead (`design-system.md`) |
 | Accents | `turquoise` (primary, «Persian blue-green»), `saffron` (money, highlights), `lapis` (bank, civic), `pomegranate` (health, alerts), `rose`, `violet`, `leaf`, `sky` |
 | Materials | `sand`, `brick`, `stone`, `steel`, `olive`, `slate`, `earth`, `asphalt`, `road`, `grass`, `water` |
 
@@ -44,11 +44,11 @@ sleep — violet; stress — rose; happiness — leaf; XP — turquoise.
   a saw-tooth factory with chimneys and containers, a barn, silo and fields,
   houses around a crossroads, a park with a pond and gazebo, and barracks with
   a fence, watchtower and parade ground.
-- **UI**: panels are drawn in code (`GlowPanel`): a layered soft shadow, a
-  vertical gradient, a 2 px top highlight, a hairline border, an optional
-  accent line. Buttons have a darker lip that disappears when pressed and a
-  squash-and-spring on press. Bars are glossy capsules; rings are radial
-  gauges. Reference 9-patch SVGs of the same look are in `assets/art/ui/`.
+- **UI**: the interface has its own tokens and components, described in
+  `design-system.md`: dark, near-flat cards with a hairline border, one
+  turquoise primary action per screen, and tonal buttons for everything that
+  repeats. Buttons squash and spring on press. Bars are flat capsules, and
+  rings are radial gauges.
 
 ## Two pipelines, one set of descriptions
 
