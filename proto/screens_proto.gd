@@ -499,33 +499,56 @@ func _s_market() -> void:
 	_btn(Rect2(20, 1026, 680, 88), "خرید 25 نان  ·  308 نیل", "green")
 
 
+## The bank: deposit or withdraw any amount. The amount is typed on the
+## game's own keypad (the phone keyboard over a Godot web page is
+## unreliable and hides the field), topped up with quick amounts, and
+## checked against what the player holds before the button says exactly
+## what will happen.
 func _s_bank() -> void:
 	_hdr("بانک", Color("#2A45B0"))
-	_card(Rect2(20, 256, 680, 200), Color(LAPIS, 0.5))
-	_emboss("bank", Rect2(590, 270, 96, 96), "sapphire")
-	_txt(Rect2(260, 276, 320, 28), "موجودی بانک", 18, Color("#C8D4F5"))
-	_big(Rect2(160, 304, 420, 72), "86,300 نیل", 54, "#EAF1FF", "#8FB0FF")
-	_emboss("coins", Rect2(600, 380, 60, 60), "gold")
-	_txt(Rect2(360, 384, 230, 48), "نقد: 12,450", 20, Color("#FFD66B"))
-	_txt(Rect2(40, 384, 300, 48), "کارمزد برداشت 0.5٪", 16, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_LEFT)
-	_sec(472, "واریز")
-	var dep := ["1,000", "5,000", "10,000", "همه"]
-	for i in dep.size():
-		_btn(Rect2(530 - i * 170, 526, 160, 70), dep[i], "gold")
-	_sec(612, "برداشت")
-	for i in dep.size():
-		_btn(Rect2(530 - i * 170, 666, 160, 70), dep[i], "blue")
-	_card(Rect2(20, 758, 680, 160), Color(LEAF, 0.3))
-	_emboss("crowncoin", Rect2(600, 772, 84, 84), "emerald")
-	_big(Rect2(300, 776, 290, 44), "پس‌انداز", 30, "#FFFFFF", "#DFFFE6")
-	_txt(Rect2(300, 822, 290, 28), "25,000  ·  سود 2٪ در هر دوره", 17, Color("#9FE3B0"))
-	_btn(Rect2(40, 790, 230, 70), "افزودن", "green")
-	_card(Rect2(20, 934, 680, 180))
-	_emboss("trade", Rect2(600, 948, 84, 84), "gold")
-	_big(Rect2(300, 950, 290, 44), "وام", 30, "#FFFFFF", "#FFE6B8")
-	_txt(Rect2(300, 996, 290, 28), "امتیاز اعتبار 720  ·  خوب", 17, Color("#FFE9B0"))
-	_pbar(Rect2(300, 1036, 380, 26), 0.72, LEAF, "720")
-	_btn(Rect2(40, 966, 230, 70), "درخواست وام", "steel")
+	_card(Rect2(20, 256, 680, 128), Color(LAPIS, 0.5))
+	_emboss("bank", Rect2(596, 266, 90, 90), "sapphire")
+	_txt(Rect2(330, 268, 256, 26), "موجودی بانک", 17, Color("#C8D4F5"))
+	_big(Rect2(300, 292, 286, 60), "86,300", 44, "#EAF1FF", "#8FB0FF")
+	_emboss("coins", Rect2(230, 276, 64, 64), "gold")
+	_txt(Rect2(40, 268, 186, 26), "نقد", 17, Color("#E8D6A8"), HORIZONTAL_ALIGNMENT_LEFT)
+	_big(Rect2(40, 292, 186, 60), "12,450", 34, "#FFF6C8", "#FFB21F", HORIZONTAL_ALIGNMENT_LEFT)
+	# deposit or withdraw
+	_chip(Rect2(366, 400, 334, 52), "واریز", Color("#B8860B"), 22)
+	_chip(Rect2(20, 400, 334, 52), "برداشت", Color("#3A4468"), 22)
+	# the amount
+	var field := _frame(Rect2(20, 468, 680, 104), 24.0, Color(0.02, 0.03, 0.08, 0.92), Color(0.05, 0.06, 0.14, 0.92), Color(GOLD, 0.95), 0.0, 3.0)
+	(field.material as ShaderMaterial).set_shader_parameter("glow", Color(GOLD, 0.35))
+	(field.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
+	_big(Rect2(130, 474, 460, 90), "7,500", 60, "#FFF6C8", "#FFB21F", HORIZONTAL_ALIGNMENT_CENTER)
+	_txt(Rect2(600, 468, 80, 104), "نیل", 20, Color("#E8D6A8"), HORIZONTAL_ALIGNMENT_CENTER)
+	var caret := ColorRect.new()
+	caret.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	caret.position = Vector2(470, 494)
+	caret.size = Vector2(4, 56)
+	caret.color = Color("#FFD66B")
+	ui.add_child(caret)
+	var clear := _button(Rect2(40, 494, 60, 54), Color("#8E97B4"), Color("#4A536E"), Color("#1E2436"), 27.0, 5.0)
+	clear.add_child(_label("×", display_font, 40, Color.WHITE, Rect2(0, -10, 60, 64), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	_txt(Rect2(40, 578, 640, 30), "نقد تو 12,450  ·  بعد از واریز: 4,950 نقد، 93,800 در بانک", 16, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_CENTER)
+	# quick amounts add to the field
+	var quick := ["+1,000", "+5,000", "+10,000", "همه"]
+	for i in quick.size():
+		_chip(Rect2(530 - i * 170, 616, 160, 48), quick[i], Color("#B8860B") if i == 3 else Color("#3552C8"), 20)
+	# the keypad: digits read left to right, as on every phone
+	var keys := ["1", "2", "3", "4", "5", "6", "7", "8", "9", "000", "0", "⌫"]
+	for i in keys.size():
+		var col := i % 3
+		var row := i / 3
+		var r := Rect2(20 + col * 231, 680 + row * 84, 218, 76)
+		var kind := "steel"
+		if keys[i] == "⌫":
+			kind = "red"
+		elif keys[i] == "000":
+			kind = "blue"
+		_btn(r, keys[i], kind)
+	_btn(Rect2(20, 1022, 680, 92), "واریز 7,500 نیل", "gold")
+	_chip(Rect2(40, 1044, 150, 40), "بدون کارمزد", LEAF, 16)
 
 
 func _s_company() -> void:
