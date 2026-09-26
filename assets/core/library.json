@@ -1,0 +1,1715 @@
+{
+ "notes": "Client asset library, published to the CDN as data:library. Content keys (from the server's content catalogue) map to model parts (mesh keys) and badge glyphs; '<category>:*' is the category fallback, '*' the global one. A drop-in asset with the same key (art_src/cdn/<category>/<name>.glb) takes precedence over a composition here.",
+ "actions": {
+  "*": "ln_menu",
+  "player": "ln_profile",
+  "map": "ln_map",
+  "bank": "ln_bank",
+  "job": "ln_work",
+  "life": "ln_life",
+  "inventory": "ln_inventory",
+  "skills": "ln_skills",
+  "education": "ln_education",
+  "crime": "ln_crime",
+  "property": "ln_property",
+  "health": "ln_health",
+  "faction": "ln_factions",
+  "social": "ln_friends",
+  "gov": "ln_government",
+  "shop": "ln_shop",
+  "market": "ln_market",
+  "company": "ln_companies",
+  "mission": "ln_missions",
+  "combat": "ln_attack",
+  "travel": "ln_travel",
+  "production": "ln_produce",
+  "research": "ln_research",
+  "auction": "ln_market",
+  "achievement": "ln_missions",
+  "election": "ln_government"
+ },
+ "icons": {
+  "*": {
+   "glyph": "cardboard-box",
+   "tint": "blue"
+  },
+  "stat:health": {
+   "glyph": "heart-beats",
+   "tint": "red"
+  },
+  "stat:energy": {
+   "glyph": "lightning-helix",
+   "tint": "yellow"
+  },
+  "stat:happiness": {
+   "glyph": "cheerful",
+   "tint": "green"
+  },
+  "stat:hunger": {
+   "glyph": "stomach",
+   "tint": "orange"
+  },
+  "stat:sleep": {
+   "glyph": "sleepy",
+   "tint": "violet"
+  },
+  "stat:stress": {
+   "glyph": "brain",
+   "tint": "rose"
+  },
+  "stat:xp": {
+   "glyph": "upgrade",
+   "tint": "cyan"
+  },
+  "stat:*": {
+   "glyph": "star-struck",
+   "tint": "blue"
+  },
+  "res:cash": {
+   "glyph": "cash",
+   "tint": "green"
+  },
+  "res:bank": {
+   "glyph": "bank",
+   "tint": "cyan"
+  },
+  "res:gold": {
+   "glyph": "gold-bar",
+   "tint": "yellow"
+  },
+  "res:*": {
+   "glyph": "coins",
+   "tint": "yellow"
+  },
+  "item:*": {
+   "glyph": "swap-bag",
+   "tint": "blue"
+  },
+  "item.consumable:*": {
+   "glyph": "hamburger",
+   "tint": "orange"
+  },
+  "item.electronics:*": {
+   "glyph": "microchip",
+   "tint": "cyan"
+  },
+  "item.weapon:*": {
+   "glyph": "pistol-gun",
+   "tint": "red"
+  },
+  "item.crime:*": {
+   "glyph": "domino-mask",
+   "tint": "violet"
+  },
+  "item.resource:*": {
+   "glyph": "ore",
+   "tint": "orange"
+  },
+  "item.apparel:*": {
+   "glyph": "running-shoe",
+   "tint": "blue"
+  },
+  "item.valuable:*": {
+   "glyph": "cut-diamond",
+   "tint": "cyan"
+  },
+  "item.tool:*": {
+   "glyph": "toolbox",
+   "tint": "blue"
+  },
+  "item.vehicle:*": {
+   "glyph": "car-key",
+   "tint": "blue"
+  },
+  "item:food": {
+   "glyph": "hamburger",
+   "tint": "orange"
+  },
+  "item:drink": {
+   "glyph": "soda-can",
+   "tint": "orange"
+  },
+  "item:medicine": {
+   "glyph": "pill",
+   "tint": "red"
+  },
+  "item:tool": {
+   "glyph": "toolbox",
+   "tint": "blue"
+  },
+  "item:gadget": {
+   "glyph": "smartphone",
+   "tint": "cyan"
+  },
+  "item:device": {
+   "glyph": "laptop",
+   "tint": "cyan"
+  },
+  "item:lockpick_set": {
+   "glyph": "lockpicks",
+   "tint": "violet"
+  },
+  "item:crowbar": {
+   "glyph": "crowbar",
+   "tint": "violet"
+  },
+  "item:running_shoes": {
+   "glyph": "running-shoe",
+   "tint": "blue"
+  },
+  "item:jewel": {
+   "glyph": "cut-diamond",
+   "tint": "cyan"
+  },
+  "item:iron_ore": {
+   "glyph": "ore",
+   "tint": "orange"
+  },
+  "item:wheat": {
+   "glyph": "wheat",
+   "tint": "yellow"
+  },
+  "item:crude_oil": {
+   "glyph": "oil-drum",
+   "tint": "orange"
+  },
+  "item:timber": {
+   "glyph": "log",
+   "tint": "orange"
+  },
+  "item:cotton": {
+   "glyph": "cotton-flower",
+   "tint": "blue"
+  },
+  "item:flour": {
+   "glyph": "flour",
+   "tint": "yellow"
+  },
+  "item:chipset": {
+   "glyph": "microchip",
+   "tint": "cyan"
+  },
+  "item:circuit_board": {
+   "glyph": "circuitry",
+   "tint": "green"
+  },
+  "item:pistol": {
+   "glyph": "pistol-gun",
+   "tint": "red"
+  },
+  "item:rifle": {
+   "glyph": "ak47",
+   "tint": "red"
+  },
+  "item:knife": {
+   "glyph": "bowie-knife",
+   "tint": "red"
+  },
+  "item:ammo": {
+   "glyph": "bullets",
+   "tint": "yellow"
+  },
+  "item:vest": {
+   "glyph": "kevlar-vest",
+   "tint": "blue"
+  },
+  "item:helmet": {
+   "glyph": "helmet",
+   "tint": "blue"
+  },
+  "item:backpack": {
+   "glyph": "backpack",
+   "tint": "orange"
+  },
+  "item:medkit": {
+   "glyph": "first-aid-kit",
+   "tint": "red"
+  },
+  "item:water": {
+   "glyph": "water-bottle",
+   "tint": "cyan"
+  },
+  "item:bread": {
+   "glyph": "bread",
+   "tint": "orange"
+  },
+  "item:phone": {
+   "glyph": "smartphone",
+   "tint": "cyan"
+  },
+  "item:laptop": {
+   "glyph": "laptop",
+   "tint": "cyan"
+  },
+  "item:gold_bar": {
+   "glyph": "gold-bar",
+   "tint": "yellow"
+  },
+  "item:ski_mask": {
+   "glyph": "domino-mask",
+   "tint": "violet"
+  },
+  "item:car": {
+   "glyph": "car-key",
+   "tint": "blue"
+  },
+  "item:gloves": {
+   "glyph": "fist",
+   "tint": "violet"
+  },
+  "item:fake_documents": {
+   "glyph": "open-book",
+   "tint": "violet"
+  },
+  "item:card_skimmer": {
+   "glyph": "circuitry",
+   "tint": "violet"
+  },
+  "place:*": {
+   "glyph": "modern-city",
+   "tint": "blue"
+  },
+  "place:bazaar": {
+   "glyph": "shop",
+   "tint": "orange"
+  },
+  "place:business_district": {
+   "glyph": "bank",
+   "tint": "cyan"
+  },
+  "place:university": {
+   "glyph": "graduate-cap",
+   "tint": "violet"
+  },
+  "place:city_hall": {
+   "glyph": "clock-tower",
+   "tint": "yellow"
+  },
+  "place:police_station": {
+   "glyph": "police-badge",
+   "tint": "blue"
+  },
+  "place:hospital": {
+   "glyph": "hospital-cross",
+   "tint": "red"
+  },
+  "place:train_station": {
+   "glyph": "subway-train",
+   "tint": "blue"
+  },
+  "place:bus_terminal": {
+   "glyph": "bus",
+   "tint": "yellow"
+  },
+  "place:airport": {
+   "glyph": "airplane",
+   "tint": "cyan"
+  },
+  "place:industrial_zone": {
+   "glyph": "factory",
+   "tint": "orange"
+  },
+  "place:farmland": {
+   "glyph": "wheat",
+   "tint": "green"
+  },
+  "place:residential_area": {
+   "glyph": "family-house",
+   "tint": "green"
+  },
+  "place:park": {
+   "glyph": "sprout",
+   "tint": "green"
+  },
+  "place:barracks": {
+   "glyph": "tank",
+   "tint": "green"
+  },
+  "place:city_centre": {
+   "glyph": "clock-tower",
+   "tint": "blue"
+  },
+  "company:*": {
+   "glyph": "briefcase",
+   "tint": "blue"
+  },
+  "company:factory": {
+   "glyph": "factory",
+   "tint": "orange"
+  },
+  "company:mine": {
+   "glyph": "ore",
+   "tint": "orange"
+  },
+  "company:farm": {
+   "glyph": "wheat",
+   "tint": "green"
+  },
+  "company:grocery": {
+   "glyph": "shopping-cart",
+   "tint": "green"
+  },
+  "company:restaurant": {
+   "glyph": "hamburger",
+   "tint": "orange"
+  },
+  "company:clinic": {
+   "glyph": "hospital-cross",
+   "tint": "red"
+  },
+  "company:pharmacy": {
+   "glyph": "pill",
+   "tint": "red"
+  },
+  "company:courier": {
+   "glyph": "truck",
+   "tint": "blue"
+  },
+  "company:tech_studio": {
+   "glyph": "laptop",
+   "tint": "cyan"
+  },
+  "company:repair_workshop": {
+   "glyph": "wrench",
+   "tint": "blue"
+  },
+  "vehicle:*": {
+   "glyph": "city-car",
+   "tint": "blue"
+  },
+  "vehicle:truck": {
+   "glyph": "truck",
+   "tint": "blue"
+  },
+  "vehicle:bus": {
+   "glyph": "bus",
+   "tint": "yellow"
+  },
+  "vehicle:police": {
+   "glyph": "police-car",
+   "tint": "blue"
+  },
+  "vehicle:ambulance": {
+   "glyph": "ambulance",
+   "tint": "red"
+  },
+  "vehicle:helicopter": {
+   "glyph": "helicopter",
+   "tint": "cyan"
+  },
+  "vehicle:jet": {
+   "glyph": "jet-fighter",
+   "tint": "cyan"
+  },
+  "vehicle:airliner": {
+   "glyph": "airplane",
+   "tint": "cyan"
+  },
+  "vehicle:ship": {
+   "glyph": "cargo-ship",
+   "tint": "blue"
+  },
+  "vehicle:tank": {
+   "glyph": "tank",
+   "tint": "green"
+  },
+  "crime:*": {
+   "glyph": "ninja-mask",
+   "tint": "violet"
+  },
+  "crime:pickpocket": {
+   "glyph": "domino-mask",
+   "tint": "violet"
+  },
+  "crime:burglary": {
+   "glyph": "crowbar",
+   "tint": "violet"
+  },
+  "military:*": {
+   "glyph": "tank-tread",
+   "tint": "green"
+  },
+  "city:*": {
+   "glyph": "modern-city",
+   "tint": "blue"
+  },
+  "action:*": {
+   "glyph": "gears",
+   "tint": "blue"
+  },
+  "action:combat": {
+   "glyph": "crossed-swords",
+   "tint": "red"
+  },
+  "action:travel": {
+   "glyph": "walk",
+   "tint": "cyan"
+  },
+  "action:map": {
+   "glyph": "treasure-map",
+   "tint": "cyan"
+  },
+  "action:job": {
+   "glyph": "briefcase",
+   "tint": "orange"
+  },
+  "action:production": {
+   "glyph": "factory",
+   "tint": "orange"
+  },
+  "action:research": {
+   "glyph": "test-tubes",
+   "tint": "violet"
+  },
+  "action:shop": {
+   "glyph": "shopping-cart",
+   "tint": "green"
+  },
+  "action:market": {
+   "glyph": "trade",
+   "tint": "green"
+  },
+  "action:bank": {
+   "glyph": "bank",
+   "tint": "cyan"
+  },
+  "action:company": {
+   "glyph": "briefcase",
+   "tint": "blue"
+  },
+  "action:crime": {
+   "glyph": "ninja-mask",
+   "tint": "violet"
+  },
+  "action:education": {
+   "glyph": "graduate-cap",
+   "tint": "violet"
+  },
+  "action:skills": {
+   "glyph": "skills",
+   "tint": "blue"
+  },
+  "action:life": {
+   "glyph": "heart-beats",
+   "tint": "red"
+  },
+  "action:health": {
+   "glyph": "hospital-cross",
+   "tint": "red"
+  },
+  "action:property": {
+   "glyph": "house",
+   "tint": "green"
+  },
+  "action:inventory": {
+   "glyph": "backpack",
+   "tint": "orange"
+  },
+  "action:faction": {
+   "glyph": "flying-flag",
+   "tint": "red"
+  },
+  "action:social": {
+   "glyph": "chat-bubble",
+   "tint": "blue"
+  },
+  "action:gov": {
+   "glyph": "gavel",
+   "tint": "yellow"
+  },
+  "action:election": {
+   "glyph": "vote",
+   "tint": "yellow"
+  },
+  "action:mission": {
+   "glyph": "treasure-map",
+   "tint": "yellow"
+  },
+  "action:achievement": {
+   "glyph": "trophy",
+   "tint": "yellow"
+  },
+  "action:player": {
+   "glyph": "person",
+   "tint": "blue"
+  },
+  "action:auction": {
+   "glyph": "gavel",
+   "tint": "orange"
+  },
+  "action:military": {
+   "glyph": "tank",
+   "tint": "green"
+  },
+  "action:finance": {
+   "glyph": "chart",
+   "tint": "green"
+  },
+  "service:*": {
+   "glyph": "shop",
+   "tint": "blue"
+  },
+  "service:bank": {
+   "glyph": "bank",
+   "tint": "cyan"
+  },
+  "service:market": {
+   "glyph": "trade",
+   "tint": "green"
+  },
+  "service:auction_house": {
+   "glyph": "gavel",
+   "tint": "orange"
+  },
+  "service:university": {
+   "glyph": "graduate-cap",
+   "tint": "violet"
+  },
+  "service:training_center": {
+   "glyph": "open-book",
+   "tint": "violet"
+  },
+  "service:city_hall": {
+   "glyph": "clock-tower",
+   "tint": "yellow"
+  },
+  "service:police": {
+   "glyph": "police-badge",
+   "tint": "blue"
+  },
+  "service:hospital": {
+   "glyph": "hospital-cross",
+   "tint": "red"
+  },
+  "mode:*": {
+   "glyph": "walk",
+   "tint": "cyan"
+  },
+  "mode:bus": {
+   "glyph": "bus",
+   "tint": "yellow"
+  },
+  "mode:car": {
+   "glyph": "city-car",
+   "tint": "blue"
+  },
+  "mode:train": {
+   "glyph": "subway-train",
+   "tint": "blue"
+  },
+  "mode:flight": {
+   "glyph": "airplane",
+   "tint": "cyan"
+  },
+  "action:settings": {
+   "glyph": "gears",
+   "tint": "blue"
+  },
+  "action:credits": {
+   "glyph": "open-book",
+   "tint": "blue"
+  },
+  "action:notifications": {
+   "glyph": "ringing-bell",
+   "tint": "yellow"
+  },
+  "action:more": {
+   "glyph": "gears",
+   "tint": "blue"
+  }
+ },
+ "models": {
+  "*": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-a"
+    }
+   ]
+  },
+  "place:*": {
+   "parts": [
+    {
+     "at": [
+      -0.3,
+      -0.2
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-e"
+    },
+    {
+     "at": [
+      0.7,
+      0.6
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-large"
+    }
+   ]
+  },
+  "place:city_centre": {
+   "parts": [
+    {
+     "at": [
+      -0.35,
+      -0.35
+     ],
+     "rotate": 0,
+     "size": 0.9,
+     "mesh": "city-kit-commercial/building-skyscraper-a"
+    },
+    {
+     "at": [
+      0.45,
+      -0.4
+     ],
+     "rotate": 0,
+     "size": 0.8,
+     "mesh": "city-kit-commercial/building-skyscraper-e"
+    },
+    {
+     "at": [
+      0.5,
+      0.55
+     ],
+     "rotate": 0,
+     "size": 0.4,
+     "mesh": "city-kit-commercial/detail-parasol-a"
+    },
+    {
+     "at": [
+      -0.2,
+      0.6
+     ],
+     "rotate": 0,
+     "size": 0.4,
+     "mesh": "city-kit-commercial/detail-parasol-b"
+    },
+    {
+     "at": [
+      0.6,
+      0.1
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/planter"
+    }
+   ]
+  },
+  "place:bazaar": {
+   "parts": [
+    {
+     "at": [
+      -0.4,
+      -0.3
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-c"
+    },
+    {
+     "at": [
+      0.45,
+      -0.35
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-d"
+    },
+    {
+     "at": [
+      -0.35,
+      0.3
+     ],
+     "rotate": 0,
+     "size": 1.0,
+     "mesh": "city-kit-commercial/detail-awning-wide"
+    },
+    {
+     "at": [
+      0.4,
+      0.55
+     ],
+     "rotate": 0,
+     "size": 0.4,
+     "mesh": "city-kit-commercial/detail-parasol-a"
+    },
+    {
+     "at": [
+      0.0,
+      0.7
+     ],
+     "rotate": 0,
+     "size": 0.4,
+     "mesh": "city-kit-commercial/detail-parasol-b"
+    }
+   ]
+  },
+  "place:business_district": {
+   "parts": [
+    {
+     "at": [
+      -0.4,
+      -0.4
+     ],
+     "rotate": 0,
+     "size": 0.9,
+     "mesh": "city-kit-commercial/building-skyscraper-b"
+    },
+    {
+     "at": [
+      0.4,
+      -0.3
+     ],
+     "rotate": 0,
+     "size": 0.8,
+     "mesh": "city-kit-commercial/building-skyscraper-d"
+    },
+    {
+     "at": [
+      -0.2,
+      0.45
+     ],
+     "rotate": 0,
+     "size": 0.7,
+     "mesh": "city-kit-commercial/building-skyscraper-c"
+    }
+   ]
+  },
+  "place:university": {
+   "parts": [
+    {
+     "at": [
+      -0.2,
+      -0.3
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-l"
+    },
+    {
+     "at": [
+      0.65,
+      0.5
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-large"
+    },
+    {
+     "at": [
+      -0.6,
+      0.6
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-small"
+    },
+    {
+     "at": [
+      0.1,
+      0.65
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/planter"
+    }
+   ]
+  },
+  "place:city_hall": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.2
+     ],
+     "rotate": 0,
+     "size": 1.8,
+     "mesh": "city-kit-commercial/building-k"
+    },
+    {
+     "at": [
+      -0.7,
+      0.6
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-small"
+    },
+    {
+     "at": [
+      0.7,
+      0.6
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-small"
+    }
+   ]
+  },
+  "place:police_station": {
+   "parts": [
+    {
+     "at": [
+      -0.2,
+      -0.35
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-h"
+    },
+    {
+     "at": [
+      0.55,
+      0.5
+     ],
+     "rotate": 90,
+     "size": 0.55,
+     "mesh": "car-kit/police"
+    },
+    {
+     "at": [
+      -0.2,
+      0.55
+     ],
+     "rotate": 90,
+     "size": 0.55,
+     "mesh": "car-kit/police"
+    }
+   ]
+  },
+  "place:hospital": {
+   "parts": [
+    {
+     "at": [
+      -0.15,
+      -0.3
+     ],
+     "rotate": 0,
+     "size": 1.7,
+     "mesh": "city-kit-commercial/building-n"
+    },
+    {
+     "at": [
+      0.5,
+      0.55
+     ],
+     "rotate": 90,
+     "size": 0.55,
+     "mesh": "car-kit/ambulance"
+    }
+   ]
+  },
+  "place:train_station": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.5
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/low-detail-building-wide-a"
+    },
+    {
+     "at": [
+      0,
+      0.1
+     ],
+     "rotate": 0,
+     "size": 1.0,
+     "mesh": "city-kit-commercial/detail-overhang-wide"
+    },
+    {
+     "at": [
+      0,
+      0.6
+     ],
+     "rotate": 90,
+     "size": 1.6,
+     "mesh": "train-kit/train-electric-city-a"
+    }
+   ]
+  },
+  "place:bus_terminal": {
+   "parts": [
+    {
+     "at": [
+      -0.1,
+      -0.2
+     ],
+     "rotate": 0,
+     "size": 1.0,
+     "mesh": "city-kit-commercial/detail-overhang-wide"
+    },
+    {
+     "at": [
+      0.4,
+      0.45
+     ],
+     "rotate": 90,
+     "size": 0.55,
+     "mesh": "car-kit/van"
+    },
+    {
+     "at": [
+      -0.4,
+      0.45
+     ],
+     "rotate": 90,
+     "size": 0.55,
+     "mesh": "car-kit/delivery"
+    }
+   ]
+  },
+  "place:airport": {
+   "parts": [
+    {
+     "at": [
+      -0.3,
+      -0.4
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-industrial/building-j"
+    },
+    {
+     "at": [
+      0.6,
+      -0.5
+     ],
+     "rotate": 0,
+     "size": 0.5,
+     "mesh": "racing-kit/radarEquipment"
+    },
+    {
+     "at": [
+      0.3,
+      0.5
+     ],
+     "rotate": 0,
+     "size": 0.9,
+     "mesh": "racing-kit/overheadLights"
+    }
+   ]
+  },
+  "place:industrial_zone": {
+   "parts": [
+    {
+     "at": [
+      -0.3,
+      -0.25
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-industrial/building-b"
+    },
+    {
+     "at": [
+      0.6,
+      -0.55
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-industrial/chimney-large"
+    },
+    {
+     "at": [
+      0.5,
+      0.5
+     ],
+     "rotate": 90,
+     "size": 0.7,
+     "mesh": "city-kit-industrial/shipping-container-a"
+    },
+    {
+     "at": [
+      -0.55,
+      0.6
+     ],
+     "rotate": 0,
+     "size": 0.7,
+     "mesh": "city-kit-industrial/detail-tank"
+    }
+   ],
+   "fx": [
+    {
+     "type": "smoke",
+     "at": [
+      0.6,
+      -0.55
+     ],
+     "y": 1.9
+    }
+   ]
+  },
+  "place:farmland": {
+   "parts": [
+    {
+     "at": [
+      -0.35,
+      -0.35
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-industrial/building-h"
+    },
+    {
+     "at": [
+      0.55,
+      -0.4
+     ],
+     "rotate": 0,
+     "size": 0.8,
+     "mesh": "city-kit-industrial/windmill"
+    },
+    {
+     "at": [
+      0.3,
+      0.35
+     ],
+     "rotate": 0,
+     "size": 1.6,
+     "mesh": "city-kit-suburban/fence-3x3"
+    },
+    {
+     "at": [
+      -0.3,
+      0.5
+     ],
+     "rotate": 45,
+     "size": 0.55,
+     "mesh": "car-kit/tractor"
+    }
+   ]
+  },
+  "place:residential_area": {
+   "parts": [
+    {
+     "at": [
+      -0.45,
+      -0.4
+     ],
+     "rotate": 0,
+     "size": 0.95,
+     "mesh": "city-kit-suburban/building-type-c"
+    },
+    {
+     "at": [
+      0.45,
+      -0.4
+     ],
+     "rotate": 0,
+     "size": 0.95,
+     "mesh": "city-kit-suburban/building-type-h"
+    },
+    {
+     "at": [
+      -0.45,
+      0.45
+     ],
+     "rotate": 180,
+     "size": 0.95,
+     "mesh": "city-kit-suburban/building-type-m"
+    },
+    {
+     "at": [
+      0.45,
+      0.45
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-large"
+    }
+   ]
+  },
+  "place:park": {
+   "parts": [
+    {
+     "at": [
+      -0.5,
+      -0.4
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-large"
+    },
+    {
+     "at": [
+      0.5,
+      -0.5
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-small"
+    },
+    {
+     "at": [
+      0.4,
+      0.4
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-large"
+    },
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 45,
+     "size": 0.7,
+     "mesh": "city-kit-suburban/path-stones-long"
+    },
+    {
+     "at": [
+      -0.4,
+      0.5
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/planter"
+    },
+    {
+     "at": [
+      0.0,
+      0.0
+     ],
+     "rotate": 0,
+     "size": 0.4,
+     "mesh": "city-kit-commercial/detail-parasol-a"
+    }
+   ]
+  },
+  "place:barracks": {
+   "parts": [
+    {
+     "at": [
+      -0.3,
+      -0.35
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-industrial/building-f"
+    },
+    {
+     "at": [
+      0.6,
+      -0.5
+     ],
+     "rotate": 0,
+     "size": 0.7,
+     "mesh": "pirate-kit/tower-watch"
+    },
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 1.6,
+     "mesh": "city-kit-suburban/fence-3x3"
+    },
+    {
+     "at": [
+      0.35,
+      0.5
+     ],
+     "rotate": 90,
+     "size": 0.55,
+     "mesh": "car-kit/truck"
+    }
+   ]
+  },
+  "place:port": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0.3
+     ],
+     "rotate": 0,
+     "size": 1.6,
+     "mesh": "pirate-kit/structure-platform-dock"
+    },
+    {
+     "at": [
+      0.2,
+      0.6
+     ],
+     "rotate": 90,
+     "size": 1.8,
+     "mesh": "pirate-kit/ship-medium"
+    },
+    {
+     "at": [
+      -0.5,
+      -0.4
+     ],
+     "rotate": 0,
+     "size": 0.7,
+     "mesh": "city-kit-industrial/shipping-container-b"
+    }
+   ]
+  },
+  "company:*": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.15
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-g"
+    },
+    {
+     "at": [
+      0.0,
+      0.4
+     ],
+     "rotate": 0,
+     "size": 1.0,
+     "mesh": "city-kit-commercial/detail-awning"
+    }
+   ]
+  },
+  "company:factory": {
+   "parts": [
+    {
+     "at": [
+      -0.1,
+      -0.1
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-industrial/building-c"
+    },
+    {
+     "at": [
+      0.6,
+      -0.55
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-industrial/chimney-medium"
+    }
+   ],
+   "fx": [
+    {
+     "type": "smoke",
+     "at": [
+      0.6,
+      -0.55
+     ],
+     "y": 1.9
+    }
+   ]
+  },
+  "company:mine": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.1
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-industrial/building-q"
+    },
+    {
+     "at": [
+      0.5,
+      0.55
+     ],
+     "rotate": 45,
+     "size": 0.55,
+     "mesh": "car-kit/tractor-shovel"
+    }
+   ]
+  },
+  "company:farm": {
+   "parts": [
+    {
+     "at": [
+      -0.2,
+      -0.2
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-industrial/building-i"
+    },
+    {
+     "at": [
+      0.6,
+      -0.5
+     ],
+     "rotate": 0,
+     "size": 0.8,
+     "mesh": "city-kit-industrial/windmill-low"
+    },
+    {
+     "at": [
+      0.4,
+      0.4
+     ],
+     "rotate": 0,
+     "size": 1.6,
+     "mesh": "city-kit-suburban/fence-2x2"
+    }
+   ]
+  },
+  "company:grocery": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.15
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-a"
+    },
+    {
+     "at": [
+      0,
+      0.4
+     ],
+     "rotate": 0,
+     "size": 1.0,
+     "mesh": "city-kit-commercial/detail-awning"
+    }
+   ]
+  },
+  "company:restaurant": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.2
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-b"
+    },
+    {
+     "at": [
+      0.45,
+      0.55
+     ],
+     "rotate": 0,
+     "size": 0.4,
+     "mesh": "city-kit-commercial/detail-parasol-a"
+    },
+    {
+     "at": [
+      -0.3,
+      0.55
+     ],
+     "rotate": 0,
+     "size": 0.4,
+     "mesh": "city-kit-commercial/detail-parasol-b"
+    }
+   ]
+  },
+  "company:clinic": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.1
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-f"
+    }
+   ]
+  },
+  "company:pharmacy": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.1
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-commercial/building-a"
+    },
+    {
+     "at": [
+      0,
+      0.4
+     ],
+     "rotate": 0,
+     "size": 1.0,
+     "mesh": "city-kit-commercial/detail-overhang"
+    }
+   ]
+  },
+  "company:courier": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.25
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-industrial/building-l"
+    },
+    {
+     "at": [
+      0.3,
+      0.5
+     ],
+     "rotate": 90,
+     "size": 0.55,
+     "mesh": "car-kit/delivery"
+    }
+   ]
+  },
+  "company:tech_studio": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 1.0,
+     "mesh": "city-kit-commercial/building-skyscraper-c"
+    }
+   ]
+  },
+  "company:repair_workshop": {
+   "parts": [
+    {
+     "at": [
+      0,
+      -0.2
+     ],
+     "rotate": 0,
+     "size": 1.5,
+     "mesh": "city-kit-industrial/building-g"
+    },
+    {
+     "at": [
+      0.4,
+      0.5
+     ],
+     "rotate": 90,
+     "size": 0.55,
+     "mesh": "car-kit/sedan"
+    }
+   ]
+  },
+  "home:*": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 1.7,
+     "mesh": "city-kit-suburban/building-type-a"
+    }
+   ]
+  },
+  "vehicle:*": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 2.0,
+     "mesh": "car-kit/sedan"
+    }
+   ]
+  },
+  "vehicle:truck": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 2.0,
+     "mesh": "car-kit/truck"
+    }
+   ]
+  },
+  "vehicle:bus": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 2.0,
+     "mesh": "car-kit/van"
+    }
+   ]
+  },
+  "vehicle:police": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 2.0,
+     "mesh": "car-kit/police"
+    }
+   ]
+  },
+  "vehicle:ambulance": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 2.0,
+     "mesh": "car-kit/ambulance"
+    }
+   ]
+  },
+  "vehicle:taxi": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 2.0,
+     "mesh": "car-kit/taxi"
+    }
+   ]
+  },
+  "decor:*": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-large"
+    }
+   ]
+  },
+  "decor:tree": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-large"
+    }
+   ]
+  },
+  "decor:tree_small": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/tree-small"
+    }
+   ]
+  },
+  "decor:planter": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 0.45,
+     "mesh": "city-kit-suburban/planter"
+    }
+   ]
+  },
+  "decor:container": {
+   "parts": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "rotate": 0,
+     "size": 0.7,
+     "mesh": "city-kit-industrial/shipping-container-c"
+    }
+   ]
+  }
+ },
+ "roads": {
+  "straight": "city-kit-roads/road-straight",
+  "end": "city-kit-roads/road-end",
+  "corner": "city-kit-roads/road-bend",
+  "t": "city-kit-roads/road-intersection",
+  "cross": "city-kit-roads/road-crossroad",
+  "single": "city-kit-roads/road-end-round",
+  "ground": "city-kit-roads/tile-low",
+  "light": "city-kit-roads/light-square"
+ },
+ "road_open": {
+  "straight": 10,
+  "end": 2,
+  "corner": 3,
+  "t": 7,
+  "cross": 15,
+  "single": 0
+ },
+ "dressing": {
+  "dock": "pirate-kit/structure-platform-dock",
+  "ship": "pirate-kit/ship-medium"
+ },
+ "extra_glyphs": [
+  "cheerful",
+  "sun",
+  "person"
+ ],
+ "credits": {
+  "kenney": [
+   "City Kit (Commercial)",
+   "City Kit (Industrial)",
+   "City Kit (Roads)",
+   "City Kit (Suburban)",
+   "Car Kit",
+   "Train Kit",
+   "Factory Kit",
+   "Pirate Kit",
+   "Blaster Kit",
+   "Food Kit",
+   "Racing Kit",
+   "UI Pack",
+   "Game Icons"
+  ]
+ }
+}

@@ -1,5 +1,10 @@
 ; Engine configuration file.
-; Pinned engine: Godot 4.7.2-stable (see docs/tooling.md).
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
@@ -9,18 +14,19 @@ config/name="Torncity"
 config/description="Client for the Torncity city-life MMORPG."
 config/version="0.1.0"
 run/main_scene="res://src/scenes/main.tscn"
-config/features=PackedStringArray("4.7", "GL Compatibility")
-config/icon="res://assets/art/brand/icon.svg"
-boot_splash/bg_color=Color(0.07, 0.094, 0.16, 1)
-boot_splash/show_image=false
 config/use_custom_user_dir=true
 config/custom_user_dir_name="torncity"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+boot_splash/bg_color=Color(0.07, 0.094, 0.16, 1)
+boot_splash/show_image=false
+config/icon="res://assets/art/brand/icon.svg"
 
 [autoload]
 
 Config="*res://src/autoload/config.gd"
 I18n="*res://src/autoload/i18n.gd"
 AppTheme="*res://src/autoload/app_theme.gd"
+AssetService="*res://src/autoload/asset_service.gd"
 AssetLib="*res://src/autoload/asset_lib.gd"
 Content="*res://src/autoload/content.gd"
 Mock="*res://src/mock/mock_server.gd"
@@ -29,6 +35,11 @@ Api="*res://src/autoload/api.gd"
 Realtime="*res://src/autoload/realtime.gd"
 TelegramApp="*res://src/autoload/telegram_app.gd"
 Game="*res://src/autoload/game.gd"
+
+[debug]
+
+gdscript/warnings/unused_parameter=0
+gdscript/warnings/inference_on_variant=1
 
 [display]
 
@@ -40,11 +51,6 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=1
 
-[gui]
-
-common/snap_controls_to_pixels=true
-theme/default_theme_scale=1.0
-
 [input_devices]
 
 pointing/emulate_touch_from_mouse=true
@@ -52,18 +58,10 @@ pointing/emulate_touch_from_mouse=true
 [internationalization]
 
 locale/translations=PackedStringArray("res://i18n/fa.po", "res://i18n/en.po")
-locale/fallback="en"
 
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true
-textures/canvas_textures/default_texture_filter=1
-anti_aliasing/quality/msaa_2d=0
 environment/defaults/default_clear_color=Color(0.07, 0.094, 0.16, 1)
-
-[debug]
-
-gdscript/warnings/inference_on_variant=1
-gdscript/warnings/unused_parameter=0

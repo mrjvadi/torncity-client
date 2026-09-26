@@ -1,9 +1,7 @@
 extends GameScreen
 ## Credits: who made the art and the font (CREDITS.md in the repository).
-## The icon list is read from assets/icons/game-icons/credits.json, written by
-## dev/vendor_game_icons.py, so it always matches the glyphs shipped.
-
-const KENNEY_KITS := "res://assets/kenney"
+## The icon list is the CDN's "data:icon-credits" (written by
+## tools/build_assets/build.py), so it always matches the glyphs served.
 
 
 func build() -> void:
@@ -15,13 +13,15 @@ func build() -> void:
 	var kits := HFlowContainer.new()
 	kits.add_theme_constant_override("h_separation", 8)
 	kits.add_theme_constant_override("v_separation", 8)
-	for d in DirAccess.get_directories_at(KENNEY_KITS):
-		kits.add_child(UI.panel(UI.label(str(d).replace("-", " ").capitalize(), "SmallLabel"), "ChipPanel"))
+	for d in AssetLib.credits.get("kenney", []):
+		kits.add_child(UI.panel(UI.label(str(d), "SmallLabel"), "ChipPanel"))
 	k.add_child(kits)
 
 	var g := card(I18n.t("credits.icons"), "")
 	g.add_child(_text(I18n.t("credits.game_icons")))
-	var data = JSON.parse_string(FileAccess.get_file_as_string("res://assets/icons/game-icons/credits.json"))
+	var data = AssetService.get_asset("data:icon-credits")
+	if data == null and not AssetService.loaded.is_connected(_on_asset):
+		AssetService.loaded.connect(_on_asset)
 	var by_author := {}
 	if data is Dictionary:
 		for e in data.get("icons", []):
@@ -35,8 +35,9 @@ func build() -> void:
 		strip.add_theme_constant_override("h_separation", 6)
 		strip.add_theme_constant_override("v_separation", 6)
 		for icon_name in by_author[a]:
-			var tex = load("res://assets/icons/game-icons/%s.svg" % icon_name)
-			strip.add_child(IconBadge.make({"texture": tex, "tint": AppTheme.col("blue")}, 44))
+			var tex = AssetService.get_asset("glyph:" + icon_name, AssetService.PREFETCH)
+			strip.add_child(IconBadge.make({"texture": tex if tex is Texture2D else AssetLib.icon("*"), "tint": AppTheme.col("blue"),
+				"pending": not (tex is Texture2D), "key": "glyph:" + icon_name}, 44))
 		row.add_child(strip)
 		g.add_child(row)
 
@@ -55,3 +56,8 @@ static func _author_name(folder: String) -> String:
 		"andymeneely": "Andy Meneely", "caro-asercion": "Caro Asercion", "cathelineau": "Cathelineau",
 		"faithtoken": "Faithtoken", "guard13007": "Guard13007", "lord-berandas": "Lord Berandas",
 		"willdabeast": "Willdabeast"}.get(folder, folder.replace("-", " ").capitalize())
+
+
+func _on_asset(k: String) -> void:
+	if k == "data:icon-credits" and is_inside_tree():
+		shell.open_local("credits")

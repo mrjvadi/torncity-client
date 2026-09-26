@@ -25,6 +25,9 @@ var _cars := []
 var _walk := {}         # {path: [Vector3], t, total}
 var _t := 0.0
 var _mats := {}
+var _pending := {}      # asset key -> [plot id | "#roads" | "#dressing" | "#traffic"]
+var _dirty := {}
+var _world_desc := {}
 
 
 func _ready() -> void:
@@ -41,6 +44,8 @@ func _ready() -> void:
 	add_child(_selector)
 	_pin = _make_pin()
 	add_child(_pin)
+	AssetService.loaded.connect(_on_asset)
+	AssetLib.changed.connect(func(): if not _world_desc.is_empty(): build(_world_desc))
 
 
 # -- scene ----------------------------------------------------------------------------------------------
@@ -93,6 +98,8 @@ func _box(sz: Vector3, pos: Vector3, mat: Material, parent: Node3D) -> MeshInsta
 
 ## (Re)build everything from a world description.
 func build(world: Dictionary) -> void:
+	_world_desc = world
+	_pending.clear()
 	model.load_world(world)
 	for c in get_children():
 		if c.has_meta("built"):
@@ -117,6 +124,7 @@ func _ground() -> void:
 	var h := float(model.h)
 	var g := Node3D.new()
 	g.set_meta("built", true)
+	g.set_meta("ground", true)
 	add_child(g)
 	var margin := 40.0
 	var side := str(model.water.get("side", ""))
@@ -132,9 +140,12 @@ func _ground() -> void:
 		var sea := _box(Vector3(w + margin * 4, 0.2, margin * 2), Vector3(0, -0.28, shore + margin), _mat("sea", Color("#1F5E82"), 0.1, 0.15), g)
 		sea.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		# a pier and a few boats, as dressing
-		var dock := AssetLib.scene("res://assets/kenney/pirate-kit/structure-platform-dock.glb")
-		var ship := AssetLib.scene("res://assets/kenney/pirate-kit/ship-medium.glb")
-		if dock and ship:
+		var dock := AssetLib.mesh_scene(str(AssetLib.dressing.get("dock", "")))
+		var ship := AssetLib.mesh_scene(str(AssetLib.dressing.get("ship", "")))
+		if dock == null or ship == null:
+			_wait("mesh:" + str(AssetLib.dressing.get("dock", "")), "#dressing")
+			_wait("mesh:" + str(AssetLib.dressing.get("ship", "")), "#dressing")
+		else:
 			for i in 3:
 				var d := dock.instantiate() as Node3D
 				d.scale = Vector3.ONE * 0.5
@@ -151,15 +162,20 @@ func _build_roads() -> void:
 	var open: Dictionary = AssetLib.road_open
 	for t in model.roads:
 		var piece := WorldModel.road_piece(model.road_mask(t), open)
-		var ps := AssetLib.scene(str(AssetLib.roads.get(piece.kind, "")))
+		var mesh := str(AssetLib.roads.get(piece.kind, ""))
+		var ps := AssetLib.mesh_scene(mesh)
+		var n: Node3D
 		if ps == null:
-			continue
-		var n := ps.instantiate() as Node3D
+			_wait("mesh:" + mesh, "#roads")
+			n = _box(Vector3(1.0, 0.03, 1.0), Vector3.ZERO, _mat("road_stand_in", Color("#5A6068")), _roads)
+			_roads.remove_child(n)
+		else:
+			n = ps.instantiate() as Node3D
 		n.position = model.tile_pos(t)
 		n.rotation_degrees.y = piece.rot
 		_roads.add_child(n)
 	# street lights along the long roads
-	var light := AssetLib.scene(str(AssetLib.roads.get("light", "")))
+	var light := AssetLib.mesh_scene(str(AssetLib.roads.get("light", "")))
 	if light:
 		for t in model.roads:
 			if (t.x + t.y) % 4 == 0 and model.road_mask(t) in [WorldModel.N | WorldModel.S, WorldModel.E | WorldModel.W]:
@@ -182,6 +198,8 @@ func _build_plot(p: Dictionary) -> void:
 		_box(Vector3(pw - 0.06, 0.08, ph - 0.06), Vector3(0, 0.02, 0), _mat("kerb", Color("#6F7680")), root)
 		_box(Vector3(pw - 0.16, 0.08, ph - 0.16), Vector3(0, 0.03, 0), _mat("pave", Color("#99A0AA")), root)
 	var m := AssetLib.instantiate(str(p.get("model", "")))
+	for k in m.get_meta("pending", []):
+		_wait(k, id)
 	if m:
 		var s := minf(pw, ph) / 2.0
 		m.scale = Vector3(s, s, s)
@@ -459,9 +477,9 @@ func _spawn_traffic() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 42
 	for i in mini(8, road_tiles.size() / 12):
-		var n := AssetLib.instantiate(keys[i % keys.size()])
-		if n == null:
-			continue
+		var n := AssetLib.instantiate(keys[i % keys.size()], AssetService.PREFETCH)
+		for k in n.get_meta("pending", []):
+			_wait(k, "#traffic")
 		n.scale = Vector3.ONE * 0.22
 		var holder := Node3D.new()
 		holder.add_child(n)
@@ -522,3 +540,50 @@ func _process(delta: float) -> void:
 		var l = _plots[id].get_meta("label") if _plots[id].has_meta("label") else null
 		if l is Label3D:
 			(l as Label3D).visible = want
+
+
+# -- assets arriving from the CDN -----------------------------------------------------------------------
+func _wait(key: String, what: String) -> void:
+	if key == "mesh:":
+		return
+	var l: Array = _pending.get_or_add(key, [])
+	if not l.has(what):
+		l.append(what)
+
+
+func _on_asset(key: String) -> void:
+	if not _pending.has(key):
+		return
+	for what in _pending[key]:
+		_dirty[what] = true
+	_pending.erase(key)
+	if _dirty.size() > 0 and not is_queued_for_deletion():
+		_flush.call_deferred()
+
+
+## Swap stand-ins for the real models, once per frame at most.
+func _flush() -> void:
+	if _dirty.is_empty():
+		return
+	var d := _dirty
+	_dirty = {}
+	if d.has("#roads"):
+		for c in _roads.get_children():
+			c.queue_free()
+		_build_roads()
+	if d.has("#dressing") or d.has("#roads"):
+		# ground holds the dressing; cheap to rebuild
+		for c in get_children():
+			if c.has_meta("ground"):
+				c.queue_free()
+		_ground()
+	if d.has("#traffic"):
+		_spawn_traffic()
+	for id in d:
+		if str(id).begins_with("#") or not model.plots.has(id):
+			continue
+		if _plots.has(id):
+			_plots[id].queue_free()
+		_build_plot(model.plots[id])
+	if selected_id != "":
+		select(selected_id)

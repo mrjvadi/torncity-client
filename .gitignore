@@ -14,7 +14,8 @@ exports/
 *.x86_64
 
 # Downloaded tools (Godot, Blender, Xvfb) — see docs/tooling.md
-tools/
+tools/*
+!tools/build_assets/
 
 # Local runtime overrides and secrets
 config/client.local.cfg
@@ -31,3 +32,6 @@ __pycache__/
 *.swp
 .vscode/
 .idea/
+
+# Built runtime assets (upload to the CDN; never bundled)
+dist-assets/

@@ -21,7 +21,10 @@ func set_avatar(c: String, name := "", lvl := 0) -> void:
 	code = c
 	level = lvl
 	initials = name.substr(0, 1).to_upper() if name != "" else "?"
-	_tex = AppTheme.tex("avatar/" + c) if c != "" and c != "photo" and c != "none" else null
+	var t = AssetService.get_asset("avatar:" + c) if c != "" and c != "photo" and c != "none" else null
+	_tex = t if t is Texture2D else null
+	if _tex == null and c != "" and not AssetService.loaded.is_connected(_on_asset):
+		AssetService.loaded.connect(_on_asset)
 	queue_redraw()
 
 
@@ -49,3 +52,10 @@ func _draw() -> void:
 		draw_colored_polygon(GlowPanel.rounded_rect(br.grow(2), br.size.y / 2 + 2, 6), AppTheme.col("night"))
 		draw_colored_polygon(GlowPanel.rounded_rect(br, br.size.y / 2, 6), AppTheme.col("saffron"))
 		draw_string(f2, Vector2(br.position.x + (bw - tw) / 2.0, br.position.y + br.size.y / 2 + fs2 * 0.38), t, HORIZONTAL_ALIGNMENT_LEFT, -1, fs2, AppTheme.col("ink"))
+
+
+func _on_asset(k: String) -> void:
+	if k == "avatar:" + code:
+		var t = AssetService.get_asset(k)
+		_tex = t if t is Texture2D else null
+		queue_redraw()

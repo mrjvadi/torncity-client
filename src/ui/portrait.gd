@@ -10,6 +10,7 @@ var _glyph := false
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	AssetService.loaded.connect(func(k): if k == "avatar:" + code: set_avatar(code))
 
 
 func set_avatar(c: String) -> void:
@@ -17,7 +18,8 @@ func set_avatar(c: String) -> void:
 	_tex = null
 	_glyph = false
 	if c != "" and c != "photo" and c != "none":
-		_tex = AppTheme.tex("avatar/" + c)
+		var t = AssetService.get_asset("avatar:" + c)
+		_tex = t if t is Texture2D else null
 	if _tex == null:
 		_tex = AssetLib.icon("action:player")
 		_glyph = true

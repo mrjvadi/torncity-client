@@ -12,6 +12,9 @@ const VERSION := "0.1.0"
 
 var api_url := "http://127.0.0.1:8080"
 var realtime_url := "ws://127.0.0.1:8000/connection/websocket"
+## Where the art lives: <cdn_url>/manifest.json (tools/build_assets). Empty: no
+## downloads, bundled fallbacks only.
+var cdn_url := "http://127.0.0.1:8090"
 var mock := true
 var mock_telegram := false
 var lang := "fa"
@@ -35,6 +38,7 @@ func _load(path: String) -> void:
 	if cf.load(path) != OK:
 		return
 	api_url = str(cf.get_value("server", "api_url", api_url)).trim_suffix("/")
+	cdn_url = str(cf.get_value("server", "cdn_url", cdn_url)).trim_suffix("/")
 	realtime_url = str(cf.get_value("server", "realtime_url", realtime_url))
 	mock = bool(cf.get_value("mode", "mock", mock))
 	mock_telegram = bool(cf.get_value("mode", "mock_telegram", mock_telegram))
@@ -49,6 +53,8 @@ func _apply_args(args: PackedStringArray) -> void:
 			mock = false
 		elif a == "--tg-mock":
 			mock_telegram = true
+		elif a.begins_with("--cdn="):
+			cdn_url = a.substr(6).trim_suffix("/")
 		elif a.begins_with("--api="):
 			api_url = a.substr(6).trim_suffix("/")
 		elif a.begins_with("--ws="):
@@ -67,6 +73,7 @@ func _apply_web_query() -> void:
 		var v := kv[1].uri_decode() if kv.size() > 1 else ""
 		match k:
 			"api": api_url = v.trim_suffix("/")
+			"cdn": cdn_url = v.trim_suffix("/")
 			"ws": realtime_url = v
 			"mock": mock = v != "0"
 			"lang": lang = v
