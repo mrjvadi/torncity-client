@@ -12,6 +12,6 @@ if [ "$1" = "--movie" ]; then
     --write-movie "$2/frame.png" --fixed-fps 24 --quit-after ${FRAMES:-96} res://proto/home_proto.tscn 2>&1 | grep -E "SCRIPT ERROR|ERROR: .*(gd|shader)" | head
 else
   DISPLAY=$DISP "$GODOT" --path . --rendering-driver opengl3 --resolution 720x1280 --position 0,0 \
-    res://proto/home_proto.tscn -- --shot="$(realpath -m "$1")" 2>&1 | grep -E "SCRIPT ERROR|ERROR: .*(gd|shader)|error\(" -A2 | head -30
+    res://proto/home_proto.tscn -- --shot="$(realpath -m "$1")" ${2:-} 2>&1 | grep -E "SCRIPT ERROR|ERROR: .*(gd|shader)|error\(" -A2 | head -30
 fi
 kill $XPID
