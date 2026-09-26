@@ -53,6 +53,9 @@ LINE = {
     "back": lambda: ic("M30 8 L14 24 L30 40"),
     "forward": lambda: ic("M18 8 L34 24 L18 40"),
     "close": lambda: ic("M12 12 L36 36 M36 12 L12 36"),
+    "plus": lambda: ic("M24 10 V38 M10 24 H38"),
+    "minus": lambda: ic("M10 24 H38"),
+    "locate": lambda: ic("M24 4 V12 M24 36 V44 M4 24 H12 M36 24 H44", circles=[(24, 24, 12)], dots=[(24, 24, 4)]),
 }
 
 

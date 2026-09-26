@@ -1,6 +1,10 @@
 extends Control
-## The in-game shell: HUD on top, the current screen in the middle, the tab
-## bar at the bottom, and overlays (toasts, input prompts, a busy strip).
+## The in-game shell: the current screen fills the stage; the HUD and the tab
+## bar float over it on glass (the city shows through), a floating action
+## button when the screen offers one; overlays (toasts, prompts, a busy strip).
+## Screens keep their content clear of the floating chrome via insets().
+
+signal insets_changed
 ## Screens are loaded lazily from res://src/screens/<name>.tscn.
 
 var hud: Hud
@@ -13,7 +17,8 @@ var _busy: ColorRect
 var _safe: MarginContainer
 var side: SideMenu
 var _sidebar: VBoxContainer     # the desktop column: player card + menu
-var _col: VBoxContainer         # the phone column: hud, content, tabs
+var _stage: Control             # the screen area: host + floating HUD, nav, FAB
+var _fab: Fab
 var _drawer: Control            # the phone drawer overlay
 var wide := false
 
@@ -35,24 +40,30 @@ func _ready() -> void:
 	_sidebar.custom_minimum_size = Vector2(500, 0)
 	_sidebar.visible = false
 	row.add_child(_sidebar)
-	var col := UI.vbox(0)
-	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_col = col
-	row.add_child(col)
+	_stage = Control.new()
+	_stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	row.add_child(_stage)
+	host = Control.new()
+	host.set_anchors_preset(Control.PRESET_FULL_RECT)
+	host.clip_contents = true
+	_stage.add_child(host)
 	hud = Hud.new()
 	hud.bell_pressed.connect(func(): open_tab("messages"))
 	hud.avatar_pressed.connect(func(): open_tab("profile"))
 	hud.menu_pressed.connect(toggle_drawer)
-	col.add_child(hud)
 	side = SideMenu.new()
 	side.picked.connect(_menu_pick)
-	host = Control.new()
-	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	host.clip_contents = true
-	col.add_child(host)
 	nav = BottomNav.new()
 	nav.tab_pressed.connect(open_tab)
-	col.add_child(nav)
+	nav.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	nav.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	nav.offset_left = 12
+	nav.offset_right = -12
+	nav.offset_bottom = -12
+	_stage.add_child(nav)
+	nav.resized.connect(func(): insets_changed.emit())
+	hud.resized.connect(func(): insets_changed.emit())
 	_busy = ColorRect.new()
 	_busy.color = AppTheme.col("blue")
 	_busy.custom_minimum_size = Vector2(0, 4)
@@ -96,7 +107,7 @@ func start() -> void:
 ## the menu beside the content.
 func _relayout() -> void:
 	var w := size.x >= WIDE_FROM
-	if w == wide and (side.get_parent() != null):
+	if w == wide and hud.get_parent() != null:
 		return
 	wide = w
 	if hud.get_parent():
@@ -106,18 +117,56 @@ func _relayout() -> void:
 	if wide:
 		close_drawer()
 		_sidebar.visible = true
-		hud.radius = 10
 		hud.set_sidebar(true)
+		hud.set_anchors_preset(Control.PRESET_TOP_LEFT)
 		_sidebar.add_child(hud)
 		side.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		_sidebar.add_child(side)
 	else:
 		_sidebar.visible = false
-		hud.radius = 0
 		hud.set_sidebar(false)
-		_col.add_child(hud)
-		_col.move_child(hud, 0)
-	hud.queue_redraw()
+		_stage.add_child(hud)
+		hud.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		hud.offset_left = 12
+		hud.offset_right = -12
+		hud.offset_top = 10
+	insets_changed.emit.call_deferred()
+
+
+## How much of the stage the floating chrome covers: {top, bottom}.
+func insets() -> Dictionary:
+	var top := 0.0
+	if hud.get_parent() == _stage:
+		top = hud.offset_top + hud.get_combined_minimum_size().y + 10.0
+	var bottom := nav.get_combined_minimum_size().y + 12.0 + 10.0
+	return {"top": top, "bottom": bottom}
+
+
+## A floating action button above the tab bar (on the reading end), or none.
+func set_fab(tex: Texture2D, fn: Callable) -> void:
+	if _fab:
+		_fab.queue_free()
+		_fab = null
+	if tex == null:
+		return
+	_fab = Fab.new()
+	_fab.tex = tex
+	_fab.custom_minimum_size = Vector2(92, 92)
+	_fab.pressed.connect(fn)
+	_stage.add_child(_fab)
+	var b: float = insets().bottom
+	var rtl := I18n.is_rtl()
+	_fab.set_anchors_preset(Control.PRESET_BOTTOM_LEFT if rtl else Control.PRESET_BOTTOM_RIGHT)
+	_fab.offset_bottom = -b - 12
+	_fab.offset_top = -b - 12 - 92
+	if rtl:
+		_fab.offset_left = 20
+		_fab.offset_right = 112
+	else:
+		_fab.offset_right = -20
+		_fab.offset_left = -112
+	if not Config.headless_capture:
+		Fx.pop(_fab, 0.4)
 
 
 func toggle_drawer() -> void:
@@ -215,6 +264,7 @@ func _show(key: String, resp: Dictionary, req: Dictionary) -> void:
 		key = "card"
 	var scn: PackedScene = load(path)
 	var s: GameScreen = scn.instantiate()
+	set_fab(null, Callable())
 	var old := current
 	current = s
 	current_key = key

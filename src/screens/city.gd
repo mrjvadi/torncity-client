@@ -3,10 +3,11 @@ extends GameScreen
 ## there with one button. Realtime arrival notices land the walker.
 
 var map: CityWorldView
-var _status: GlowPanel
 var _status_label: Label
-var _sheet: GlowPanel
+var _top: Control
+var _sheet: GlassPanel
 var _sheet_box: VBoxContainer
+var _zoom: VBoxContainer
 var _walk_end := 0.0
 var _walk_to := ""
 
@@ -17,57 +18,72 @@ func build() -> void:
 	map.place_tapped.connect(_show_place)
 	add_child(map)
 
-	# top: city banner + status
-	var top := UI.vbox(10)
-	top.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	top.offset_left = 18
-	top.offset_right = -18
-	top.offset_top = 14
-	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(top)
-	var bar := UI.hbox(10)
-	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var banner := GlowPanel.new()
-	banner.padding = 14
-	banner.radius = 10
-	banner.top_color = Color(0.13, 0.17, 0.3, 0.92)
-	banner.bottom_color = Color(0.1, 0.13, 0.24, 0.92)
-	banner.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var brow := UI.hbox(10, [UI.icon("city", 44)])
+	# under the HUD: the city and what the player is doing, on glass
+	_top = UI.hbox(10)
+	_top.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	_top.offset_left = 14
+	_top.offset_right = -14
+	_top.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_top)
+	var chip := GlassPanel.new()
+	chip.radius = 22
+	chip.pad = Vector4(14, 10, 18, 10)
+	chip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	chip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var brow := UI.hbox(12)
+	brow.add_child(IconBadge.make(AssetLib.glyph("city:" + str(view.get("city_code", ""))), 52))
 	var bcol := UI.vbox(0)
-	bcol.add_child(UI.label(I18n.name_of("city", str(view.get("city_code", "")), str(view.get("city", ""))), "HeadLabel"))
+	bcol.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var cname := UI.label(Content.name_of("city", str(view.get("city_code", "")), str(view.get("city", ""))), "HeadLabel")
+	cname.add_theme_font_size_override("font_size", 26)
+	bcol.add_child(cname)
 	_status_label = UI.label("", "DimLabel")
+	_status_label.add_theme_font_size_override("font_size", 19)
+	_status_label.add_theme_color_override("font_color", Color("#C9D5E8"))
 	_status_label.clip_text = true
 	bcol.add_child(_status_label)
-	bcol.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	brow.add_child(bcol)
-	banner.add_child(brow)
-	bar.add_child(banner)
+	chip.add_child(brow)
+	_top.add_child(chip)
 	# the server's "other cities" action, if it offers one
 	for a in resp.get("actions", []):
 		if a is Dictionary and str(a.get("command", "")) == "map.cities":
-			var travel := round_button("travel", func(): Game.run_action(a))
-			travel.custom_minimum_size = Vector2(84, 84)
-			bar.add_child(travel)
+			var travel := RoundIconButton.make(AssetLib.icon("action:travel"), func(): Game.run_action(a), 72)
+			_top.add_child(travel)
 			break
-	top.add_child(bar)
 
-	# bottom sheet for the selected place
-	_sheet = GlowPanel.new()
+	# zoom controls on the reading-start edge
+	_zoom = UI.vbox(10)
+	_zoom.set_anchors_preset(Control.PRESET_CENTER_LEFT if not I18n.is_rtl() else Control.PRESET_CENTER_RIGHT)
+	_zoom.grow_vertical = Control.GROW_DIRECTION_BOTH
+	_zoom.add_child(RoundIconButton.make(AppTheme.icon("ln_plus"), func(): map.world.cam.look_at_point(map.world.cam.target, map.world.cam.zoom * 0.7), 64))
+	_zoom.add_child(RoundIconButton.make(AppTheme.icon("ln_minus"), func(): map.world.cam.look_at_point(map.world.cam.target, map.world.cam.zoom / 0.7), 64))
+	_zoom.add_child(RoundIconButton.make(AppTheme.icon("ln_locate"), func(): map.focus(map.here), 64))
+	add_child(_zoom)
+
+	# the sheet for the selected place, above the tab bar
+	_sheet = GlassPanel.new()
+	_sheet.radius = 28
+	_sheet.pad = Vector4(20, 18, 20, 18)
 	_sheet.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	_sheet.offset_left = 14
-	_sheet.offset_right = -14
-	_sheet.offset_bottom = -14
+	_sheet.offset_left = 12
+	_sheet.offset_right = -12
 	_sheet.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_sheet.accent = AppTheme.col("blue", 0.9)
-	_sheet.top_color = Color(0.17, 0.21, 0.37, 0.96)
-	_sheet.bottom_color = Color(0.12, 0.15, 0.28, 0.96)
 	_sheet_box = UI.vbox(12)
 	_sheet.add_child(_sheet_box)
 	add_child(_sheet)
-
+	_place_chrome()
+	if shell and shell.has_signal("insets_changed"):
+		shell.insets_changed.connect(_place_chrome)
 	_apply(resp)
+
+
+func _place_chrome() -> void:
+	var ins := insets()
+	_top.offset_top = ins.top + 4
+	_sheet.offset_bottom = -ins.bottom - 4
+	_zoom.offset_left = 14 if not I18n.is_rtl() else -78
+	_zoom.offset_right = _zoom.offset_left + 64
 
 
 ## A new city_map response while the map is up: update in place (the walker keeps walking).

@@ -37,11 +37,19 @@ func scroll_body(sep := 18) -> VBoxContainer:
 	content = UI.vbox(sep)
 	var m := UI.margin(content, 22, 20, 22, 28)
 	_body_margin = m
-	# keep a readable measure on wide screens: centre at most ~1040 px
-	resized.connect(func():
+	# keep a readable measure on wide screens (~1040 px), and clear the
+	# floating HUD and tab bar (content scrolls under their glass)
+	var fit := func():
 		var side := maxi(22, int((size.x - 1040.0) / 2.0))
 		m.add_theme_constant_override("margin_left", side)
-		m.add_theme_constant_override("margin_right", side))
+		m.add_theme_constant_override("margin_right", side)
+		var ins := insets()
+		m.add_theme_constant_override("margin_top", int(ins.top) + 16)
+		m.add_theme_constant_override("margin_bottom", int(ins.bottom) + (140 if _cta_bar else 28))
+	resized.connect(fit)
+	if shell and shell.has_signal("insets_changed"):
+		shell.insets_changed.connect(fit)
+	fit.call_deferred()
 	var s := UI.scroll(m)
 	s.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(s)
@@ -115,28 +123,20 @@ func tile_columns() -> int:
 	return clampi(int(w / 175.0), 3, 6)
 
 
+func insets() -> Dictionary:
+	return shell.insets() if shell and shell.has_method("insets") else {"top": 0.0, "bottom": 0.0}
+
+
 ## Pin a primary action at the bottom of the screen, above the tab bar.
 func pin_cta(a: Dictionary) -> void:
 	if _cta_bar:
 		_cta_bar.queue_free()
 	var bar := Control.new()
 	bar.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	bar.offset_top = -124
+	var ib: float = insets().bottom
+	bar.offset_bottom = -ib + 10
+	bar.offset_top = -ib - 118
 	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	# a fade so the content scrolls under it
-	var fade := TextureRect.new()
-	var gt := GradientTexture2D.new()
-	gt.fill_from = Vector2(0, 0)
-	gt.fill_to = Vector2(0, 1)
-	var gr := Gradient.new()
-	gr.set_color(0, Color(AppTheme.col("night"), 0.0))
-	gr.set_color(1, Color(AppTheme.col("night"), 0.96))
-	gt.gradient = gr
-	fade.texture = gt
-	fade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	fade.stretch_mode = TextureRect.STRETCH_SCALE
-	fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bar.add_child(fade)
 	var b := ActionKit.cta(a, self)
 	b.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	b.offset_left = 22
@@ -147,7 +147,7 @@ func pin_cta(a: Dictionary) -> void:
 	add_child(bar)
 	_cta_bar = bar
 	if _body_margin:
-		_body_margin.add_theme_constant_override("margin_bottom", 140)
+		_body_margin.add_theme_constant_override("margin_bottom", int(ib) + 140)
 	if not Config.headless_capture:
 		b.modulate.a = 0.0
 		b.create_tween().tween_property(b, "modulate:a", 1.0, 0.2)

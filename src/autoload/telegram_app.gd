@@ -139,6 +139,10 @@ func open_telegram_link(url: String) -> void:
 		OS.shell_open(url)
 
 
+## A haptic tick: Telegram's HapticFeedback in the Mini App, the device's
+## vibrator on Android/iOS builds, nothing elsewhere.
 func haptic(kind := "light") -> void:
 	if _webapp != null and _at_least("6.1") and _webapp.HapticFeedback != null:
 		_webapp.HapticFeedback.impactOccurred(kind)
+	elif OS.has_feature("mobile"):
+		Input.vibrate_handheld({"light": 12, "medium": 22, "heavy": 35}.get(kind, 15))
