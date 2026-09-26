@@ -112,3 +112,69 @@ follows the time of day in Tehran.
 - Rendered place sprites are 512 px (2× the art space) PNGs with mipmaps; the
   vector originals stay as fallbacks.
 - Fonts are WOFF2 (four weights of Vazirmatn, ~200 KB).
+
+
+## Data-driven client
+
+The client holds no game content: no item, place, city, company type, price or
+which-buttons list. It owns only the visual library, the UI components and the
+generic renderers.
+
+### Content catalogue — `GET /api/v1/content?since=<version>`
+
+Cached in `user://content.json`; refetched on start and on a realtime
+`{type:"content", version}` message. Shape the client needs:
+
+```json
+{
+  "version": "2026-09-26#42",
+  "langs": ["fa", "en"],
+  "entries": {
+    "city":         [{"code": "fenwick_span", "name": {"fa": "فنویک اسپن", "en": "Fenwick Span"}, "asset": {"icon": "city:fenwick_span"}}],
+    "place":        [{"code": "bazaar", "name": {...}, "kind": "place", "asset": {"model": "place:bazaar", "icon": "place:bazaar"}}],
+    "company_type": [{"code": "factory", "name": {...}, "asset": {"model": "company:factory", "icon": "company:factory"}}],
+    "item":         [{"code": "pistol", "name": {...}, "category": "weapon", "asset": {"icon": "item:pistol"}}],
+    "service":      [{"code": "bank", "name": {...}, "asset": {"icon": "service:bank"}}],
+    "mode":         [{"code": "flight", "name": {...}, "asset": {"icon": "mode:flight"}}],
+    "vehicle": [...], "crime": [...], "course": [...], "military_unit": [...]
+  },
+  "ui": {"tabs": [{"key": "market", "label": {"fa": "بازار", "en": "Market"}, "command": "market.list", "icon": "nav:market"}]}
+}
+```
+
+An up-to-date client gets `{"version": "…", "unchanged": true}`. `category`
+(items) and `kind` (places) are used for icon fallbacks. Any table name works.
+
+### World — `GET /api/v1/world/city?code=<city>`
+
+```json
+{"city": "fenwick_span", "version": 12, "grid": {"w": 16, "h": 16}, "water": {"side": "south", "width": 6},
+ "roads": [[0, 0], [1, 0], ...],
+ "plots": [{"id": "company:1027", "x": 4, "y": 7, "w": 2, "h": 2, "kind": "company", "model": "company:drone_foundry", "rot": 0,
+            "ref": {"table": "company_type", "code": "drone_foundry", "company_id": 1027, "owner": "Sara"},
+            "name": {"fa": "پرواز نو", "en": "New Flight Drones"}}]}
+```
+
+Kinds: `place | company | home | decor`. Updates on `city:<code>`:
+`{type:"world.plot", city, op:"upsert", plot}` or `{…, op:"remove", id}`. A tap on
+a company plot sends `company.show {id}`; on a place, the place sheet shows the
+server's own actions for it (`args.place`).
+
+### Actions and views
+
+Actions: `{command, args, label, kind, icon, group}` —
+`kind: primary | secondary | danger | confirm | navigation | back | refresh`,
+`icon`: an asset key (`action:work`), `group`: a heading for tiles, or `"rows"` for
+per-row actions a native screen places on its rows (matched by args: `listing`,
+`item`, `id`, `crime`, `course`, `place`). Until the server sends `kind`/`icon`,
+the client infers them (ActionKit). Placement: primary → pinned CTA; back/refresh
+→ header; danger/confirm → confirm sheet; the rest → icon tile grid.
+
+Native views (mock fixtures today, `src/mock/mock_server.gd`):
+`market {buy: [{id, item, price, qty, seller, change}], sell: [{item, qty, best_bid}], fee_bps}`,
+`company_list {companies: [{id, name, type, level, staff, cash, producing: {item, progress, eta_seconds, per_hour}}]}`,
+`crime_hub {heat, jail_seconds, crimes: [{crime, chance, energy, reward, cooldown_seconds}]}`,
+`education {intelligence, courses: [{course, status, progress, seconds_left, fee}]}`.
+Anything else renders through the generic screen (hero + parsed cards + tile grid).
+
+Runtime art: see [assets.md](assets.md).
