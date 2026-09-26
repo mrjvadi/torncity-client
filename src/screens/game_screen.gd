@@ -239,23 +239,36 @@ func pill(text: String, style: String, fn: Callable) -> Button:
 
 
 ## A segmented control: pills in a rounded track; calls fn(index) on change.
+## The pressed pill restyles itself immediately, independent of whatever
+## `fn` does with the rest of the screen (it may only swap a table's rows).
 func segmented(labels: Array, active: int, fn: Callable) -> Control:
 	var track := PanelContainer.new()
 	track.theme_type_variation = "InsetPanel"
 	var row := UI.hbox(6)
 	track.add_child(row)
+	var buttons: Array[Button] = []
+	var restyle := func(sel: int):
+		for i in buttons.size():
+			var bb := buttons[i]
+			bb.theme_type_variation = "Button" if i == sel else "NavButton"
+			if i == sel:
+				bb.remove_theme_color_override("font_color")
+			else:
+				bb.add_theme_color_override("font_color", AppTheme.col("text_dim"))
 	for i in labels.size():
 		var b := Button.new()
-		b.theme_type_variation = "Button" if i == active else "NavButton"
 		b.text = str(labels[i])
 		b.focus_mode = Control.FOCUS_NONE
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.custom_minimum_size.y = 60
 		b.add_theme_font_size_override("font_size", 22)
-		if i != active:
-			b.add_theme_color_override("font_color", AppTheme.col("text_dim"))
-		b.pressed.connect(func(): fn.call(i))
+		b.pressed.connect(func():
+			restyle.call(i)
+			fn.call(i))
 		row.add_child(b)
+		buttons.append(b)
+	restyle.call(active)
+	track.set_meta("select", restyle)   # so a caller can switch tabs programmatically
 	return track
 
 

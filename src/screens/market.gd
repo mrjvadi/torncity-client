@@ -6,15 +6,17 @@ extends GameScreen
 
 var tab := 0
 var _table: VBoxContainer
+var _seg: Control
 
 
 func build() -> void:
 	scroll_body(16)
 	content.add_child(title_row(TextIcons.strip(str(resp.get("text", "")).split("\n")[0]), "market"))
 	maybe_notice()
-	content.add_child(segmented([I18n.t("market.buy"), I18n.t("market.sell")], tab, func(i):
+	_seg = segmented([I18n.t("market.buy"), I18n.t("market.sell")], tab, func(i):
 		tab = i
-		_fill()))
+		_fill())
+	content.add_child(_seg)
 	var box := panel_card(8)
 	_table = box
 	_fill()
@@ -25,6 +27,15 @@ func build() -> void:
 	if g.get_child_count() > 0:
 		content.add_child(g)
 	Fx.stagger_in(content)
+
+
+## Switch tab programmatically (used by the screenshot harness) with the
+## same restyle a real tap gets.
+func select_tab(i: int) -> void:
+	tab = i
+	if _seg:
+		(_seg.get_meta("select") as Callable).call(i)
+	_fill()
 
 
 func _fill() -> void:
