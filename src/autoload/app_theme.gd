@@ -25,12 +25,15 @@ var font_black: Font
 var theme: Theme
 var manifest := {}
 var _tex_cache := {}
+var ui_kit := {}
 
 
 func _ready() -> void:
 	_load_palette()
 	_load_fonts()
 	_load_manifest()
+	var k = JSON.parse_string(FileAccess.get_file_as_string("res://assets/ui/kit.json"))
+	ui_kit = k if k is Dictionary else {}
 	theme = _build_theme()
 	get_tree().root.theme = theme
 
@@ -163,7 +166,7 @@ func _build_theme() -> Theme:
 	t.set_constant("line_spacing", "Label", 6)
 	for v in [["TitleLabel", font_black, SIZE_TITLE, text], ["HeadLabel", font_bold, 28, text],
 			["DimLabel", font_regular, SIZE_SMALL, dim], ["SmallLabel", font_medium, SIZE_SMALL, text],
-			["HugeLabel", font_black, SIZE_HUGE, text], ["MoneyLabel", font_bold, 30, col("saffron")]]:
+			["HugeLabel", font_black, SIZE_HUGE, text], ["MoneyLabel", font_bold, 30, col("yellow")]]:
 		t.set_type_variation(v[0], "Label")
 		t.set_font(&"font", v[0], v[1])
 		t.set_font_size(&"font_size", v[0], v[2])
@@ -178,11 +181,13 @@ func _build_theme() -> Theme:
 	t.set_constant("line_separation", "RichTextLabel", 10)
 
 	# Buttons: primary (turquoise), and variations
-	_button_style(t, "Button", col("turquoise"), col("ink"))
-	_button_style(t, "GhostButton", col("panel_hi"), text)
-	_button_style(t, "GoldButton", col("saffron"), col("ink"))
-	_button_style(t, "DangerButton", col("pomegranate"), col("white"))
-	_button_style(t, "ActionButton", col("panel_hi"), text)
+	# Buttons: the 9-slice kit (assets/ui, art_src/ui_kit.py). Primary is blue;
+	# "GoldButton" is the green buy/confirm button of the reference kit.
+	_button_style(t, "Button", "primary", col("white"))
+	_button_style(t, "GhostButton", "ghost", text)
+	_button_style(t, "GoldButton", "buy", col("white"))
+	_button_style(t, "DangerButton", "danger", col("white"))
+	_button_style(t, "ActionButton", "ghost", text)
 	t.set_font("font", "Button", font_bold)
 	t.set_font_size("font_size", "Button", SIZE_BODY)
 	t.set_constant("h_separation", "Button", 12)
@@ -196,25 +201,21 @@ func _build_theme() -> Theme:
 	t.set_font("font", "NavButton", font_medium)
 	t.set_font_size("font_size", "NavButton", 19)
 	t.set_color("font_color", "NavButton", dim)
-	t.set_color("font_pressed_color", "NavButton", col("turquoise"))
+	t.set_color("font_pressed_color", "NavButton", col("blue").lightened(0.25))
 	t.set_color("font_hover_color", "NavButton", text)
 	t.set_color("font_focus_color", "NavButton", dim)
-	t.set_color("font_hover_pressed_color", "NavButton", col("turquoise"))
+	t.set_color("font_hover_pressed_color", "NavButton", col("blue").lightened(0.25))
 
 	# Panels
-	t.set_stylebox("panel", "PanelContainer", box(col("panel"), 26, col("line"), 1, 14, 22))
-	t.set_type_variation("CardPanel", "PanelContainer")
-	t.set_stylebox("panel", "CardPanel", box(col("panel"), 26, col("line", 0.8), 1, 16, 24))
-	t.set_type_variation("InsetPanel", "PanelContainer")
-	t.set_stylebox("panel", "InsetPanel", box(col("night"), 18, col("line", 0.6), 1, 0, 16))
-	t.set_type_variation("ChipPanel", "PanelContainer")
-	t.set_stylebox("panel", "ChipPanel", box(col("panel_hi"), 40, Color(0, 0, 0, 0), 0, 0, 10))
-	t.set_type_variation("ToastPanel", "PanelContainer")
-	t.set_stylebox("panel", "ToastPanel", box(col("panel_hi"), 22, col("turquoise", 0.8), 2, 18, 18))
+	t.set_stylebox("panel", "PanelContainer", kitbox("panel", 20, 18))
+	for v in [["CardPanel", "panel", 22, 20], ["InsetPanel", "panel_flat", 16, 14], ["ChipPanel", "chip", 12, 6],
+			["ToastPanel", "panel_header", 18, 16], ["SlotPanel", "slot", 10, 10], ["HeaderPanel", "panel_header", 16, 12]]:
+		t.set_type_variation(v[0], "PanelContainer")
+		t.set_stylebox("panel", v[0], kitbox(v[1], v[2], v[3]))
 
 	# LineEdit
-	var le := box(col("night"), 18, col("line"), 2, 0, 18)
-	var le_focus := box(col("night"), 18, col("turquoise"), 2, 0, 18)
+	var le := kitbox("input", 18, 12)
+	var le_focus := kitbox("input_focus", 18, 12)
 	t.set_stylebox("normal", "LineEdit", le)
 	t.set_stylebox("focus", "LineEdit", le_focus)
 	t.set_stylebox("read_only", "LineEdit", le)
@@ -222,8 +223,8 @@ func _build_theme() -> Theme:
 	t.set_font_size("font_size", "LineEdit", 34)
 	t.set_color("font_color", "LineEdit", text)
 	t.set_color("font_placeholder_color", "LineEdit", Color(dim, 0.6))
-	t.set_color("caret_color", "LineEdit", col("turquoise"))
-	t.set_color("selection_color", "LineEdit", col("turquoise", 0.35))
+	t.set_color("caret_color", "LineEdit", col("blue"))
+	t.set_color("selection_color", "LineEdit", col("blue", 0.35))
 
 	# ProgressBar (vitals)
 	var pb_bg := box(col("ink", 0.7), 10, Color(0, 0, 0, 0), 0, 0, 0)
@@ -247,20 +248,38 @@ func _build_theme() -> Theme:
 	return t
 
 
-func _button_style(t: Theme, type: String, face: Color, fg: Color) -> void:
+func _button_style(t: Theme, type: String, kit_name: String, fg: Color) -> void:
 	if type != "Button":
 		t.set_type_variation(type, "Button")
-	t.set_stylebox("normal", type, button_box(face))
-	t.set_stylebox("hover", type, button_box(face.lightened(0.07)))
-	t.set_stylebox("pressed", type, button_box(face.darkened(0.06), true))
-	t.set_stylebox("hover_pressed", type, button_box(face.darkened(0.06), true))
+	t.set_stylebox("normal", type, kitbox("btn_%s_normal" % kit_name, 22, 10))
+	t.set_stylebox("hover", type, kitbox("btn_%s_hover" % kit_name, 22, 10))
+	t.set_stylebox("pressed", type, kitbox("btn_%s_pressed" % kit_name, 22, 10))
+	t.set_stylebox("hover_pressed", type, kitbox("btn_%s_pressed" % kit_name, 22, 10))
+	t.set_stylebox("disabled", type, kitbox("btn_%s_disabled" % kit_name, 22, 10))
 	t.set_stylebox("focus", type, StyleBoxEmpty.new())
-	var dis := button_box(face.darkened(0.45))
-	t.set_stylebox("disabled", type, dis)
 	for k in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
 		t.set_color(k, type, fg)
 	t.set_color("font_disabled_color", type, Color(fg, 0.45))
-	t.set_color("icon_normal_color", type, Color.WHITE)
-	t.set_color("icon_pressed_color", type, Color.WHITE)
-	t.set_color("icon_hover_color", type, Color.WHITE)
-	t.set_color("icon_focus_color", type, Color.WHITE)
+	t.set_constant("outline_size", type, 0)
+	for k in ["icon_normal_color", "icon_pressed_color", "icon_hover_color", "icon_focus_color"]:
+		t.set_color(k, type, Color.WHITE)
+
+
+## A 9-slice StyleBoxTexture from the UI kit, with content padding (h, v).
+func kitbox(name: String, pad_h := 16, pad_v := 12) -> StyleBox:
+	var path := "res://assets/ui/%s.png" % name
+	if not ResourceLoader.exists(path):
+		return box(col("panel"), 8, col("line"), 1, 0, pad_h)
+	var sb := StyleBoxTexture.new()
+	sb.texture = load(path)
+	var info: Dictionary = ui_kit.get(name, {})
+	var m := float(info.get("margin", 12))
+	sb.set_texture_margin_all(m)
+	var sh := float(info.get("shadow", 0))
+	# a drop shadow drawn outside the box: pull it out of the content rect
+	sb.set_expand_margin_all(sh)
+	sb.content_margin_left = pad_h
+	sb.content_margin_right = pad_h
+	sb.content_margin_top = pad_v
+	sb.content_margin_bottom = pad_v
+	return sb

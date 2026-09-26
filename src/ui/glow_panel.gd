@@ -5,15 +5,15 @@ extends PanelContainer
 ## shadow, a vertical gradient face, a 1 px inner highlight along the top edge
 ## and a hairline border. Children are laid out like a PanelContainer's.
 
-@export var top_color := Color("#2C3760"):
+@export var top_color := Color("#1A2A43"):
 	set(v): top_color = v; queue_redraw()
-@export var bottom_color := Color("#20284A"):
+@export var bottom_color := Color("#0F1A2B"):
 	set(v): bottom_color = v; queue_redraw()
-@export var border_color := Color(1, 1, 1, 0.08):
+@export var border_color := Color("#2B4468"):
 	set(v): border_color = v; queue_redraw()
-@export var highlight := Color(1, 1, 1, 0.12):
+@export var highlight := Color(0.42, 0.6, 0.9, 0.35):
 	set(v): highlight = v; queue_redraw()
-@export var radius := 26.0:
+@export var radius := 10.0:
 	set(v): radius = v; queue_redraw()
 @export var shadow := 16.0:
 	set(v): shadow = v; queue_redraw()

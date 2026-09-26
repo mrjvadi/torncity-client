@@ -1,0 +1,13 @@
+{
+ "notes": "Client-owned visual library: asset key -> scene/icon. '<category>:*' is the category fallback, '*' the global one. Keys come from the server's content catalogue.",
+ "actions": {
+  "*": "ln_menu", "player": "ln_profile", "map": "ln_map", "bank": "ln_bank", "job": "ln_work", "life": "ln_life",
+  "inventory": "ln_inventory", "skills": "ln_skills", "education": "ln_education", "crime": "ln_crime",
+  "property": "ln_property", "health": "ln_health", "faction": "ln_factions", "social": "ln_friends",
+  "gov": "ln_government", "shop": "ln_shop", "market": "ln_market", "company": "ln_companies",
+  "mission": "ln_missions", "combat": "ln_attack", "travel": "ln_travel", "production": "ln_produce",
+  "research": "ln_research", "auction": "ln_market", "achievement": "ln_missions", "election": "ln_government"
+ },
+ "icons": {"*": "item"},
+ "models": {}
+}

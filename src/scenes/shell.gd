@@ -11,6 +11,13 @@ var current: GameScreen
 var current_key := ""
 var _busy: ColorRect
 var _safe: MarginContainer
+var side: SideMenu
+var _sidebar: VBoxContainer     # the desktop column: player card + menu
+var _col: VBoxContainer         # the phone column: hud, content, tabs
+var _drawer: Control            # the phone drawer overlay
+var wide := false
+
+const WIDE_FROM := 1100.0
 
 
 func _ready() -> void:
@@ -22,12 +29,23 @@ func _ready() -> void:
 	_safe = MarginContainer.new()
 	_safe.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_safe)
+	var row := UI.hbox(0)
+	_safe.add_child(row)
+	_sidebar = UI.vbox(12)
+	_sidebar.custom_minimum_size = Vector2(470, 0)
+	_sidebar.visible = false
+	row.add_child(_sidebar)
 	var col := UI.vbox(0)
-	_safe.add_child(col)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_col = col
+	row.add_child(col)
 	hud = Hud.new()
-	hud.bell_pressed.connect(func(): open_local("notifications"))
-	hud.avatar_pressed.connect(func(): open_tab("me"))
+	hud.bell_pressed.connect(func(): open_tab("messages"))
+	hud.avatar_pressed.connect(func(): open_tab("profile"))
+	hud.menu_pressed.connect(toggle_drawer)
 	col.add_child(hud)
+	side = SideMenu.new()
+	side.picked.connect(_menu_pick)
 	host = Control.new()
 	host.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	host.clip_contents = true
@@ -36,12 +54,14 @@ func _ready() -> void:
 	nav.tab_pressed.connect(open_tab)
 	col.add_child(nav)
 	_busy = ColorRect.new()
-	_busy.color = AppTheme.col("turquoise")
+	_busy.color = AppTheme.col("blue")
 	_busy.custom_minimum_size = Vector2(0, 4)
 	_busy.visible = false
 	host.add_child(_busy)
 	toasts = ToastLayer.new()
 	add_child(toasts)
+	resized.connect(_relayout)
+	_relayout.call_deferred()
 
 	layout_direction = I18n.direction()
 	Game.response.connect(_on_response)
@@ -69,23 +89,91 @@ func _apply_insets() -> void:
 
 
 func start() -> void:
-	open_tab("city")
+	open_tab("map")
+
+
+## Phone: HUD on top, drawer menu. Desktop: a sidebar with the player card and
+## the menu beside the content.
+func _relayout() -> void:
+	var w := size.x >= WIDE_FROM
+	if w == wide and (side.get_parent() != null):
+		return
+	wide = w
+	if hud.get_parent():
+		hud.get_parent().remove_child(hud)
+	if side.get_parent():
+		side.get_parent().remove_child(side)
+	if wide:
+		close_drawer()
+		_sidebar.visible = true
+		hud.radius = 10
+		_sidebar.add_child(hud)
+		side.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		_sidebar.add_child(side)
+	else:
+		_sidebar.visible = false
+		hud.radius = 0
+		_col.add_child(hud)
+		_col.move_child(hud, 0)
+	hud.queue_redraw()
+
+
+func toggle_drawer() -> void:
+	if wide:
+		return
+	if _drawer:
+		close_drawer()
+		return
+	_drawer = Control.new()
+	_drawer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var dim := ColorRect.new()
+	dim.color = Color(0.02, 0.04, 0.08, 0.6)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dim.gui_input.connect(func(e): if e is InputEventMouseButton and e.pressed: close_drawer())
+	_drawer.add_child(dim)
+	side.size_flags_vertical = Control.SIZE_FILL
+	_drawer.add_child(side)
+	var w := minf(size.x * 0.78, 520.0)
+	side.size = Vector2(w, size.y - 40)
+	var x := size.x - w - 10 if I18n.is_rtl() else 10.0
+	side.position = Vector2(x, 20)
+	add_child(_drawer)
+	if not Config.headless_capture:
+		var from := x + (w if I18n.is_rtl() else -w)
+		side.position.x = from
+		side.create_tween().tween_property(side, "position:x", x, 0.28).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		Fx.fade_in(dim, 0.2)
+
+
+func close_drawer() -> void:
+	if _drawer:
+		_drawer.remove_child(side)
+		_drawer.queue_free()
+		_drawer = null
+
+
+func _menu_pick(action: Dictionary) -> void:
+	close_drawer()
+	var command := str(action.get("command", ""))
+	if command.begins_with("@"):
+		open_local(command.substr(1))
+	else:
+		Game.run_action(action)
 
 
 func open_tab(tab: String) -> void:
 	nav.select(tab)
-	var cmd: String = ViewRouter.TABS[tab]["command"]
-	if cmd == "":
-		open_local("more")
+	var info: Dictionary = ViewRouter.TABS[tab]
+	if info["command"] == "":
+		open_local(info.get("local", "more"))
 	else:
-		Game.run(cmd)
+		Game.run(info["command"])
 
 
 ## Screens that live only in the client.
 func open_local(name: String) -> void:
 	var key: String = {"bell": "notifications", "settings": "settings", "more": "more", "notifications": "notifications"}.get(name, name)
-	if key == "notifications" or key == "settings":
-		nav.select("more")
+	nav.select("messages" if key == "notifications" else "")
 	_show(key, {"ok": true, "screen": key, "text": "", "view": {}, "actions": []}, {"command": "", "args": {}})
 
 
@@ -111,6 +199,7 @@ func _on_response(resp: Dictionary, req: Dictionary) -> void:
 		Game.run("map.list", {}, false)
 		return
 	nav.select(ViewRouter.tab_for(key, cmd))
+	close_drawer()
 	if key == current_key and current and current.has_method("update_response"):
 		current.update_response(resp, req)
 		return
@@ -186,7 +275,7 @@ func _ask(action: Dictionary) -> void:
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(dim)
 	var p := GlowPanel.new()
-	p.accent = AppTheme.col("turquoise")
+	p.accent = AppTheme.col("blue")
 	p.padding = 28
 	var box := UI.vbox(18)
 	box.add_child(UI.rich(str(input.get("text", ""))))

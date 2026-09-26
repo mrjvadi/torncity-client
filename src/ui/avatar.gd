@@ -4,7 +4,7 @@ extends Control
 ## with an optional level badge. Unknown or "photo"/"none" avatars show initials.
 
 @export var diameter := 92.0
-@export var ring := Color("#2EC4B6")
+@export var ring := Color("#2F80ED")
 
 var code := ""
 var initials := ""

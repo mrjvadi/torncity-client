@@ -18,10 +18,10 @@ func _ready() -> void:
 func show_toast(text: String, kind := "notice", icon_name := "") -> void:
 	var accent := {"announce": "saffron", "error": "pomegranate", "ok": "leaf"}.get(kind, "turquoise")
 	var p := GlowPanel.new()
-	p.top_color = Color("#34416F")
-	p.bottom_color = Color("#27315A")
+	p.top_color = Color("#1F3150")
+	p.bottom_color = Color("#16243A")
 	p.accent = AppTheme.col(accent)
-	p.radius = 24
+	p.radius = 10
 	p.padding = 18
 	p.shadow = 20
 	p.mouse_filter = Control.MOUSE_FILTER_STOP

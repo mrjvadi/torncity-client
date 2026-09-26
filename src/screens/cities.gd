@@ -9,7 +9,7 @@ func build() -> void:
 	maybe_notice()
 	var origin := I18n.name_of("city", str(v.get("origin_code", "")), str(v.get("origin", "")))
 	var here := GlowPanel.new()
-	here.accent = AppTheme.col("turquoise")
+	here.accent = AppTheme.col("blue")
 	here.add_child(UI.hbox(12, [UI.icon("pin", 46), UI.label(I18n.t("travel.from", {"city": origin}), "HeadLabel")]))
 	content.add_child(here)
 	if v.get("travelling", false):

@@ -19,20 +19,23 @@ const NATIVE := {
 	"life": "life",
 }
 
-## Bottom navigation tabs -> the command each opens.
+## Bottom navigation tabs -> the command each opens ("" = a client screen).
 const TABS := {
-	"city": {"command": "map.list", "icon": "city", "label": "nav.city"},
-	"me": {"command": "player.profile.get", "icon": "profile", "label": "nav.me"},
-	"work": {"command": "job.status", "icon": "work", "label": "nav.work"},
-	"bank": {"command": "bank.show", "icon": "bank", "label": "nav.bank"},
-	"more": {"command": "", "icon": "grid", "label": "nav.more"},
+	"world": {"command": "map.cities", "icon": "ln_world", "label": "nav.world"},
+	"map": {"command": "map.list", "icon": "ln_map", "label": "nav.map"},
+	"companies": {"command": "company.list", "icon": "ln_companies", "label": "nav.companies"},
+	"market": {"command": "market.list", "icon": "ln_market", "label": "nav.market"},
+	"inventory": {"command": "inventory.show", "icon": "ln_inventory", "label": "nav.inventory"},
+	"messages": {"command": "", "local": "notifications", "icon": "ln_messages", "label": "nav.messages"},
+	"profile": {"command": "player.profile.get", "icon": "ln_profile", "label": "nav.profile"},
 }
+const TAB_ORDER := ["world", "map", "companies", "market", "inventory", "messages", "profile"]
 
 ## Which tab a client screen belongs to (for highlighting the nav).
 const TAB_OF := {
-	"city": "city", "cities": "city", "travel_options": "city", "travel_status": "city",
-	"profile": "me", "life": "me", "inventory": "more",
-	"job": "work", "bank": "bank",
+	"city": "map", "cities": "world", "travel_options": "world", "travel_status": "world",
+	"profile": "profile", "life": "profile", "job": "profile", "bank": "profile",
+	"inventory": "inventory", "notifications": "messages", "market": "market",
 }
 
 
@@ -50,4 +53,9 @@ static func tab_for(scene: String, command := "") -> String:
 	for t in TABS:
 		if TABS[t]["command"] != "" and TABS[t]["command"] == command:
 			return t
-	return "more"
+	var head := command.split(".")[0]
+	if head == "company":
+		return "companies"
+	if head in ["market", "shop", "auction"]:
+		return "market"
+	return ""

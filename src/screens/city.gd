@@ -35,7 +35,7 @@ func build() -> void:
 	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var banner := GlowPanel.new()
 	banner.padding = 14
-	banner.radius = 22
+	banner.radius = 10
 	banner.top_color = Color(0.13, 0.17, 0.3, 0.92)
 	banner.bottom_color = Color(0.1, 0.13, 0.24, 0.92)
 	banner.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -62,7 +62,7 @@ func build() -> void:
 	_sheet.offset_right = -14
 	_sheet.offset_bottom = -14
 	_sheet.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_sheet.accent = AppTheme.col("turquoise", 0.9)
+	_sheet.accent = AppTheme.col("blue", 0.9)
 	_sheet.top_color = Color(0.17, 0.21, 0.37, 0.96)
 	_sheet.bottom_color = Color(0.12, 0.15, 0.28, 0.96)
 	_sheet_box = UI.vbox(12)

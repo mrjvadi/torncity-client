@@ -433,3 +433,30 @@ msgstr "Property"
 msgid "worth.savings"
 msgstr "Savings"
 
+
+msgid "nav.world"
+msgstr "World"
+
+msgid "nav.map"
+msgstr "Map"
+
+msgid "nav.companies"
+msgstr "Companies"
+
+msgid "nav.market"
+msgstr "Market"
+
+msgid "nav.inventory"
+msgstr "Inventory"
+
+msgid "nav.messages"
+msgstr "Messages"
+
+msgid "nav.profile"
+msgstr "Profile"
+
+msgid "stat.happiness"
+msgstr "Happiness"
+
+msgid "menu.title"
+msgstr "Menu"

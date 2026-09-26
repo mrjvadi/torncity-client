@@ -17,8 +17,8 @@ func build() -> void:
 		return
 	var j: Dictionary = v.get("job", {}) if v.get("job") is Dictionary else {}
 	var hero := GlowPanel.new()
-	hero.top_color = Color("#6B3B2A")
-	hero.bottom_color = Color("#3C2622")
+	hero.top_color = Color("#1F3150")
+	hero.bottom_color = Color("#132139")
 	hero.accent = AppTheme.col("brick")
 	hero.padding = 24
 	var hv := UI.vbox(10)
@@ -32,7 +32,7 @@ func build() -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	_ring = Ring.new()
 	_ring.icon_name = "hourglass"
-	_ring.color = AppTheme.col("turquoise")
+	_ring.color = AppTheme.col("blue")
 	_ring.custom_minimum_size = Vector2(230, 270)
 	var sh = v.get("shift")
 	if sh is Dictionary:

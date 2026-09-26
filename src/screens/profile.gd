@@ -8,9 +8,9 @@ func build() -> void:
 	scroll_body(18)
 	var v := view
 	var hero := GlowPanel.new()
-	hero.top_color = Color("#34427A")
-	hero.bottom_color = Color("#232C52")
-	hero.accent = AppTheme.col("turquoise", 0.8)
+	hero.top_color = Color("#1F3150")
+	hero.bottom_color = Color("#132139")
+	hero.accent = AppTheme.col("blue", 0.8)
 	hero.padding = 24
 	var hbox := UI.hbox(20)
 	var av := AvatarBadge.new()
@@ -41,7 +41,7 @@ func build() -> void:
 	if nxt > 0:
 		var bar := StatBar.new()
 		bar.icon_name = "xp"
-		bar.color = AppTheme.col("turquoise")
+		bar.color = AppTheme.col("blue")
 		bar.set_value(xp, nxt, I18n.of(xp, nxt))
 		hv.add_child(bar)
 	hero.add_child(hv)

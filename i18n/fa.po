@@ -433,3 +433,30 @@ msgstr "ملک"
 msgid "worth.savings"
 msgstr "پس‌انداز"
 
+
+msgid "nav.world"
+msgstr "جهان"
+
+msgid "nav.map"
+msgstr "نقشه"
+
+msgid "nav.companies"
+msgstr "شرکت‌ها"
+
+msgid "nav.market"
+msgstr "بازار"
+
+msgid "nav.inventory"
+msgstr "انبار"
+
+msgid "nav.messages"
+msgstr "پیام‌ها"
+
+msgid "nav.profile"
+msgstr "پروفایل"
+
+msgid "stat.happiness"
+msgstr "شادی"
+
+msgid "menu.title"
+msgstr "منو"

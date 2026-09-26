@@ -3,7 +3,7 @@ extends Control
 ## A radial gauge: a track, a gradient-ish progress arc with round caps, an
 ## icon in the middle and a caption underneath.
 
-@export var color := Color("#2EC4B6")
+@export var color := Color("#2F80ED")
 @export var thickness := 14.0
 @export var icon_name := ""
 var value := 0.0          # 0..1

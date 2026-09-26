@@ -11,6 +11,11 @@ extends Node
 signal changed          # player / vitals changed (HUD redraws)
 signal logged_out
 signal notice_added(notice: Dictionary)
+signal hub_changed      # the server's main-menu actions changed
+
+## The main menu, exactly as the server sends it: the actions of the
+## profile/dashboard screen (the bot's hub keyboard). The side menu draws these.
+var hub_actions: Array = []
 
 const STORE := "user://session.dat"
 const FEED_MAX := 60
@@ -31,6 +36,13 @@ var unread := 0
 
 func _ready() -> void:
 	_load()
+
+
+func set_hub(actions: Array) -> void:
+	if actions.is_empty() or actions == hub_actions:
+		return
+	hub_actions = actions.duplicate(true)
+	hub_changed.emit()
 
 
 func logged_in() -> bool:

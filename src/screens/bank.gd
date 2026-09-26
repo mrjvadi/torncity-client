@@ -11,8 +11,8 @@ func build() -> void:
 		content.add_child(notice_banner(I18n.t("bank.closed"), "warn"))
 	# balance hero
 	var hero := GlowPanel.new()
-	hero.top_color = Color("#2F4DA8")
-	hero.bottom_color = Color("#223779")
+	hero.top_color = Color("#1E4E9A")
+	hero.bottom_color = Color("#12305F")
 	hero.accent = AppTheme.col("sky", 0.9)
 	hero.padding = 26
 	var hv := UI.vbox(8)

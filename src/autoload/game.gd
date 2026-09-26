@@ -59,6 +59,12 @@ func start_playing() -> bool:
 		I18n.set_lang(plang, false)
 	Realtime.set_city(Session.city_code)
 	Realtime.start()
+	# the main menu and the HUD come from the profile screen
+	var hub := await Api.command("player.profile.get", {})
+	if hub.get("ok", false):
+		Session.set_hub(hub.get("actions", []))
+		if hub.get("view") is Dictionary:
+			Session.absorb_view(hub["view"])
 	playing.emit()
 	return true
 
@@ -76,6 +82,8 @@ func run(cmd: String, args := {}, remember := true) -> Dictionary:
 			_stack.pop_front()
 	last_request = req
 	last_response = resp
+	if str(resp.get("screen", "")) in ["profile", "dashboard"]:
+		Session.set_hub(resp.get("actions", []))
 	if Session.city_code != "":
 		Realtime.set_city(Session.city_code)
 	response.emit(resp, req)

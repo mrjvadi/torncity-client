@@ -8,7 +8,18 @@ extends Control
 signal place_tapped(code: String)
 
 const TEHRAN_UTC_OFFSET := 3.5 * 3600.0
-const ART_ANCHOR := Vector2(128, 150)   # the place art's world origin, in 256-px art space
+## The place art's world origin, in 256-px-wide art space: (128, 150) on the
+## 256 x 256 vector canvas, (128, 214) on the taller 256 x 352 render canvas.
+const ART_ANCHOR := Vector2(128, 150)
+const ART_ANCHOR_TALL := Vector2(128, 214)
+## Scenery for lots no game place uses (not tappable).
+const FILLERS := ["_hq", "_hotel", "_warehouse", "_mall", "_lab"]
+
+
+static func art_anchor(tex: Texture2D) -> Vector2:
+	if tex and float(tex.get_height()) / float(tex.get_width()) > 1.2:
+		return ART_ANCHOR_TALL
+	return ART_ANCHOR
 const HIT_HEIGHT := 120.0
 
 ## Screenshot/test hook: a fixed hour of the day (-1 = the real Tehran clock).
@@ -140,7 +151,7 @@ func _build_buildings() -> void:
 		for i in CityLayout.N:
 			var s := Vector2i(i, j)
 			if not taken.has(s):
-				entries.append(["_plaza" if (i + j) % 2 == 0 else "_empty", s])
+				entries.append([FILLERS[(i * 3 + j) % FILLERS.size()], s])
 	entries.sort_custom(func(a, b): return (a[1].x + a[1].y) < (b[1].x + b[1].y) or ((a[1].x + a[1].y) == (b[1].x + b[1].y) and a[1].x < b[1].x))
 	for e in entries:
 		var code: String = e[0]
@@ -153,7 +164,7 @@ func _build_buildings() -> void:
 		sp.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 		var k := 256.0 / float(tex.get_width()) if tex else 1.0
 		sp.scale = Vector2(k, k)
-		sp.offset = -ART_ANCHOR / k
+		sp.offset = -art_anchor(tex) / k
 		sp.position = CityLayout.project(CityLayout.lot_origin(e[1]))
 		sp.set_meta("code", code)
 		buildings.add_child(sp)
