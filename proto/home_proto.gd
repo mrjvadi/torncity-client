@@ -329,39 +329,73 @@ func _ready_toast() -> void:
 	go.add_child(_glabel("شروع شیفت", display_font, 27, "#5A2A00", "#3A1600", Rect2(0, 4, 182, 54), HORIZONTAL_ALIGNMENT_CENTER, 0))
 
 
+## The dock: its top edge rises in the middle into a pedestal for the main
+## action. The active tab stands on a lit plate above the others; each tab
+## can carry a count; gold diamonds part them.
 func _dock() -> void:
-	_frame(Rect2(-10, 1128, 740, 180), 40.0, Color(0.11, 0.13, 0.29, 0.98), Color(0.04, 0.05, 0.13, 0.98), GOLD, 0.07)
-	var slots := [["city", "شهر", true, 646.0], ["activity", "فعالیت", false, 506.0], ["market", "اقتصاد", false, 214.0], ["society", "جامعه", false, 74.0]]
-	for s in slots:
-		var cx: float = s[3]
-		if s[2]:
-			var hl := _frame(Rect2(cx - 60, 1140, 120, 128), 26.0, Color(FIROUZEH, 0.40), Color(FIROUZEH, 0.06), GOLD, 0.0, 2.5)
-			(hl.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
-			(hl.material as ShaderMaterial).set_shader_parameter("glow", Color(FIROUZEH, 0.6))
-		var lift := 10.0 if s[2] else 0.0
-		var ic := _emboss(s[0], Rect2(cx - 46, 1146 - lift, 92, 92), "gold" if s[2] else "steel")
-		if not s[2]:
-			ic.modulate = Color(0.8, 0.84, 0.95)
-		if s[2]:
-			ui.add_child(_glabel(s[1], display_font, 22, "#FFFFFF", "#FFD66B", Rect2(cx - 60, 1228, 120, 34), HORIZONTAL_ALIGNMENT_CENTER, 5))
+	var d := ColorRect.new()
+	d.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	d.position = Vector2(0, 1060)
+	d.size = Vector2(W, 220)
+	d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var dm := _mat("dock")
+	dm.set_shader_parameter("size", d.size)
+	dm.set_shader_parameter("top", 100.0)
+	dm.set_shader_parameter("hump_r", 108.0)
+	dm.set_shader_parameter("hump_y", 54.0)
+	d.material = dm
+	ui.add_child(d)
+	# tabs, in reading order from the right: city, activity | market, society
+	var tabs := [["city", "شهر", 648.0, 0], ["activity", "فعالیت", 516.0, 0], ["market", "اقتصاد", 204.0, 2], ["society", "جامعه", 72.0, 3]]
+	var active := "city"
+	for t in tabs:
+		var cx: float = t[2]
+		var on: bool = t[0] == active
+		if on:
+			var plate := _frame(Rect2(cx - 62, 1126, 124, 170), 30.0, Color(FIROUZEH, 0.55), Color(0.03, 0.10, 0.14, 0.95), GOLD, 0.0, 3.0)
+			(plate.material as ShaderMaterial).set_shader_parameter("glow", Color(FIROUZEH, 0.8))
+			(plate.material as ShaderMaterial).set_shader_parameter("shadow", 0.5)
+			var bar := _button(Rect2(cx - 26, 1122, 52, 10), Color("#FFF1B8"), GOLD, GOLD.darkened(0.4), 5.0, 2.0)
+			bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			_emboss(t[0], Rect2(cx - 48, 1134, 96, 96), "gold")
+			ui.add_child(_glabel(t[1], display_font, 24, "#FFFFFF", "#FFD66B", Rect2(cx - 62, 1226, 124, 38), HORIZONTAL_ALIGNMENT_CENTER, 6))
 		else:
-			ui.add_child(_label(s[1], display_font, 20, Color("#AEB6D6"), Rect2(cx - 60, 1230, 120, 32), HORIZONTAL_ALIGNMENT_CENTER, 4))
-	# the raised action in the middle: what the player does most, right now a shift
+			var ic := _emboss(t[0], Rect2(cx - 38, 1170, 76, 76), "steel")
+			ic.modulate = Color(0.82, 0.86, 0.98)
+			ui.add_child(_label(t[1], display_font, 20, Color("#B9C1E0"), Rect2(cx - 60, 1238, 120, 32), HORIZONTAL_ALIGNMENT_CENTER, 4))
+		if t[3] > 0:
+			_count(Rect2(cx + 12, 1164, 32, 32), t[3])
+	for x in [582.0, 138.0]:
+		var gem := Polygon2D.new()
+		gem.polygon = PackedVector2Array([Vector2(x, 1204), Vector2(x + 7, 1212), Vector2(x, 1220), Vector2(x - 7, 1212)])
+		gem.color = GOLD
+		ui.add_child(gem)
+	# the main action on its pedestal: rays, an energy ring, the button, its cost
 	var holder := Control.new()
 	holder.layout_direction = Control.LAYOUT_DIRECTION_LTR
-	holder.position = Vector2(284, 1070)
+	holder.position = Vector2(360 - 76, 1058)
 	holder.size = Vector2(152, 152)
 	holder.pivot_offset = Vector2(76, 76)
+	var rays := ColorRect.new()
+	rays.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	rays.position = Vector2(360 - 150, 1058 + 76 - 150)
+	rays.size = Vector2(300, 300)
+	rays.material = _mat("rays")
+	rays.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ui.add_child(rays)
 	ui.add_child(holder)
 	_dock_btn = holder
-	_ring(Rect2(0, 0, 152, 152), 1.0, Color("#FFD66B"), holder)
-	_badge("person", Rect2(12, 12, 128, 128), Color("#F59A1F"), Color("#FFF1B8"), 0.0, holder)
+	_ring(Rect2(0, 0, 152, 152), 0.96, Color("#FFD66B"), holder)
+	_badge("person", Rect2(13, 13, 126, 126), Color("#F59A1F"), Color("#FFF1B8"), 0.0, holder)
 	var disc: TextureRect = holder.get_child(holder.get_child_count() - 1)
 	(disc.material as ShaderMaterial).set_shader_parameter("glyph_color", Color(0, 0, 0, 0))
 	(disc.material as ShaderMaterial).set_shader_parameter("rim_w", 0.07)
-	_emboss("work", Rect2(22, 14, 108, 108), "cream", holder)
-	var cap := _frame(Rect2(22, 120, 108, 40), 20.0, Color("#7A3E00"), Color("#4A2400"), GOLD, 0.0, 3.0, holder)
-	_in(cap).add_child(_glabel("شیفت", display_font, 23, "#FFFFFF", "#FFD66B", Rect2(0, 0, 108, 38), HORIZONTAL_ALIGNMENT_CENTER, 5))
+	_emboss("work", Rect2(24, 16, 104, 104), "cream", holder)
+	var cap := _frame(Rect2(248, 1196, 224, 46), 23.0, Color("#8A4A06"), Color("#4A2400"), GOLD, 0.0, 3.0)
+	_in(cap).add_child(_glabel("شیفت", display_font, 25, "#FFFFFF", "#FFD66B", Rect2(96, 0, 118, 44), HORIZONTAL_ALIGNMENT_CENTER, 5))
+	_in(cap).add_child(_label("−20", display_font, 21, Color("#FFE9B0"), Rect2(14, 2, 50, 42), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	_emboss("energy", Rect2(300, 1198, 42, 42), "amber")
+	ui.add_child(_label("6 دقیقه  ·  +1,850", body_bold, 15, Color("#E8ECF8"), Rect2(240, 1246, 240, 26), HORIZONTAL_ALIGNMENT_CENTER, 3))
 
 
 func _crime_popup() -> void:

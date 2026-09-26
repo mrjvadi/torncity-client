@@ -11,8 +11,9 @@ const Builders := preload("res://proto/city/builders.gd")
 const ROAD := preload("res://proto/city/road.gdshader")
 const OUTLINE := preload("res://proto/city/outline.gdshader")
 
-const P := 7.4                  # block pitch: 6 units of lot + a road
-const ROAD_W := 1.4
+const P := 11.0                 # block pitch: a roomy lot and a wide road
+const ROAD_W := 1.8
+const F := P / 7.4              # how much bigger the big sites are than the first draft
 ## One letter per block: Military, Airport, Residential, Industrial, Park,
 ## Centre, Bazaar, Villas. Rows run north to south.
 const LAYOUT := ["MMRRRRAA", "MMRRRRAA", "IIPCCBAA", "IICCCBAA", "IICCCBAA", "RRPPVVVV", "RRRPVVVV", "RRRPVVVV"]
@@ -20,7 +21,7 @@ const HOUSES := ["building-small-a", "building-small-b", "building-small-c", "bu
 
 var kit: Builders
 var sites := {}                 # id -> {node, pos, kind, ...}
-var markers: Array = []         # [control, world pos, min zoom]
+var markers: Array = []         # [control, world pos, min zoom, max zoom]
 var anchors: Array = []         # [control, world pos, screen offset]
 var _view := "overview"
 var _target := Vector3.ZERO
@@ -50,6 +51,7 @@ func _build_world() -> void:
 			_block(i, j, LAYOUT[j][i])
 	_military()
 	_airport()
+	_flush_trees()
 	_frame_view()
 
 
@@ -78,7 +80,7 @@ func _environment() -> void:
 	sun.light_color = Color("#FFB07A")
 	sun.light_energy = 1.2
 	sun.shadow_enabled = true
-	sun.directional_shadow_max_distance = 160.0
+	sun.directional_shadow_max_distance = 260.0
 	sun.rotation_degrees = Vector3(-35, -60, 0)
 	world.add_child(sun)
 
@@ -90,7 +92,7 @@ func _block_center(i: int, j: int) -> Vector3:
 func _ground() -> void:
 	var g := MeshInstance3D.new()
 	var pm := PlaneMesh.new()
-	pm.size = Vector2(220, 220)
+	pm.size = Vector2(400, 400)
 	g.mesh = pm
 	g.material_override = kit.mat(Color("#355E44"))
 	g.position.y = -0.03
@@ -145,94 +147,160 @@ func _block(i: int, j: int, kind: String) -> void:
 	rng.seed = i * 131 + j * 17
 	if kind in ["M", "A"]:
 		return
-	var base_c := {"C": "#9C9AA8", "B": "#C8AE84", "I": "#7E828E", "P": "#4F9A5C", "R": "#A8A294", "V": "#6FB06E"}.get(kind, "#999999")
-	kit.box(world, Vector3(P - ROAD_W, 0.06, P - ROAD_W), c, kit.mat(Color(base_c)))
+	var lot := P - ROAD_W
+	var base_c := {"C": "#8E8C9A", "B": "#C8AE84", "I": "#7E828E", "P": "#4F9A5C", "R": "#6FA56A", "V": "#6FB06E"}.get(kind, "#999999")
+	# a kerb and pavement around every block, trees along it
+	kit.box(world, Vector3(lot, 0.08, lot), c, kit.mat(Color("#C9C4B8")))
+	kit.box(world, Vector3(lot - 1.1, 0.03, lot - 1.1), c + Vector3(0, 0.08, 0), kit.mat(Color(base_c)))
+	if kind != "P":
+		var e := lot / 2.0 - 0.3
+		for k in 5:
+			var u := -e + 0.9 + k * (2.0 * e - 1.8) / 4.0
+			for side in [Vector3(u, 0, -e), Vector3(u, 0, e), Vector3(-e, 0, u), Vector3(e, 0, u)]:
+				_street_tree(c + side + Vector3(0, 0.08, 0), rng.randf_range(0.9, 1.2))
+	var y := Vector3(0, 0.11, 0)
 	match kind:
 		"C":
 			if i == 3 and j == 3:
-				kit.city_hall(world, c + Vector3(0, 0.06, 0))
-				_site("city_hall", c, "place", {"name": "شهرداری", "icon": "rank", "pal": "gold"})
+				kit.city_hall(world, c + y + Vector3(0, 0, -1.4))
+				_site("city_hall", c + Vector3(0, 0, -1.4), "place", {"name": "شهرداری", "icon": "rank", "pal": "gold"})
+				_char_bagh(c + y + Vector3(0, 0, 2.6))
 			elif i == 4 and j == 3:
-				kit.bank(world, c + Vector3(0, 0.06, 0))
+				kit.bank(world, c + y)
 				_site("bank", c, "place", {"name": "بانک مرکزی", "icon": "bank", "pal": "sapphire"})
+				for x in [-3.0, 3.0]:
+					for z in [-3.0, 3.0]:
+						_street_tree(c + y + Vector3(x, 0, z), 1.4)
 			else:
 				var walls := [Color("#8C95B8"), Color("#A7A0C8"), Color("#7FA3B8"), Color("#B3A58E")]
-				for dx in [-1.55, 1.55]:
-					for dz in [-1.55, 1.55]:
-						var h := rng.randf_range(3.0, 8.5) if (i + j) % 2 == 0 else rng.randf_range(2.2, 5.5)
-						kit.tower(world, c + Vector3(dx, 0.06, dz), h, 2.2, 2.2, walls[rng.randi() % 4], rng.randf() * 10.0)
+				for dx in [-2.3, 2.3]:
+					for dz in [-2.3, 2.3]:
+						var h := rng.randf_range(3.5, 9.5) if (i + j) % 2 == 0 else rng.randf_range(2.4, 6.0)
+						kit.tower(world, c + y + Vector3(dx, 0, dz), h, 2.3, 2.3, walls[rng.randi() % 4], rng.randf() * 10.0)
+				# a small plaza with a fountain between the towers
+				kit.cyl(world, 0.7, 0.18, c + y, kit.mat(Color("#D8D2C4")))
+				var wm := ShaderMaterial.new()
+				wm.shader = kit.WATER
+				kit.cyl(world, 0.58, 0.2, c + y + Vector3(0, 0.02, 0), wm)
 		"B":
-			kit.bazaar(world, c + Vector3(-1.4, 0.06, 0), 5.2, 90.0)
+			kit.bazaar(world, c + y + Vector3(-2.3, 0, 0), 7.6, 90.0)
 			if j == 3:
-				kit.shop(world, c + Vector3(1.6, 0.06, -1.5), Color("#E5484D"))
-				_site("shop", c + Vector3(1.6, 0, -1.5), "shop", {})
-				kit.shop(world, c + Vector3(1.6, 0.06, 1.5), Color("#2BC4B2"))
+				kit.shop(world, c + y + Vector3(2.5, 0, -2.4), Color("#E5484D"))
+				_site("shop", c + Vector3(2.5, 0, -2.4), "shop", {})
+				kit.shop(world, c + y + Vector3(2.5, 0, 2.4), Color("#2BC4B2"))
 			else:
-				kit.shop(world, c + Vector3(1.6, 0.06, 0), Color("#F5A623"))
+				kit.shop(world, c + y + Vector3(2.5, 0, -1.6), Color("#F5A623"))
+				kit.shop(world, c + y + Vector3(2.5, 0, 2.2), Color("#8E6CF0"))
 		"I":
 			var names := {Vector2i(0, 2): ["فولاد البرز", "سارا", true], Vector2i(1, 2): ["پرواز نو", "مینا", false],
 				Vector2i(0, 3): ["داروسازی مهر", "رضا", false], Vector2i(1, 3): ["گجت دانا", "دانا", false],
 				Vector2i(0, 4): ["نان آفتاب", "علی", false], Vector2i(1, 4): ["زمین خالی", "", false]}
 			var accents := [Color("#E5484D"), Color("#2BC4B2"), Color("#8E6CF0"), Color("#F5A623")]
-			for dz in [-1.6, 1.6]:
-				var key := Vector2i(i, j)
-				var info: Array = names.get(key, ["", "", false])
+			var info: Array = names.get(Vector2i(i, j), ["", "", false])
+			for dz in [-2.3, 2.3]:
 				if info[1] == "" and dz > 0:
-					_empty_lot(c + Vector3(0, 0.06, dz))
+					_empty_lot(c + y + Vector3(0, 0, dz))
 					continue
-				kit.factory(world, c + Vector3(0, 0.06, dz), accents[(i + j * 2 + int(dz > 0)) % 4])
+				kit.box(world, Vector3(4.4, 0.02, 3.6), c + y + Vector3(0, 0, dz), kit.mat(Color("#5C606C")))
+				kit.factory(world, c + y + Vector3(0, 0, dz), accents[(i + j * 2 + int(dz > 0)) % 4])
 				if dz < 0 and info[1] != "":
 					var id := "company" if info[2] else "company_%d_%d" % [i, j]
 					_site(id, c + Vector3(0, 0, dz), "company", {"name": info[0], "owner": info[1], "mine": info[2]})
 		"P":
-			for n in 22:
-				kit.tree(world, c + Vector3(rng.randf_range(-2.8, 2.8), 0.06, rng.randf_range(-2.8, 2.8)), rng.randf_range(1.2, 1.9))
+			for n in 34:
+				_street_tree(c + y + Vector3(rng.randf_range(-4.0, 4.0), 0, rng.randf_range(-4.0, 4.0)), rng.randf_range(1.3, 2.1))
 			if i == 3 and j == 6:
 				var lake := MeshInstance3D.new()
 				var cm := CylinderMesh.new()
-				cm.top_radius = 2.2
-				cm.bottom_radius = 2.2
+				cm.top_radius = 3.2
+				cm.bottom_radius = 3.2
 				cm.height = 0.05
 				lake.mesh = cm
 				var wm := ShaderMaterial.new()
 				wm.shader = kit.WATER
 				lake.material_override = wm
-				lake.position = c + Vector3(0, 0.08, 0)
-				lake.scale = Vector3(1.2, 1, 0.9)
+				lake.position = c + Vector3(0, 0.13, 0)
+				lake.scale = Vector3(1.2, 1, 0.85)
 				world.add_child(lake)
 		"R":
 			var sale := (i + j) % 3 == 0
-			for dx in [-2.0, 0.0, 2.0]:
-				for dz in [-2.0, 0.0, 2.0]:
-					if dx == 0.0 and dz == 0.0:
-						kit.tree(world, c + Vector3(0, 0.06, 0), 1.6)
-						continue
+			for dx in [-2.3, 2.3]:
+				for dz in [-2.3, 2.3]:
+					kit.box(world, Vector3(3.2, 0.02, 3.2), c + y + Vector3(dx, 0, dz), kit.mat(Color("#5DA862")))
 					var h: String = HOUSES[rng.randi() % HOUSES.size()]
 					var scn: PackedScene = load(ART + "models/%s.glb" % h)
 					var m: Node3D = scn.instantiate()
-					m.position = c + Vector3(dx, 0.06, dz)
+					m.position = c + y + Vector3(dx, 0.02, dz)
 					m.rotation_degrees.y = [0.0, 90.0, 180.0, 270.0][rng.randi() % 4]
-					m.scale = Vector3(1.6, 1.6, 1.6)
+					m.scale = Vector3(1.9, 1.9, 1.9)
 					world.add_child(m)
+					_street_tree(c + y + Vector3(dx + 1.2, 0, dz + 1.2), 1.1)
 			if sale:
-				_sale_marker(c + Vector3(2.0, 1.4, -2.0), "خانه", "%d,000" % rng.randi_range(180, 420))
+				_sale_marker(c + Vector3(2.3, 2.0, -2.3), "خانه", "%d,000" % rng.randi_range(180, 420))
 		"V":
 			var walls := [Color("#F4EFE6"), Color("#EADBC4"), Color("#DDE6EE"), Color("#F1E1D0")]
-			for dx in [-1.55, 1.55]:
-				for dz in [-1.55, 1.55]:
-					kit.villa(world, c + Vector3(dx, 0.06, dz), [0.0, 90.0, 180.0, 270.0][rng.randi() % 4], walls[rng.randi() % 4])
+			for dx in [-2.35, 2.35]:
+				for dz in [-2.35, 2.35]:
+					kit.villa(world, c + y + Vector3(dx, 0, dz), [0.0, 90.0, 180.0, 270.0][rng.randi() % 4], walls[rng.randi() % 4])
 			if i == 5 and j == 6:
-				_site("villa", c + Vector3(1.55, 0, -1.55), "villa", {})
-				_sale_marker(c + Vector3(1.55, 1.8, -1.55), "ویلا", "2.4M")
+				_site("villa", c + Vector3(2.35, 0, -2.35), "villa", {})
+				_sale_marker(c + Vector3(2.35, 2.0, -2.35), "ویلا", "2.4M")
 			elif (i * 3 + j) % 5 == 0:
-				_sale_marker(c + Vector3(-1.55, 1.8, 1.55), "ویلا", "%.1fM" % rng.randf_range(1.6, 3.8))
+				_sale_marker(c + Vector3(-2.35, 2.0, 2.35), "ویلا", "%.1fM" % rng.randf_range(1.6, 3.8))
+
+
+## A Persian garden in front of the city hall: a long pool and a cross
+## channel, four lawns, rows of trees.
+func _char_bagh(at: Vector3) -> void:
+	var wm := ShaderMaterial.new()
+	wm.shader = kit.WATER
+	kit.box(world, Vector3(0.7, 0.04, 3.6), at, kit.mat(Color("#D8D2C4")))
+	kit.box(world, Vector3(0.5, 0.05, 3.4), at + Vector3(0, 0.01, 0), wm)
+	kit.box(world, Vector3(6.4, 0.04, 0.5), at + Vector3(0, 0, 0.3), kit.mat(Color("#D8D2C4")))
+	kit.box(world, Vector3(6.2, 0.05, 0.32), at + Vector3(0, 0.01, 0.3), wm)
+	for x in [-1.9, 1.9]:
+		for z in [-1.0, 1.4]:
+			kit.box(world, Vector3(2.6, 0.03, 1.3), at + Vector3(x, 0, z), kit.mat(Color("#4E9C58")))
+	for k in 5:
+		for x in [-3.6, 3.6]:
+			_street_tree(at + Vector3(x, 0, -1.8 + k * 0.9), 1.0)
+
+
+var _tree_xf: Array = []
+
+
+## Trees are many: collected here and drawn as two MultiMeshes at the end.
+func _street_tree(at: Vector3, s: float) -> void:
+	_tree_xf.append(Transform3D(Basis().scaled(Vector3(s, s, s)), at))
+
+
+func _flush_trees() -> void:
+	var trunk := CylinderMesh.new()
+	trunk.top_radius = 0.05
+	trunk.bottom_radius = 0.06
+	trunk.height = 0.4
+	var crown := SphereMesh.new()
+	crown.radius = 0.3
+	crown.height = 0.56
+	for part in [[trunk, Color("#7A5230"), 0.2], [crown, Color("#3F9E5A"), 0.62]]:
+		var mm := MultiMesh.new()
+		mm.transform_format = MultiMesh.TRANSFORM_3D
+		mm.mesh = part[0]
+		mm.instance_count = _tree_xf.size()
+		for i in _tree_xf.size():
+			var t: Transform3D = _tree_xf[i]
+			mm.set_instance_transform(i, t.translated_local(Vector3(0, part[2], 0)))
+		var mi := MultiMeshInstance3D.new()
+		mi.multimesh = mm
+		mi.material_override = kit.mat(part[1])
+		world.add_child(mi)
 
 
 func _empty_lot(at: Vector3) -> void:
-	kit.box(world, Vector3(3.2, 0.03, 2.6), at, kit.mat(Color("#8E7A5A")))
+	kit.box(world, Vector3(3.8, 0.03, 3.2), at, kit.mat(Color("#8E7A5A")))
 	var post := kit.mat(Color("#F2C255"))
-	kit.box(world, Vector3(0.05, 0.7, 0.05), at + Vector3(1.2, 0, 1.0), post)
-	kit.box(world, Vector3(0.7, 0.4, 0.04), at + Vector3(1.2, 0.55, 1.0), kit.mat(Color("#2BC4B2"), 0.0, 0.5, 0.6))
+	kit.box(world, Vector3(0.05, 0.7, 0.05), at + Vector3(1.4, 0, 1.2), post)
+	kit.box(world, Vector3(0.7, 0.4, 0.04), at + Vector3(1.4, 0.55, 1.2), kit.mat(Color("#2BC4B2"), 0.0, 0.5, 0.6))
 	_sale_marker(at + Vector3(0, 1.0, 0), "زمین", "85,000")
 
 
@@ -240,23 +308,24 @@ func _military() -> void:
 	var c := (_block_center(0, 0) + _block_center(1, 1)) / 2.0
 	var s := 2 * P - ROAD_W
 	kit.box(world, Vector3(s, 0.06, s), c, kit.mat(Color("#6E7456")))
-	# perimeter fence
 	var fence := kit.mat(Color("#B8BDC8"), 0.5, 0.4)
 	for side in [-1, 1]:
 		kit.box(world, Vector3(s, 0.35, 0.05), c + Vector3(0, 0.06, side * s / 2.0), fence)
 		kit.box(world, Vector3(0.05, 0.35, s), c + Vector3(side * s / 2.0, 0.06, 0), fence)
 	for k in 3:
-		kit.barracks(world, c + Vector3(-3.2, 0.06, -4.2 + k * 1.9))
-	kit.box(world, Vector3(4.2, 0.02, 4.2), c + Vector3(3.0, 0.06, -3.2), kit.mat(Color("#C9C0A2")))
-	kit.flag(world, c + Vector3(3.0, 0.08, -3.2), Color("#2BC4B2"))
+		kit.barracks(world, c + Vector3(-3.2 * F, 0.06, (-4.2 + k * 1.9) * F))
+	kit.box(world, Vector3(4.2 * F, 0.02, 4.2 * F), c + Vector3(3.0 * F, 0.06, -3.2 * F), kit.mat(Color("#C9C0A2")))
+	kit.flag(world, c + Vector3(3.0 * F, 0.08, -3.2 * F), Color("#2BC4B2"))
 	for corner in [Vector3(-1, 0, -1), Vector3(1, 0, -1), Vector3(-1, 0, 1), Vector3(1, 0, 1)]:
-		kit.watchtower(world, c + corner * (s / 2.0 - 0.5) + Vector3(0, 0.06, 0))
-	var r := kit.radar(world, c + Vector3(3.2, 0.06, 3.0))
+		kit.watchtower(world, c + corner * (s / 2.0 - 0.6) + Vector3(0, 0.06, 0))
+	var r := kit.radar(world, c + Vector3(3.2 * F, 0.06, 3.0 * F))
 	_spin.append(r.get_node("Spin"))
 	for k in 3:
-		kit.launcher(world, c + Vector3(0.4 + k * 1.2, 0.06, 1.6), 20.0 - k * 20.0)
-	kit.helipad(world, c + Vector3(-3.2, 0.06, 3.6))
-	_site("military", c + Vector3(-3.2, 0, -2.3), "military", {})
+		kit.launcher(world, c + Vector3((0.4 + k * 1.2) * F, 0.06, 1.6 * F), 20.0 - k * 20.0)
+	kit.helipad(world, c + Vector3(-3.2 * F, 0.06, 3.6 * F))
+	for k in 6:
+		_street_tree(c + Vector3(-s / 2.0 + 1.0, 0.06, -s / 2.0 + 2.0 + k * 3.0), 1.2)
+	_site("military", c + Vector3(-3.2 * F, 0, -2.3 * F), "military", {})
 	_district_label("منطقه‌ی نظامی", c + Vector3(0, 3.0, 0))
 
 
@@ -267,16 +336,16 @@ func _airport() -> void:
 	var sx := 2 * P - ROAD_W
 	var sz := 5 * P - ROAD_W
 	kit.box(world, Vector3(sx, 0.06, sz), c, kit.mat(Color("#5E7A5E")))
-	kit.runway(world, c + Vector3(3.2, 0.06, 0), sz - 3.0)
-	kit.box(world, Vector3(1.0, 0.02, sz - 6.0), c + Vector3(0.9, 0.06, 0), kit.mat(Color("#3A3C44")))
-	kit.box(world, Vector3(4.8, 0.02, 9.0), c + Vector3(-3.3, 0.06, -4.0), kit.mat(Color("#4A4C55")))
-	kit.terminal(world, c + Vector3(-5.2, 0.06, -4.0), 90.0)
-	kit.plane(world, c + Vector3(-2.6, 0.08, -7.0), 90.0, Color("#2BC4B2"))
-	kit.plane(world, c + Vector3(-2.6, 0.08, -3.2), 90.0, Color("#E5484D"))
-	kit.plane(world, c + Vector3(3.2, 0.08, 6.0), 0.0, Color("#3552C8"))
-	for k in 2:
-		kit.hangar(world, c + Vector3(-4.2, 0.06, 5.0 + k * 3.2), 90.0)
-	_site("airport", c + Vector3(-5.2, 0, -4.0), "place", {"name": "فرودگاه", "icon": "plane", "pal": "sapphire"})
+	kit.runway(world, c + Vector3(3.6 * F, 0.06, 0), sz - 4.0)
+	kit.box(world, Vector3(1.0, 0.02, sz - 8.0), c + Vector3(1.2 * F, 0.06, 0), kit.mat(Color("#3A3C44")))
+	kit.box(world, Vector3(6.0, 0.02, 13.0), c + Vector3(-3.6 * F, 0.06, -6.0 * F), kit.mat(Color("#4A4C55")))
+	kit.terminal(world, c + Vector3(-5.6 * F, 0.06, -6.0 * F), 90.0)
+	kit.plane(world, c + Vector3(-2.6 * F, 0.08, -9.0 * F), 90.0, Color("#2BC4B2"))
+	kit.plane(world, c + Vector3(-2.6 * F, 0.08, -4.5 * F), 90.0, Color("#E5484D"))
+	kit.plane(world, c + Vector3(3.6 * F, 0.08, 8.0 * F), 0.0, Color("#3552C8"))
+	for k in 3:
+		kit.hangar(world, c + Vector3(-4.6 * F, 0.06, (5.0 + k * 3.4) * F), 90.0)
+	_site("airport", c + Vector3(-5.6 * F, 0, -6.0 * F), "place", {"name": "فرودگاه", "icon": "plane", "pal": "sapphire"})
 	_district_label("فرودگاه", c + Vector3(0, 3.0, 2.0))
 
 
@@ -295,8 +364,8 @@ func _frame_view() -> void:
 			_place_camera()
 			_center_on(sites[_view].pos, Vector2(360, 570))
 		_:
-			_target = Vector3(1.5, 0, 0)
-			_zoom = 64.0
+			_target = Vector3(2.0, 0, 0)
+			_zoom = 78.0
 	_place_camera()
 
 
@@ -327,7 +396,7 @@ func _tour(t: float) -> void:
 	var air: Vector3 = sites["airport"].pos + Vector3(2.0, 0, 0)
 	var vil: Vector3 = sites["villa"].pos
 	var baz: Vector3 = sites["shop"].pos
-	var pts := [[Vector3(1.5, 0, 0), 60.0], [mil, 26.0], [air, 30.0], [vil, 22.0], [baz, 18.0]]
+	var pts := [[Vector3(2.0, 0, 0), 80.0], [mil, 34.0], [air, 44.0], [vil, 24.0], [baz, 20.0]]
 	var seg := 2.2
 	var i := mini(int(t / seg), pts.size() - 2)
 	var f := clampf((t - i * seg) / seg, 0.0, 1.0)
@@ -352,7 +421,7 @@ func _process(delta: float) -> void:
 		# never under the chrome: the top bar and filters, the map buttons, the dock
 		var mid := c.position + c.size / 2.0
 		var clear := mid.y > 320.0 and mid.y < 1100.0 and not (mid.x < 110.0 and mid.y < 560.0)
-		c.visible = _zoom >= m[2] and _selected == "" and clear
+		c.visible = _zoom >= m[2] and _zoom <= (m[3] if m.size() > 3 else 999.0) and _selected == "" and clear
 	for a in anchors:
 		var c: Control = a[0]
 		c.position = cam.unproject_position(a[1]) * k + a[2]
@@ -368,7 +437,7 @@ func _unhandled_input(e: InputEvent) -> void:
 			_zoom = maxf(10.0, _zoom * 0.9)
 			_place_camera()
 		elif e.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			_zoom = minf(80.0, _zoom * 1.1)
+			_zoom = minf(110.0, _zoom * 1.1)
 			_place_camera()
 		elif e.button_index == MOUSE_BUTTON_LEFT:
 			if e.pressed:
@@ -454,7 +523,7 @@ func _markers_now() -> void:
 		box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		ui.add_child(box)
 		box.add_child(_glabel(d[0], display_font, 34, "#FFFFFF", "#FFE2A0", Rect2(0, 0, 240, 60), HORIZONTAL_ALIGNMENT_CENTER, 9))
-		markers.append([box, d[1], 24.0])
+		markers.append([box, d[1], 30.0])
 	for s in _pending_sales:
 		var box := Control.new()
 		box.layout_direction = Control.LAYOUT_DIRECTION_LTR
@@ -492,7 +561,7 @@ func _markers_now() -> void:
 		var chip := _frame(Rect2(0, 64, 150, 32), 16.0, Color(0.06, 0.07, 0.16, 0.92), Color(0.02, 0.03, 0.08, 0.92), Color(GOLD, 0.8), 0.0, 1.5, box)
 		(chip.material as ShaderMaterial).set_shader_parameter("shadow", 0.3)
 		_in(chip).add_child(_label(name, display_font, 17, Color("#FFE9B0") if s.get("mine", false) else Color.WHITE, Rect2(0, 0, 150, 32), HORIZONTAL_ALIGNMENT_CENTER, 4))
-		markers.append([box, s.pos + Vector3(0, 2.6, 0), 0.0])
+		markers.append([box, s.pos + Vector3(0, 2.6, 0), 0.0, 62.0])
 
 
 var _filter_nodes: Array = []
