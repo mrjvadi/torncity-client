@@ -11,5 +11,11 @@ if ! [ -e /tmp/.X11-unix/X${DISP#:} ]; then
   sleep 2
 fi
 "$GODOT" --headless --path . --import >/dev/null 2>&1
+# the art comes from the CDN: serve dist-assets/ like it (build it first if missing)
+[ -f dist-assets/manifest.json ] || python3 tools/build_assets/build.py >/dev/null
+python3 tools/build_assets/serve.py --port 8090 >/dev/null 2>&1 &
+SPID=$!
+sleep 0.5
 DISPLAY=$DISP "$GODOT" --path . --rendering-driver opengl3 --resolution ${SIZE:-720x1280} --position 0,0 res://dev/screenshots.tscn -- "$@" 2>&1 | grep -vE "triangulation|^Godot|^OpenGL|^$" | head -60
+kill $SPID 2>/dev/null
 [ -n "$XPID" ] && kill $XPID

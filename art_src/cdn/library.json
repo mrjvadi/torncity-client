@@ -616,6 +616,14 @@
   "action:more": {
    "glyph": "gears",
    "tint": "blue"
+  },
+  "action:danger": {
+   "glyph": "broken-shield",
+   "tint": "red"
+  },
+  "action:confirm": {
+   "glyph": "scales",
+   "tint": "yellow"
   }
  },
  "models": {
@@ -1693,7 +1701,8 @@
  "extra_glyphs": [
   "cheerful",
   "sun",
-  "person"
+  "person",
+  "broken-shield"
  ],
  "credits": {
   "kenney": [

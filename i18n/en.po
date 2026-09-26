@@ -487,3 +487,69 @@ msgstr "Vazirmatn by Saber Rastikerdar, SIL Open Font License 1.1."
 
 msgid "settings.app"
 msgstr "App settings"
+
+msgid "confirm.sure"
+msgstr "This cannot be undone."
+
+msgid "confirm.cancel"
+msgstr "Cancel"
+
+msgid "confirm.yes"
+msgstr "Yes, do it"
+
+msgid "market.buy"
+msgstr "Buy"
+
+msgid "market.sell"
+msgstr "Sell"
+
+msgid "market.item"
+msgstr "Item"
+
+msgid "market.price"
+msgstr "Price"
+
+msgid "market.qty"
+msgstr "Qty"
+
+msgid "market.empty"
+msgstr "Nothing here right now."
+
+msgid "market.fee"
+msgstr "Market fee {fee}%"
+
+msgid "market.you_have"
+msgstr "You have {qty}"
+
+msgid "market.best_bid"
+msgstr "best bid"
+
+msgid "companies.none"
+msgstr "You do not own a company yet."
+
+msgid "companies.producing"
+msgstr "Producing {item}"
+
+msgid "companies.rate"
+msgstr "{n} per hour"
+
+msgid "companies.staff"
+msgstr "Staff"
+
+msgid "companies.cash"
+msgstr "Company cash"
+
+msgid "crime.heat"
+msgstr "Police heat"
+
+msgid "crime.chance"
+msgstr "success"
+
+msgid "education.studying"
+msgstr "Studying now"
+
+msgid "education.done"
+msgstr "Completed"
+
+msgid "education.left"
+msgstr "{time} left"

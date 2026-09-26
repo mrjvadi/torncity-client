@@ -12,6 +12,8 @@ const SHOTS := [
 	["company", "company.show", {"id": 1027}],
 	["companies", "company.list", {}],
 	["market", "market.list", {}],
+	["crime", "crime.hub", {}],
+	["education", "education.list", {}],
 	["inventory", "inventory.show", {}],
 	["profile", "player.profile.get", {}],
 	["bank", "bank.show", {}],
@@ -116,12 +118,22 @@ func _run() -> void:
 					scr.map.world._walk["left"] = float(scr.map.world._walk["total"]) * 0.55
 					scr.map.world.focus(scr.map.slots.get("bazaar", ""), 7.0)
 			await _frames(8)
+			await _assets_settle()
 			if OS.get_environment("SHOT_DEBUG") != "":
 				_debug(shell)
 			await _save(lang, name)
 			if name == "city_walking":
 				Mock.st["walk"] = null
 				Mock.st["place"] = "city_centre"
+
+
+## Wait for CDN downloads to finish (up to 20 s), then a few frames to swap them in.
+func _assets_settle() -> void:
+	var t := 0.0
+	while not AssetService.idle() and t < 20.0:
+		await get_tree().create_timer(0.1).timeout
+		t += 0.1
+	await _frames(6)
 
 
 func _debug(n: Node, depth := 0) -> void:

@@ -17,6 +17,10 @@ const NATIVE := {
 	"inventory": "inventory",
 	"job_status": "job",
 	"life": "life",
+	"market": "market",
+	"company_list": "companies",
+	"crime_hub": "crime",
+	"education": "education",
 }
 
 ## Bottom navigation tabs -> the command each opens ("" = a client screen).

@@ -289,6 +289,10 @@ func command(cmd: String, args: Dictionary) -> Dictionary:
 		"bank.withdraw": return _bank_move(int(str(args.get("amount", "0"))), false)
 		"inventory.show": return _inventory()
 		"company.show": return _company_show(int(str(args.get("id", "0"))))
+		"market.list": return _market()
+		"company.list": return _companies()
+		"crime.hub": return _crime_hub()
+		"education.list": return _education()
 		"job.status": return _job()
 		"job.work": return _job_work()
 		"life.me": return _life()
@@ -308,12 +312,21 @@ func _resp(screen: String, text: String, view, actions: Array, notice := "") -> 
 	return r
 
 
-func _act(label: String, cmd: String, args := {}) -> Dictionary:
-	return {"label": label, "command": cmd, "args": args}
+## A server action. kind/icon/group: the semantic fields the server is adding
+## ({kind: primary|secondary|danger|confirm|navigation|back, icon: "action:work"}).
+func _act(label: String, cmd: String, args := {}, kind := "", icon := "", group := "") -> Dictionary:
+	var a := {"label": label, "command": cmd, "args": args}
+	if kind != "":
+		a["kind"] = kind
+	if icon != "":
+		a["icon"] = icon
+	if group != "":
+		a["group"] = group
+	return a
 
 
 func _back() -> Dictionary:
-	return _act(L("🔙 بازگشت", "🔙 Back"), "player.profile.get")
+	return _act(L("🔙 بازگشت", "🔙 Back"), "player.profile.get", {}, "back")
 
 
 func _refresh(cmd: String, args := {}) -> Dictionary:
@@ -625,8 +638,85 @@ func _company_show(id: int) -> Dictionary:
 			var text := L("🏢 %s\n%s · مالک: %s\n\n📈 تولید امروز: ۱۲۰ واحد\n👥 کارمندان: ۸" % [nm["fa"], tname, p["ref"]["owner"]],
 				"🏢 %s\n%s · Owner: %s\n\n📈 Output today: 120 units\n👥 Staff: 8" % [nm["en"], tname, p["ref"]["owner"]])
 			return _resp("company", text, {"company": {"id": id, "type": t, "name": nm[st["lang"]], "owner": p["ref"]["owner"], "staff": 8}},
-				[_act(L("📦 انبار", "📦 Stock"), "company.stock", {"id": id}), _act(L("👥 کارمندان", "👥 Staff"), "company.staff", {"id": id}), _back()])
+				[_act(L("شروع تولید", "Start production"), "company.produce", {"id": id}, "primary", "action:production"),
+				_act(L("انبار", "Stock"), "company.stock", {"id": id}, "", "action:inventory"),
+				_act(L("کارمندان", "Staff"), "company.staff", {"id": id}, "", "action:social"),
+				_act(L("پژوهش", "Research"), "company.research", {"id": id}, "", "action:research"),
+				_act(L("فروش در بازار", "Sell on market"), "market.sell", {"company": id}, "", "action:market"),
+				_act(L("انحلال شرکت", "Close company"), "company.close", {"id": id}, "danger", "action:danger"),
+				_back()])
 	return _resp("error", L("این شرکت پیدا نشد.", "Company not found."), null, [_back()])
+
+
+# Structured views for the screens the client draws natively. The real
+# server is adding the same shapes (docs/architecture.md, "Views").
+func _nm(code: String, fa: String, en: String) -> Dictionary:
+	return {"code": code, "name": fa if st["lang"] == "fa" else en}
+
+
+func _market() -> Dictionary:
+	var rows := [
+		[501, "bread", "نان", "Bread", 12, 340, "Aftab Market", -2.1], [502, "pistol", "کلت", "Pistol", 2400, 6, "Reza", 4.5],
+		[503, "gadget", "گجت", "Gadget", 9500, 14, "Dana Studio", 1.2], [504, "iron_ore", "سنگ آهن", "Iron ore", 85, 1200, "Alborz Steel", -0.4],
+		[505, "medicine", "دارو", "Medicine", 160, 90, "Mina", 0.0], [506, "quantum_toaster", "توستر کوانتومی", "Quantum toaster", 18500, 2, "New Flight", 12.0]]
+	var buy := []
+	var acts := []
+	for r in rows:
+		buy.append({"id": r[0], "item": _nm(r[1], r[2], r[3]), "price": r[4], "qty": r[5], "seller": r[6], "change": r[7]})
+		acts.append(_act(L("خرید", "Buy"), "market.buy", {"listing": r[0]}, "", "action:shop", "rows"))
+	var sell := []
+	for it in fx["inventory"]:
+		sell.append({"item": _nm(it["code"], it["fa"], it["en"]), "qty": it["qty"], "best_bid": 10 + (int(it["qty"]) * 37) % 400})
+		acts.append(_act(L("فروش", "Sell"), "market.sell", {"item": it["code"]}, "", "action:market", "rows"))
+	acts.append(_act(L("ثبت آگهی فروش", "Post a listing"), "market.post", {}, "primary", "action:market"))
+	acts.append(_act(L("سفارش‌های من", "My orders"), "market.orders", {}, "", "action:inventory"))
+	acts.append(_back())
+	return _resp("market", L("🏪 بازار", "🏪 Market"), {"buy": buy, "sell": sell, "fee_bps": 250}, acts)
+
+
+func _companies() -> Dictionary:
+	var list := []
+	var acts := []
+	for p in world_fixture(str(st["city"]))["plots"]:
+		if p.get("kind") != "company" or p["ref"].get("owner") != "Sara":
+			continue
+		var id := int(p["ref"]["company_id"])
+		list.append({"id": id, "name": p["name"][st["lang"]], "type": p["ref"]["code"], "level": 2 + id % 3, "staff": 6 + id % 7,
+			"cash": 40000 + (id % 9) * 17000, "producing": {"item": _nm("tool", "ابزار", "Tool") if id % 2 == 0 else _nm("gadget", "گجت", "Gadget"),
+			"progress": 0.35 + (id % 5) * 0.12, "eta_seconds": 900 + (id % 4) * 700, "per_hour": 20 + id % 30}})
+		acts.append(_act(p["name"][st["lang"]], "company.show", {"id": id}, "", "", "rows"))
+	acts.append(_act(L("ثبت شرکت تازه", "Register a company"), "company.register", {}, "primary", "action:company"))
+	acts.append(_act(L("بازار کار", "Job market"), "job.market", {}, "", "action:job"))
+	acts.append(_act(L("پژوهش", "Research"), "research.list", {}, "", "action:research"))
+	acts.append(_back())
+	return _resp("company_list", L("🏢 شرکت‌های من", "🏢 My companies"), {"companies": list}, acts)
+
+
+func _crime_hub() -> Dictionary:
+	var crimes := [["pickpocket", "جیب‌بری", "Pickpocketing", 82, 5, "40–300", 0], ["burglary", "دزدی از خانه", "Burglary", 54, 15, "800–4,000", 0],
+		["car_theft", "سرقت خودرو", "Car theft", 31, 25, "5,000–18,000", 1800], ["bank_job", "دستبرد به بانک", "Bank job", 9, 60, "90,000+", 0]]
+	var v := []
+	var acts := []
+	for c in crimes:
+		v.append({"crime": _nm(c[0], c[1], c[2]), "chance": c[3], "energy": c[4], "reward": c[5], "cooldown_seconds": c[6]})
+		acts.append(_act(L("انجام", "Commit"), "crime.commit", {"crime": c[0]}, "confirm", "action:crime", "rows"))
+	acts.append(_act(L("زندان", "Jail"), "crime.jail", {}, "", "action:crime"))
+	acts.append(_back())
+	return _resp("crime_hub", L("🕶 خلاف", "🕶 Crime"), {"crimes": v, "heat": 32, "jail_seconds": 0}, acts)
+
+
+func _education() -> Dictionary:
+	var courses := [["business_101", "مدیریت پایه", "Business basics", "active", 0.45, 5400, 2000], ["driving_pro", "رانندگی حرفه‌ای", "Professional driving", "available", 0.0, 7200, 1200],
+		["chemistry", "شیمی صنعتی", "Industrial chemistry", "available", 0.0, 14400, 5200], ["first_aid", "کمک‌های اولیه", "First aid", "done", 1.0, 0, 800]]
+	var v := []
+	var acts := []
+	for c in courses:
+		v.append({"course": _nm(c[0], c[1], c[2]), "status": c[3], "progress": c[4], "seconds_left": c[5], "fee": c[6]})
+		if c[3] == "available":
+			acts.append(_act(L("ثبت‌نام", "Enrol"), "education.enroll", {"course": c[0]}, "", "action:education", "rows"))
+	acts.append(_act(L("دانشگاه", "University"), "education.university", {}, "", "action:education"))
+	acts.append(_back())
+	return _resp("education", L("🎓 آموزش", "🎓 Education"), {"courses": v, "intelligence": 58}, acts)
 
 
 func _settings() -> Dictionary:

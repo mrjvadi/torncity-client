@@ -86,7 +86,8 @@ func get_asset(key: String, priority := VISIBLE):
 	if _decoded.has(key):
 		return _decoded[key]
 	request(key, priority)
-	return null
+	# a disk-cache hit decodes synchronously inside request()
+	return _decoded.get(key)
 
 
 func request(key: String, priority := VISIBLE) -> void:
@@ -225,6 +226,11 @@ static func _sha256(bytes: PackedByteArray) -> String:
 	ctx.start(HashingContext.HASH_SHA256)
 	ctx.update(bytes)
 	return ctx.finish().hex_encode()
+
+
+## Nothing queued or downloading.
+func idle() -> bool:
+	return _active.is_empty() and _queue.is_empty()
 
 
 ## For tests and the settings screen: how much is cached.

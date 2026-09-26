@@ -41,6 +41,10 @@ static func make(g: Dictionary, px := 72.0, is_framed := true) -> IconBadge:
 
 
 func _ready() -> void:
+	# it may have arrived between make() and now
+	if pending_key != "" and not Engine.is_editor_hint() and AssetService.get_asset(pending_key) is Texture2D:
+		texture = AssetService.get_asset(pending_key)
+		pending_key = ""
 	if pending_key != "" and not Engine.is_editor_hint():
 		AssetService.loaded.connect(_on_asset)
 		set_process(true)

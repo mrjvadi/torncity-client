@@ -487,3 +487,69 @@ msgstr "وزیرمتن اثر صابر راستی‌کردار، با مجوز S
 
 msgid "settings.app"
 msgstr "تنظیمات برنامه"
+
+msgid "confirm.sure"
+msgstr "این کار برگشت‌پذیر نیست."
+
+msgid "confirm.cancel"
+msgstr "انصراف"
+
+msgid "confirm.yes"
+msgstr "بله، انجام بده"
+
+msgid "market.buy"
+msgstr "خرید"
+
+msgid "market.sell"
+msgstr "فروش"
+
+msgid "market.item"
+msgstr "کالا"
+
+msgid "market.price"
+msgstr "قیمت"
+
+msgid "market.qty"
+msgstr "تعداد"
+
+msgid "market.empty"
+msgstr "فعلاً چیزی نیست."
+
+msgid "market.fee"
+msgstr "کارمزد بازار ٪{fee}"
+
+msgid "market.you_have"
+msgstr "دارید: {qty}"
+
+msgid "market.best_bid"
+msgstr "بهترین پیشنهاد"
+
+msgid "companies.none"
+msgstr "هنوز شرکتی ندارید."
+
+msgid "companies.producing"
+msgstr "در حال تولید {item}"
+
+msgid "companies.rate"
+msgstr "{n} در ساعت"
+
+msgid "companies.staff"
+msgstr "کارمندان"
+
+msgid "companies.cash"
+msgstr "موجودی شرکت"
+
+msgid "crime.heat"
+msgstr "حساسیت پلیس"
+
+msgid "crime.chance"
+msgstr "موفقیت"
+
+msgid "education.studying"
+msgstr "در حال تحصیل"
+
+msgid "education.done"
+msgstr "گذرانده شد"
+
+msgid "education.left"
+msgstr "{time} مانده"
