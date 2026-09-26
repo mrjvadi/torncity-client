@@ -87,6 +87,11 @@ func command(cmd: String, args := {}) -> Dictionary:
 	return {"ok": false, "screen": "error", "text": msg, "error": {"code": code, "message": msg}, "actions": []}
 
 
+## A plain authorised GET (content catalogue, world): {status, data}.
+func get_json(path: String) -> Dictionary:
+	return await _authed("GET", path, null)
+
+
 func realtime_token() -> String:
 	var r := await _authed("GET", "/api/v1/realtime/token", null)
 	return str(r.data.get("token", "")) if r.data is Dictionary else ""

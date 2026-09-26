@@ -1,0 +1,700 @@
+{
+ "version": "mock-3",
+ "langs": [
+  "fa",
+  "en"
+ ],
+ "entries": {
+  "city": [
+   {
+    "code": "ostmarch",
+    "name": {
+     "fa": "استمارچ",
+     "en": "Ostmarch"
+    },
+    "asset": {
+     "icon": "city:ostmarch"
+    }
+   },
+   {
+    "code": "fenwick_span",
+    "name": {
+     "fa": "فنویک اسپن",
+     "en": "Fenwick Span"
+    },
+    "asset": {
+     "icon": "city:fenwick_span"
+    }
+   },
+   {
+    "code": "aldrin_hollow",
+    "name": {
+     "fa": "آلدرین هالو",
+     "en": "Aldrin Hollow"
+    },
+    "asset": {
+     "icon": "city:aldrin_hollow"
+    }
+   },
+   {
+    "code": "brennhaven",
+    "name": {
+     "fa": "برنهاون",
+     "en": "Brennhaven"
+    },
+    "asset": {
+     "icon": "city:brennhaven"
+    }
+   },
+   {
+    "code": "kessmoor",
+    "name": {
+     "fa": "کسمور",
+     "en": "Kessmoor"
+    },
+    "asset": {
+     "icon": "city:kessmoor"
+    }
+   },
+   {
+    "code": "calderis",
+    "name": {
+     "fa": "کالدریس",
+     "en": "Calderis"
+    },
+    "asset": {
+     "icon": "city:calderis"
+    }
+   },
+   {
+    "code": "vantor_reach",
+    "name": {
+     "fa": "ونتور ریچ",
+     "en": "Vantor Reach"
+    },
+    "asset": {
+     "icon": "city:vantor_reach"
+    }
+   }
+  ],
+  "place": [
+   {
+    "code": "city_centre",
+    "name": {
+     "fa": "مرکز شهر",
+     "en": "City centre"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:city_centre",
+     "icon": "place:city_centre"
+    }
+   },
+   {
+    "code": "bazaar",
+    "name": {
+     "fa": "بازار",
+     "en": "Bazaar"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:bazaar",
+     "icon": "place:bazaar"
+    }
+   },
+   {
+    "code": "business_district",
+    "name": {
+     "fa": "منطقهٔ تجاری",
+     "en": "Business district"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:business_district",
+     "icon": "place:business_district"
+    }
+   },
+   {
+    "code": "university",
+    "name": {
+     "fa": "محلهٔ دانشگاه",
+     "en": "University quarter"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:university",
+     "icon": "place:university"
+    }
+   },
+   {
+    "code": "city_hall",
+    "name": {
+     "fa": "ساختمان شهرداری",
+     "en": "Civic centre"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:city_hall",
+     "icon": "place:city_hall"
+    }
+   },
+   {
+    "code": "police_station",
+    "name": {
+     "fa": "کلانتری",
+     "en": "Police station"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:police_station",
+     "icon": "place:police_station"
+    }
+   },
+   {
+    "code": "bus_terminal",
+    "name": {
+     "fa": "پایانهٔ اتوبوس",
+     "en": "Bus terminal"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:bus_terminal",
+     "icon": "place:bus_terminal"
+    }
+   },
+   {
+    "code": "train_station",
+    "name": {
+     "fa": "ایستگاه قطار",
+     "en": "Train station"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:train_station",
+     "icon": "place:train_station"
+    }
+   },
+   {
+    "code": "airport",
+    "name": {
+     "fa": "فرودگاه",
+     "en": "Airport"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:airport",
+     "icon": "place:airport"
+    }
+   },
+   {
+    "code": "industrial_zone",
+    "name": {
+     "fa": "منطقهٔ صنعتی",
+     "en": "Industrial zone"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:industrial_zone",
+     "icon": "place:industrial_zone"
+    }
+   },
+   {
+    "code": "farmland",
+    "name": {
+     "fa": "زمین‌های کشاورزی",
+     "en": "Farmland"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:farmland",
+     "icon": "place:farmland"
+    }
+   },
+   {
+    "code": "hospital",
+    "name": {
+     "fa": "بیمارستان",
+     "en": "Hospital"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:hospital",
+     "icon": "place:hospital"
+    }
+   },
+   {
+    "code": "barracks",
+    "name": {
+     "fa": "پادگان",
+     "en": "Barracks"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:barracks",
+     "icon": "place:barracks"
+    }
+   },
+   {
+    "code": "residential_area",
+    "name": {
+     "fa": "محلهٔ مسکونی",
+     "en": "Residential area"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:residential_area",
+     "icon": "place:residential_area"
+    }
+   },
+   {
+    "code": "park",
+    "name": {
+     "fa": "پارک شهر",
+     "en": "City park"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:park",
+     "icon": "place:park"
+    }
+   },
+   {
+    "code": "sky_garden",
+    "name": {
+     "fa": "باغ آسمان",
+     "en": "Sky garden"
+    },
+    "kind": "place",
+    "asset": {
+     "model": "place:sky_garden",
+     "icon": "place:sky_garden"
+    }
+   }
+  ],
+  "company_type": [
+   {
+    "code": "grocery",
+    "name": {
+     "fa": "خواربارفروشی",
+     "en": "Grocery"
+    },
+    "asset": {
+     "model": "company:grocery",
+     "icon": "company:grocery"
+    }
+   },
+   {
+    "code": "restaurant",
+    "name": {
+     "fa": "رستوران",
+     "en": "Restaurant"
+    },
+    "asset": {
+     "model": "company:restaurant",
+     "icon": "company:restaurant"
+    }
+   },
+   {
+    "code": "clinic",
+    "name": {
+     "fa": "درمانگاه",
+     "en": "Clinic"
+    },
+    "asset": {
+     "model": "company:clinic",
+     "icon": "company:clinic"
+    }
+   },
+   {
+    "code": "pharmacy",
+    "name": {
+     "fa": "داروخانه",
+     "en": "Pharmacy"
+    },
+    "asset": {
+     "model": "company:pharmacy",
+     "icon": "company:pharmacy"
+    }
+   },
+   {
+    "code": "courier",
+    "name": {
+     "fa": "پیک",
+     "en": "Courier"
+    },
+    "asset": {
+     "model": "company:courier",
+     "icon": "company:courier"
+    }
+   },
+   {
+    "code": "tech_studio",
+    "name": {
+     "fa": "استودیوی فناوری",
+     "en": "Tech studio"
+    },
+    "asset": {
+     "model": "company:tech_studio",
+     "icon": "company:tech_studio"
+    }
+   },
+   {
+    "code": "factory",
+    "name": {
+     "fa": "کارخانه",
+     "en": "Factory"
+    },
+    "asset": {
+     "model": "company:factory",
+     "icon": "company:factory"
+    }
+   },
+   {
+    "code": "mine",
+    "name": {
+     "fa": "معدن",
+     "en": "Mine"
+    },
+    "asset": {
+     "model": "company:mine",
+     "icon": "company:mine"
+    }
+   },
+   {
+    "code": "farm",
+    "name": {
+     "fa": "مزرعه",
+     "en": "Farm"
+    },
+    "asset": {
+     "model": "company:farm",
+     "icon": "company:farm"
+    }
+   },
+   {
+    "code": "repair_workshop",
+    "name": {
+     "fa": "تعمیرگاه",
+     "en": "Repair workshop"
+    },
+    "asset": {
+     "model": "company:repair_workshop",
+     "icon": "company:repair_workshop"
+    }
+   },
+   {
+    "code": "drone_foundry",
+    "name": {
+     "fa": "کارگاه پهپادسازی",
+     "en": "Drone foundry"
+    },
+    "asset": {
+     "model": "company:drone_foundry",
+     "icon": "company:drone_foundry"
+    }
+   }
+  ],
+  "item": [
+   {
+    "code": "food",
+    "name": {
+     "fa": "غذا",
+     "en": "Food"
+    },
+    "category": "consumable",
+    "asset": {
+     "icon": "item:food"
+    }
+   },
+   {
+    "code": "drink",
+    "name": {
+     "fa": "نوشیدنی",
+     "en": "Drink"
+    },
+    "category": "consumable",
+    "asset": {
+     "icon": "item:drink"
+    }
+   },
+   {
+    "code": "medicine",
+    "name": {
+     "fa": "دارو",
+     "en": "Medicine"
+    },
+    "category": "consumable",
+    "asset": {
+     "icon": "item:medicine"
+    }
+   },
+   {
+    "code": "tool",
+    "name": {
+     "fa": "ابزار",
+     "en": "Tool"
+    },
+    "category": "tool",
+    "asset": {
+     "icon": "item:tool"
+    }
+   },
+   {
+    "code": "gadget",
+    "name": {
+     "fa": "گجت",
+     "en": "Gadget"
+    },
+    "category": "electronics",
+    "asset": {
+     "icon": "item:gadget"
+    }
+   },
+   {
+    "code": "lockpick_set",
+    "name": {
+     "fa": "جعبهٔ شاه‌کلید",
+     "en": "Lockpick set"
+    },
+    "category": "crime",
+    "asset": {
+     "icon": "item:lockpick_set"
+    }
+   },
+   {
+    "code": "crowbar",
+    "name": {
+     "fa": "دیلم",
+     "en": "Crowbar"
+    },
+    "category": "crime",
+    "asset": {
+     "icon": "item:crowbar"
+    }
+   },
+   {
+    "code": "running_shoes",
+    "name": {
+     "fa": "کفش دو",
+     "en": "Running shoes"
+    },
+    "category": "apparel",
+    "asset": {
+     "icon": "item:running_shoes"
+    }
+   },
+   {
+    "code": "jewel",
+    "name": {
+     "fa": "جواهر",
+     "en": "Jewel"
+    },
+    "category": "valuable",
+    "asset": {
+     "icon": "item:jewel"
+    }
+   },
+   {
+    "code": "iron_ore",
+    "name": {
+     "fa": "سنگ آهن",
+     "en": "Iron ore"
+    },
+    "category": "resource",
+    "asset": {
+     "icon": "item:iron_ore"
+    }
+   },
+   {
+    "code": "wheat",
+    "name": {
+     "fa": "گندم",
+     "en": "Wheat"
+    },
+    "category": "resource",
+    "asset": {
+     "icon": "item:wheat"
+    }
+   },
+   {
+    "code": "crude_oil",
+    "name": {
+     "fa": "نفت خام",
+     "en": "Crude oil"
+    },
+    "category": "resource",
+    "asset": {
+     "icon": "item:crude_oil"
+    }
+   },
+   {
+    "code": "pistol",
+    "name": {
+     "fa": "کلت",
+     "en": "Pistol"
+    },
+    "category": "weapon",
+    "asset": {
+     "icon": "item:pistol"
+    }
+   },
+   {
+    "code": "ski_mask",
+    "name": {
+     "fa": "نقاب",
+     "en": "Ski mask"
+    },
+    "category": "crime",
+    "asset": {
+     "icon": "item:ski_mask"
+    }
+   },
+   {
+    "code": "car",
+    "name": {
+     "fa": "خودرو",
+     "en": "Car"
+    },
+    "category": "vehicle",
+    "asset": {
+     "icon": "item:car"
+    }
+   },
+   {
+    "code": "quantum_toaster",
+    "name": {
+     "fa": "توستر کوانتومی",
+     "en": "Quantum toaster"
+    },
+    "category": "electronics",
+    "asset": {
+     "icon": "item:quantum_toaster"
+    }
+   }
+  ],
+  "vehicle": [
+   {
+    "code": "sedan",
+    "name": {
+     "fa": "سواری",
+     "en": "Sedan"
+    },
+    "asset": {
+     "model": "vehicle:sedan",
+     "icon": "vehicle:sedan"
+    }
+   },
+   {
+    "code": "truck",
+    "name": {
+     "fa": "کامیون",
+     "en": "Truck"
+    },
+    "asset": {
+     "model": "vehicle:truck",
+     "icon": "vehicle:truck"
+    }
+   },
+   {
+    "code": "bus",
+    "name": {
+     "fa": "اتوبوس",
+     "en": "Bus"
+    },
+    "asset": {
+     "model": "vehicle:bus",
+     "icon": "vehicle:bus"
+    }
+   }
+  ],
+  "crime": [
+   {
+    "code": "pickpocket",
+    "name": {
+     "fa": "جیب‌بری",
+     "en": "Pickpocketing"
+    },
+    "asset": {
+     "icon": "crime:pickpocket"
+    }
+   },
+   {
+    "code": "burglary",
+    "name": {
+     "fa": "دزدی از خانه",
+     "en": "Burglary"
+    },
+    "asset": {
+     "icon": "crime:burglary"
+    }
+   }
+  ]
+ },
+ "ui": {
+  "tabs": [
+   {
+    "key": "world",
+    "label": {
+     "fa": "جهان",
+     "en": "World"
+    },
+    "command": "map.cities",
+    "icon": "nav:world"
+   },
+   {
+    "key": "map",
+    "label": {
+     "fa": "نقشه",
+     "en": "Map"
+    },
+    "command": "@city",
+    "icon": "nav:map"
+   },
+   {
+    "key": "companies",
+    "label": {
+     "fa": "شرکت‌ها",
+     "en": "Companies"
+    },
+    "command": "company.list",
+    "icon": "nav:companies"
+   },
+   {
+    "key": "market",
+    "label": {
+     "fa": "بازار",
+     "en": "Market"
+    },
+    "command": "market.list",
+    "icon": "nav:market"
+   },
+   {
+    "key": "inventory",
+    "label": {
+     "fa": "انبار",
+     "en": "Inventory"
+    },
+    "command": "inventory.show",
+    "icon": "nav:inventory"
+   },
+   {
+    "key": "messages",
+    "label": {
+     "fa": "پیام‌ها",
+     "en": "Messages"
+    },
+    "command": "@notifications",
+    "icon": "nav:messages"
+   },
+   {
+    "key": "profile",
+    "label": {
+     "fa": "پروفایل",
+     "en": "Profile"
+    },
+    "command": "player.profile.get",
+    "icon": "nav:profile"
+   }
+  ]
+ }
+}

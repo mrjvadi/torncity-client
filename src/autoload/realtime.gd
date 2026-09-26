@@ -10,12 +10,14 @@ extends Node
 ##      with sub_refresh; reconnect with exponential backoff + full jitter
 ##      unless the server said not to (terminal close codes).
 ## Messages: {type:"notice", kind, text, view?} on the personal channel,
-##           {type:"announce", text} on the city channel.
+##           {type:"announce", text} and {type:"world.plot", ...} on the city channel,
+##           {type:"content", version} on either (content reloaded).
 
 signal state_changed(state: String)
 signal message(channel: String, data: Dictionary)
 signal notice(data: Dictionary)
 signal announce(data: Dictionary)
+signal world_plot(data: Dictionary)     # {type:"world.plot", city, plot?, op?, id?} on city:<code>
 
 enum State { OFF, CONNECTING, CONNECTED }
 
@@ -351,3 +353,9 @@ func _dispatch(ch: String, data) -> void:
 			notice.emit(data)
 		"announce":
 			announce.emit(data)
+		"content":
+			# the operator reloaded content: refetch the catalogue if it moved on
+			if str(data.get("version", "")) != Content.version:
+				Content.sync()
+		"world.plot":
+			world_plot.emit(data)

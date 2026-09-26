@@ -14,17 +14,22 @@ extends Node
 const LIBRARY := "res://assets/library.json"
 
 var models := {}
+var roads := {}
 var icons := {}
 var actions := {}
+var glyph_dir := "res://assets/icons/game-icons/"
 var _scene_cache := {}
+var _tex_cache := {}
 
 
 func _ready() -> void:
 	var d = JSON.parse_string(FileAccess.get_file_as_string(LIBRARY))
 	if d is Dictionary:
 		models = d.get("models", {})
+		roads = d.get("roads", {})
 		icons = d.get("icons", {})
 		actions = d.get("actions", {})
+		glyph_dir = str(d.get("glyph_dir", glyph_dir))
 
 
 ## The library entry for a key, with category and global fallbacks.
@@ -37,41 +42,76 @@ static func resolve(table: Dictionary, key: String):
 	return table.get("*")
 
 
-## A model scene for an asset key: {scene, scale, rotate, lift}. Never null
-## while the library has a "*" entry.
+## The model entry for an asset key: {parts: [{scene, at: [x, z], rotate, scale}]}
+## in plot space (a 2 x 2-tile plot centred on the origin). A bare path or
+## {scene, scale, rotate} is accepted as a one-part model.
 func model(key: String) -> Dictionary:
 	var e = resolve(models, key)
 	if e is String:
 		e = {"scene": e}
+	if e is Dictionary and not e.has("parts") and e.has("scene"):
+		e = {"parts": [{"scene": e["scene"], "at": [0, 0], "rotate": e.get("rotate", 0), "scale": e.get("scale", 1.0)}]}
 	return e if e is Dictionary else {}
 
 
+func scene(path: String) -> PackedScene:
+	if not _scene_cache.has(path):
+		_scene_cache[path] = load(path) if ResourceLoader.exists(path) else null
+	return _scene_cache[path]
+
+
+## Build the model for an asset key: a Node3D holding its parts. Null only if
+## the library has nothing at all (not even "*").
 func instantiate(key: String) -> Node3D:
 	var e := model(key)
-	var path := str(e.get("scene", ""))
-	if path == "" or not ResourceLoader.exists(path):
+	var parts: Array = e.get("parts", [])
+	if parts.is_empty():
 		return null
-	if not _scene_cache.has(path):
-		_scene_cache[path] = load(path)
-	var ps: PackedScene = _scene_cache[path]
-	var n := ps.instantiate() as Node3D
-	if n == null:
-		return null
-	var s := float(e.get("scale", 1.0))
-	n.scale = Vector3(s, s, s)
-	n.rotation_degrees.y = float(e.get("rotate", 0.0))
-	n.position.y = float(e.get("lift", 0.0))
-	return n
+	var root := Node3D.new()
+	root.name = key.validate_node_name()
+	for p in parts:
+		var ps := scene(str(p.get("scene", "")))
+		if ps == null:
+			continue
+		var n := ps.instantiate() as Node3D
+		if n == null:
+			continue
+		var at: Array = p.get("at", [0, 0])
+		n.position = Vector3(float(at[0]), 0.0, float(at[1]))
+		n.rotation_degrees.y = float(p.get("rotate", 0))
+		var sc := float(p.get("scale", 1.0))
+		n.scale = Vector3(sc, sc, sc)
+		root.add_child(n)
+	return root if root.get_child_count() > 0 else null
 
 
-## An icon texture for an asset key ("item:pistol"), with fallbacks.
+## The badge icon for an asset key: {texture, tint}. Resolution: the exact
+## key, then "<table>.<category>:*" when a category is given (item category,
+## place kind...), then "<table>:*", then "*".
+func glyph(key: String, category := "") -> Dictionary:
+	var e = null
+	if icons.has(key):
+		e = icons[key]
+	elif category != "" and key.contains(":"):
+		e = icons.get("%s.%s:*" % [key.split(":")[0], category])
+	if e == null:
+		e = resolve(icons, key)
+	if not (e is Dictionary):
+		e = {"glyph": str(e) if e != null else "cardboard-box", "tint": "blue"}
+	var path := glyph_dir + str(e.get("glyph", "cardboard-box")) + ".svg"
+	if not _tex_cache.has(path):
+		_tex_cache[path] = load(path) if ResourceLoader.exists(path) else null
+	return {"texture": _tex_cache[path], "tint": AppTheme.col(str(e.get("tint", "blue")))}
+
+
+## The badge icon of a catalogue entry (uses its asset key and category).
+func glyph_for(table: String, code: String) -> Dictionary:
+	var e := Content.entry(table, code)
+	return glyph(Content.asset(table, code, "icon"), str(e.get("category", e.get("kind", ""))))
+
+
 func icon(key: String) -> Texture2D:
-	var e = resolve(icons, key)
-	if e is String:
-		if e.begins_with("res://"):
-			return load(e) if ResourceLoader.exists(e) else null
-		return AppTheme.icon(e)
-	return AppTheme.icon("item")
+	return glyph(key).get("texture")
 
 
 ## The line icon for a server action, by its command's domain
@@ -79,3 +119,8 @@ func icon(key: String) -> Texture2D:
 func action_icon(command: String) -> String:
 	var domain := command.split(".")[0]
 	return str(actions.get(command, actions.get(domain, actions.get("*", "ln_menu"))))
+
+
+## The badge icon for a server action, by its command's domain.
+func action_glyph(command: String) -> Dictionary:
+	return glyph("action:" + command.split(".")[0])

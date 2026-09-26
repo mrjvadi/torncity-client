@@ -59,6 +59,7 @@ func start_playing() -> bool:
 		I18n.set_lang(plang, false)
 	Realtime.set_city(Session.city_code)
 	Realtime.start()
+	await Content.sync()
 	# the main menu and the HUD come from the profile screen
 	var hub := await Api.command("player.profile.get", {})
 	if hub.get("ok", false):

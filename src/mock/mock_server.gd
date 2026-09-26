@@ -156,9 +156,24 @@ func http(method: String, path: String, body, token: String) -> Dictionary:
 		["GET", "/api/v1/realtime/subscribe"]:
 			var ch := path.split("channel=")[1].uri_decode() if path.contains("channel=") else ""
 			return {"status": 200, "data": {"token": jwt({"sub": str(fx["player"]["id"]), "channel": ch, "exp": int(now()) + 900})}, "error": ""}
+		["GET", "/api/v1/content"]:
+			var since := path.split("since=")[1].uri_decode() if path.contains("since=") else ""
+			var cat: Dictionary = content_fixture()
+			if since == str(cat["version"]):
+				return {"status": 200, "data": {"version": cat["version"], "unchanged": true}, "error": ""}
+			return {"status": 200, "data": cat, "error": ""}
 		["POST", "/api/v1/command"]:
 			return {"status": 200, "data": command(str(body.get("command", "")), body.get("args", {})), "error": ""}
 	return _err(404, "not_found", "not found")
+
+
+var _content := {}
+
+
+func content_fixture() -> Dictionary:
+	if _content.is_empty():
+		_content = JSON.parse_string(FileAccess.get_file_as_string("res://src/mock/content.json"))
+	return _content
 
 
 func _err(status: int, code: String, message: String) -> Dictionary:
