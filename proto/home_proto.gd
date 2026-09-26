@@ -30,6 +30,7 @@ var _t := 0.0
 var _shot := ""
 var _frames := 0
 var _dock_btn: Control
+var dock_tab := 2              # which dock tab is lit: 0 me, 1 activity, 2 city, 3 market, 4 society
 var _coins: CPUParticles2D
 
 
@@ -339,7 +340,7 @@ func _dock() -> void:
 	(bar.material as ShaderMaterial).set_shader_parameter("shadow", 0.7)
 	# right to left: me, activity, city, market, society
 	var tabs := [["person", "من", 0], ["activity", "فعالیت", 1], ["city", "شهر", 0], ["market", "اقتصاد", 2], ["society", "جامعه", 3]]
-	var active := 2
+	var active := dock_tab
 	var x := W
 	for i in tabs.size():
 		var t: Array = tabs[i]
