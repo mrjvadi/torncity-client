@@ -32,7 +32,7 @@ func build() -> void:
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	_ring = Ring.new()
 	_ring.icon_name = "hourglass"
-	_ring.color = AppTheme.col("blue")
+	_ring.color = AppTheme.col("primary")
 	_ring.custom_minimum_size = Vector2(230, 270)
 	var sh = v.get("shift")
 	if sh is Dictionary:

@@ -97,13 +97,13 @@ func _row(r: Dictionary, zebra: bool) -> Control:
 	var price := int(r.get("price", r.get("best_bid", 0)))
 	var pl := UI.label(I18n.money_short(price), "SmallLabel")
 	pl.add_theme_font_override("font", AppTheme.font_bold)
-	pl.add_theme_color_override("font_color", AppTheme.col("yellow"))
+	pl.add_theme_color_override("font_color", AppTheme.col("gold"))
 	pc.add_child(pl)
 	if r.has("change"):
 		var ch := float(r["change"])
 		var cl := UI.label(("▲ " if ch > 0 else ("▼ " if ch < 0 else "• ")) + I18n.digits("%.1f%%" % absf(ch)), "DimLabel")
 		cl.add_theme_font_size_override("font_size", 17)
-		cl.add_theme_color_override("font_color", AppTheme.col("green") if ch > 0 else (AppTheme.col("red") if ch < 0 else AppTheme.col("text_dim")))
+		cl.add_theme_color_override("font_color", AppTheme.col("success") if ch > 0 else (AppTheme.col("danger") if ch < 0 else AppTheme.col("text_dim")))
 		pc.add_child(cl)
 	elif tab == 1:
 		var bl := UI.label(I18n.t("market.best_bid"), "DimLabel")

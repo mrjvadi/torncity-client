@@ -33,13 +33,16 @@ const TABS := {
 	"messages": {"command": "", "local": "notifications", "icon": "ln_messages", "label": "nav.messages"},
 	"profile": {"command": "player.profile.get", "icon": "ln_profile", "label": "nav.profile"},
 }
-const TAB_ORDER := ["world", "map", "companies", "market", "inventory", "messages", "profile"]
+## Five tabs fit a phone's thumb; the inventory lives under the profile (and
+## the menu), messages behind the HUD's bell. Both stay in TABS, so either can
+## still be opened as a tab.
+const TAB_ORDER := ["world", "map", "companies", "market", "profile"]
 
 ## Which tab a client screen belongs to (for highlighting the nav).
 const TAB_OF := {
 	"city": "map", "cities": "world", "travel_options": "world", "travel_status": "world",
 	"profile": "profile", "life": "profile", "job": "profile", "bank": "profile",
-	"inventory": "inventory", "notifications": "messages", "market": "market",
+	"inventory": "profile", "notifications": "", "market": "market",
 }
 
 

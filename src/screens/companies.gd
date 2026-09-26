@@ -28,7 +28,7 @@ func build() -> void:
 func _card(c: Dictionary) -> Control:
 	var t := str(c.get("type", ""))
 	var gl := AssetLib.glyph_for("company_type", t)
-	var tint: Color = gl.get("tint", AppTheme.col("blue"))
+	var tint: Color = gl.get("tint", AppTheme.col("primary"))
 	var p := GlowPanel.new()
 	p.radius = 14
 	p.padding = 20
@@ -61,7 +61,7 @@ func _card(c: Dictionary) -> Control:
 		what.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		top.add_child(what)
 		var eta := UI.label("", "SmallLabel")
-		eta.add_theme_color_override("font_color", AppTheme.col("cyan"))
+		eta.add_theme_color_override("font_color", AppTheme.col("info"))
 		top.add_child(eta)
 		pc.add_child(top)
 		var bar := StatBar.new()
@@ -69,7 +69,7 @@ func _card(c: Dictionary) -> Control:
 		bar.compact = true
 		bar.show_text = false
 		bar.custom_minimum_size = Vector2(80, 14)
-		bar.color = AppTheme.col("green")
+		bar.color = AppTheme.col("success")
 		pc.add_child(bar)
 		var rate := UI.label(I18n.t("companies.rate", {"n": I18n.num(int(pr.get("per_hour", 0)))}), "DimLabel")
 		rate.add_theme_font_size_override("font_size", 18)

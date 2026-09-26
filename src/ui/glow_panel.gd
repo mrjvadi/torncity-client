@@ -1,26 +1,38 @@
 @tool
 class_name GlowPanel
 extends PanelContainer
-## A premium panel drawn in code, crisp at any scale: a soft layered drop
-## shadow, a vertical gradient face, a 1 px inner highlight along the top edge
-## and a hairline border. Children are laid out like a PanelContainer's.
+## A card drawn in code, crisp at any scale: a soft drop shadow, a nearly flat
+## face (a whisper of gradient), a faint top edge light and a hairline border.
+## An optional accent draws a short bar on the top edge. Children are laid out
+## like a PanelContainer's. Colours default to the UI tokens (palette.json "ui").
 
-@export var top_color := Color("#1A2A43"):
+const SURFACE := Color("#131A2E")
+const STROKE := Color("#243052")
+
+@export var top_color := Color("#161E35"):
 	set(v): top_color = v; queue_redraw()
-@export var bottom_color := Color("#0F1A2B"):
+@export var bottom_color := SURFACE:
 	set(v): bottom_color = v; queue_redraw()
-@export var border_color := Color("#2B4468"):
+@export var border_color := STROKE:
 	set(v): border_color = v; queue_redraw()
-@export var highlight := Color(0.42, 0.6, 0.9, 0.35):
+@export var highlight := Color(1, 1, 1, 0.05):
 	set(v): highlight = v; queue_redraw()
-@export var radius := 10.0:
+@export var radius := 24.0:
 	set(v): radius = v; queue_redraw()
-@export var shadow := 16.0:
+@export var shadow := 14.0:
 	set(v): shadow = v; queue_redraw()
-@export var accent := Color(0, 0, 0, 0):   ## an optional glow line along the top
+@export var accent := Color(0, 0, 0, 0):   ## an optional accent bar on the top edge
 	set(v): accent = v; queue_redraw()
 @export var padding := 22:
 	set(v): padding = v; _apply_padding()
+
+
+## Wash the card with a colour (a place's, a domain's): the face picks up a
+## little of it, the border a little more.
+func tint_with(c: Color, amount := 0.16) -> void:
+	top_color = SURFACE.lerp(c, amount)
+	bottom_color = SURFACE.lerp(c, amount * 0.35)
+	border_color = Color(c, 0.32)
 
 
 func _init() -> void:
@@ -61,34 +73,32 @@ func _draw() -> void:
 		return
 	# shadow: a few expanding translucent layers, offset downwards
 	if shadow > 0:
-		var layers := 5
+		var layers := 4
 		for i in layers:
 			var grow := shadow * (i + 1) / layers
-			var sr := r.grow(grow * 0.6)
-			sr.position.y += shadow * 0.35
-			var a := 0.16 * (1.0 - float(i) / layers)
-			draw_colored_polygon(rounded_rect(sr, radius + grow * 0.6), Color(0.02, 0.03, 0.08, a))
-	# gradient face: per-vertex colours by height
+			var sr := r.grow(grow * 0.5)
+			sr.position.y += shadow * 0.4
+			var a := 0.12 * (1.0 - float(i) / layers)
+			draw_colored_polygon(rounded_rect(sr, radius + grow * 0.5), Color(0.0, 0.01, 0.04, a))
+	# face: per-vertex colours by height
 	var pts := rounded_rect(r, radius)
 	var cols := PackedColorArray()
 	for p in pts:
 		cols.append(top_color.lerp(bottom_color, clampf(p.y / maxf(1.0, size.y), 0, 1)))
 	draw_polygon(pts, cols)
-	# inner top highlight
-	if highlight.a > 0 and size.x > radius * 2:
-		var rr := maxf(radius - 1.5, 0.0)
-		var hl := PackedVector2Array()
-		for i in 9:
-			var a := deg_to_rad(200.0 + 70.0 * i / 8.0)
-			hl.append(Vector2(1.5 + rr, 1.5 + rr) + Vector2(cos(a), sin(a)) * rr)
-		for i in 9:
-			var a := deg_to_rad(270.0 + 70.0 * i / 8.0)
-			hl.append(Vector2(size.x - 1.5 - rr, 1.5 + rr) + Vector2(cos(a), sin(a)) * rr)
-		draw_polyline(hl, highlight, 2.0, true)
-	if accent.a > 0:
-		draw_line(Vector2(radius, 1.5), Vector2(size.x - radius, 1.5), accent, 3.0, true)
 	# hairline border
 	if border_color.a > 0:
 		var closed := pts.duplicate()
 		closed.append(pts[0])
-		draw_polyline(closed, border_color, 1.5, true)
+		draw_polyline(closed, border_color, 1.2, true)
+	# top edge light, fading towards the corners
+	if highlight.a > 0 and size.x > radius * 2:
+		var x0 := radius
+		var x1 := size.x - radius
+		var hl := PackedVector2Array([Vector2(x0, 1.0), Vector2((x0 + x1) / 2.0, 1.0), Vector2(x1, 1.0)])
+		var hc := PackedColorArray([Color(highlight, 0.0), highlight, Color(highlight, 0.0)])
+		draw_polyline_colors(hl, hc, 1.5, true)
+	if accent.a > 0:
+		var w := minf(96.0, size.x * 0.3)
+		var x := size.x - radius - w if is_layout_rtl() else radius
+		draw_colored_polygon(rounded_rect(Rect2(x, 0, w, 4), 2, 3), accent)

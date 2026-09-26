@@ -24,7 +24,7 @@ func _draw() -> void:
 	var c := size / 2.0
 	var ready := pull >= 1.0 or spinning
 	draw_circle(c + Vector2(0, 3), 30, Color(0, 0, 0, 0.3))
-	draw_circle(c, 30, Color("#2F80ED") if ready else Color("#1C2F4C"))
+	draw_circle(c, 30, Color("#2EC4B6") if ready else Color("#1A2340"))
 	var start := _a if spinning else pull * PI * 1.5
 	draw_arc(c, 17, start, start + PI * 1.4 * (1.0 if spinning else clampf(pull, 0.1, 1.0)), 32, Color.WHITE, 4.0, true)
 	var tip := start + PI * 1.4 * (1.0 if spinning else clampf(pull, 0.1, 1.0))

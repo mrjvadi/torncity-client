@@ -24,7 +24,7 @@ func build() -> void:
 func _hero(p: Dictionary) -> Control:
 	var cmd := str(req.get("command", ""))
 	var g := AssetLib.action_glyph(cmd)
-	var tint: Color = g.get("tint", AppTheme.col("blue"))
+	var tint: Color = g.get("tint", AppTheme.col("primary"))
 	var hero := GlowPanel.new()
 	hero.radius = 14
 	hero.padding = 22
@@ -113,7 +113,7 @@ func _row(text: String, last: bool) -> Control:
 	else:
 		var dot := ColorRect.new()
 		dot.custom_minimum_size = Vector2(8, 8)
-		dot.color = AppTheme.col("blue")
+		dot.color = AppTheme.col("primary")
 		dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		h.add_child(dot)
 	var l := UI.rich(TextIcons.strip(text) if ic != "" else text, 24)

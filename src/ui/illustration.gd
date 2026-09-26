@@ -5,7 +5,7 @@ extends Control
 ## middle, and a gentle float animation.
 
 var glyph := {}
-var tint := Color("#2F80ED")
+var tint := Color("#2EC4B6")
 var _t := 0.0
 
 
@@ -14,7 +14,7 @@ static func make(kind: String, px := 240.0) -> Illustration:
 	var key: String = {"empty": "state:empty", "error": "state:error", "offline": "state:offline", "done": "state:done",
 		"search": "state:search"}.get(kind, "state:empty")
 	i.glyph = AssetLib.glyph(key)
-	i.tint = i.glyph.get("tint", Color("#2F80ED"))
+	i.tint = i.glyph.get("tint", Color("#2EC4B6"))
 	i.custom_minimum_size = Vector2(px, px)
 	i.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	i.mouse_filter = Control.MOUSE_FILTER_IGNORE

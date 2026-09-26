@@ -1,6 +1,6 @@
 class_name ActionTile
 extends Button
-## A square action tile: a badge icon over a short label, on a raised navy
+## A square action tile: a badge icon over a short label, on a flat
 ## card (the reference kit's Attack / Travel / Work grid). Spring press,
 ## hover lift, dimmed when disabled.
 
@@ -53,19 +53,11 @@ func _draw() -> void:
 	var hover := is_hovered() and not disabled
 	var down := is_pressed() or button_pressed
 	var danger := ActionKit.kind_of(action) in ["danger", "confirm"]
-	var top := Color("#1F3150") if not hover else Color("#26406A")
-	var bottom := Color("#132139")
-	# shadow
-	var sh := GlowPanel.rounded_rect(Rect2(r.position + Vector2(0, 5 if not down else 2), r.size), 12, 6)
-	draw_colored_polygon(sh, Color(0, 0, 0, 0.32))
-	var pts := GlowPanel.rounded_rect(r, 12, 6)
-	var cols := PackedColorArray()
-	for p in pts:
-		cols.append(top.lerp(bottom, p.y / maxf(1.0, size.y)))
-	draw_polygon(pts, cols)
+	var face := Color("#1A2340") if hover or down else Color("#131A2E")
+	var pts := GlowPanel.rounded_rect(r, AppTheme.R_CARD - 4, 8)
+	draw_colored_polygon(pts, face)
 	var border := pts.duplicate()
 	border.append(pts[0])
-	var bc := Color("#EB5757", 0.7) if danger else (Color("#5B9CF2", 0.9) if hover else Color("#2B4468"))
+	var bc := Color("#EF5A5F", 0.6) if danger else (Color("#2EC4B6", 0.7) if hover else Color("#243052"))
 	draw_polyline(border, bc, 1.2, true)
-	draw_line(Vector2(12, 2), Vector2(size.x - 12, 2), Color(1, 1, 1, 0.07 if not hover else 0.12), 1.5)
 	modulate = Color(1, 1, 1, 0.45) if disabled else Color.WHITE

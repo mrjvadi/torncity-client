@@ -46,5 +46,30 @@
     "water":        "#79D2EA",
     "earth":        "#B98A5E",
     "earth_dk":     "#8E6443"
+  },
+  "ui_notes": "The interface's own tokens (AppTheme): surfaces, text and semantic accents. The art reads \"colors\"; the UI reads these. See docs/design-system.md.",
+  "ui": {
+    "bg":          "#0A0F1E",
+    "bg_top":      "#10172C",
+    "surface":     "#131A2E",
+    "surface_2":   "#1A2340",
+    "surface_3":   "#232E52",
+    "stroke":      "#243052",
+    "stroke_hi":   "#34426C",
+    "text":        "#EEF2FA",
+    "text_2":      "#A6B1CB",
+    "text_3":      "#6C789A",
+    "primary":     "#2EC4B6",
+    "primary_hi":  "#5AD9CD",
+    "primary_lo":  "#1A9187",
+    "on_primary":  "#03211E",
+    "gold":        "#F6B93B",
+    "gold_lo":     "#C98B14",
+    "on_gold":     "#2A1A00",
+    "danger":      "#EF5A5F",
+    "danger_lo":   "#C23A40",
+    "success":     "#4CC47E",
+    "warning":     "#F2994A",
+    "info":        "#5AA9F0"
   }
 }

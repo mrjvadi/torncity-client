@@ -33,7 +33,7 @@ func _build(title: String, text: String, on_yes: Callable, danger: bool) -> void
 	var sheet := GlowPanel.new()
 	sheet.radius = 14
 	sheet.padding = 26
-	sheet.accent = AppTheme.col("red" if danger else "blue")
+	sheet.accent = AppTheme.col("danger" if danger else "blue")
 	sheet.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	sheet.offset_left = 16
 	sheet.offset_right = -16
