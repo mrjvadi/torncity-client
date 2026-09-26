@@ -513,6 +513,10 @@
    "glyph": "chat-bubble",
    "tint": "blue"
   },
+  "action:staff": {
+   "glyph": "meeple-group",
+   "tint": "cyan"
+  },
   "action:gov": {
    "glyph": "gavel",
    "tint": "yellow"
@@ -624,6 +628,26 @@
   "action:confirm": {
    "glyph": "scales",
    "tint": "yellow"
+  },
+  "state:empty": {
+   "glyph": "cardboard-box",
+   "tint": "blue"
+  },
+  "state:error": {
+   "glyph": "broken-shield",
+   "tint": "red"
+  },
+  "state:offline": {
+   "glyph": "network-bars",
+   "tint": "orange"
+  },
+  "state:done": {
+   "glyph": "trophy",
+   "tint": "green"
+  },
+  "state:search": {
+   "glyph": "treasure-map",
+   "tint": "cyan"
   }
  },
  "models": {
@@ -1812,10 +1836,11 @@
   "fence": "city-kit-suburban/fence-3x3"
  },
  "extra_glyphs": [
+  "broken-shield",
   "cheerful",
-  "sun",
+  "network-bars",
   "person",
-  "broken-shield"
+  "sun"
  ],
  "credits": {
   "kenney": [

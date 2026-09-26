@@ -1,9 +1,11 @@
 class_name Fmt
 ## Number, money, duration and bidi formatting for the client shell.
 ##
-## Mirrors the server's locale rules (configs/locales/*.yml, `format:`): Persian
-## writes every number with Persian digits, «٬» between thousands and «٫» as
-## the decimal mark; English uses 0-9 and ",". Pure functions: unit-tested in
+## Mirrors the server's locale rules (configs/locales/*.yml, `format:`) for
+## grouping and words: Persian writes «٬» between thousands and «٫» as the
+## decimal mark; English uses ",". Digits themselves are ALWAYS Western
+## (0-9) in both languages, per the owner's rule — Persian text still gets
+## Persian digit *glyphs* nowhere. Pure functions: unit-tested in
 ## tests/test_fmt.gd.
 
 const FA_DIGITS := "۰۱۲۳۴۵۶۷۸۹"
@@ -23,18 +25,12 @@ static func is_rtl(lang: String) -> bool:
 	return lang == "fa" or lang == "ar"
 
 
-## Latin digits -> the language's digits (leaves everything else alone).
-static func digits(s: String, lang: String) -> String:
-	if lang != "fa":
-		return s
-	var out := ""
-	for ch in s:
-		var c := ch.unicode_at(0)
-		if c >= 48 and c <= 57:
-			out += FA_DIGITS[c - 48]
-		else:
-			out += ch
-	return out
+## Digits stay Western (0-9) in every language: the owner's rule is that no
+## digit glyph is ever localised, even in Persian text. Kept as a pass-through
+## (rather than removing call sites) so a future per-language override stays
+## a one-line change here.
+static func digits(s: String, _lang: String) -> String:
+	return s
 
 
 ## Any Persian/Arabic-Indic digits back to Latin (for parsing what a player typed).

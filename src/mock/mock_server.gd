@@ -245,7 +245,7 @@ func _tick() -> void:
 		st["place"] = "city_centre"
 		st["travel"] = null
 		st["xp"] += 120
-		push_notice("travel_arrived", L("📍 به %s رسیدید.\n⭐ ۱۲۰ امتیاز تجربه گرفتید." % city_name(tr["to"]), "📍 You arrived in %s.\n⭐ You earned 120 XP." % city_name(tr["to"])),
+		push_notice("travel_arrived", L("📍 به %s رسیدید.\n⭐ 120 امتیاز تجربه گرفتید." % city_name(tr["to"]), "📍 You arrived in %s.\n⭐ You earned 120 XP." % city_name(tr["to"])),
 			{"city_code": st["city"], "city": city_name(st["city"])})
 	var sh = st["shift"]
 	if sh is Dictionary and t >= sh["ends"]:
@@ -543,7 +543,7 @@ func _bank(notice: String) -> Dictionary:
 		acts.append(_act((L("📤 برداشت همه - %s", "📤 Withdraw all - %s") if d["all"] else L("📤 برداشت %s", "📤 Withdraw %s")) % money(d["amount"]), "bank.withdraw", {"amount": str(d["amount"]), "nonce": d["nonce"]}))
 	acts.append({"label": L("✏️ واریز مبلغ دلخواه", "✏️ Deposit another amount"), "command": "bank.deposit", "args": {}, "input": {"field": "amount", "text": L("چه مبلغی واریز شود؟", "How much to deposit?")}})
 	acts.append({"label": L("✏️ برداشت مبلغ دلخواه", "✏️ Withdraw another amount"), "command": "bank.withdraw", "args": {}, "input": {"field": "amount", "text": L("چه مبلغی برداشت شود؟", "How much to withdraw?")}})
-	var text := L("🏦 بانک %s\n💵 پول نقد: %s\n🏦 موجودی بانک: %s\nکارمزد برداشت: ٪۰٫۵", "🏦 Bank of %s\n💵 Cash: %s\n🏦 Bank: %s\nWithdrawal fee: 0.5%%") % [city_name(st["city"]), money(st["cash"]), money(st["bank"])]
+	var text := L("🏦 بانک %s\n💵 پول نقد: %s\n🏦 موجودی بانک: %s\nکارمزد برداشت: ٪0٫5", "🏦 Bank of %s\n💵 Cash: %s\n🏦 Bank: %s\nWithdrawal fee: 0.5%%") % [city_name(st["city"]), money(st["cash"]), money(st["bank"])]
 	return _resp("bank", text, v, acts, notice)
 
 
@@ -591,8 +591,8 @@ func _job() -> Dictionary:
 		"shift_length_seconds": j["shift"], "workplace": named(j["workplace"], place_name(j["workplace"])),
 		"walk_to_work_seconds": 0 if at_work else int(place_row(j["workplace"])["walk"]),
 		"shift": {"remaining_seconds": maxi(0, int(sh["ends"] - now())), "ends_at": Time.get_datetime_string_from_unix_time(int(sh["ends"])) + "Z", "total_seconds": j["shift"]} if sh is Dictionary else null,
-		"next": {"title": L("سرپرست فروش", "Sales supervisor"), "pay": 2600}, "promotion_ready": false, "missing": [L("۳ شیفت دیگر", "3 more shifts")]}
-	var text := L("💼 %s در %s - %s برای هر شیفت\n📈 عملکرد: %s از ۱۰۰", "💼 %s at %s - %s per shift\n📈 Performance: %s of 100") % [v["job"]["title"], v["employer"], money(j["pay"]), num(j["performance"])]
+		"next": {"title": L("سرپرست فروش", "Sales supervisor"), "pay": 2600}, "promotion_ready": false, "missing": [L("3 شیفت دیگر", "3 more shifts")]}
+	var text := L("💼 %s در %s - %s برای هر شیفت\n📈 عملکرد: %s از 100", "💼 %s at %s - %s per shift\n📈 Performance: %s of 100") % [v["job"]["title"], v["employer"], money(j["pay"]), num(j["performance"])]
 	var acts := []
 	if not (sh is Dictionary):
 		acts.append(_act(L("🛠 شروع شیفت", "🛠 Start a shift") if at_work else L("🚶 رفتن به محل کار و شروع شیفت", "🚶 Walk to work and start"), "job.work"))
@@ -635,12 +635,12 @@ func _company_show(id: int) -> Dictionary:
 			var nm: Dictionary = p["name"]
 			var t := str(p["ref"]["code"])
 			var tname := Content.name_of("company_type", t)
-			var text := L("🏢 %s\n%s · مالک: %s\n\n📈 تولید امروز: ۱۲۰ واحد\n👥 کارمندان: ۸" % [nm["fa"], tname, p["ref"]["owner"]],
+			var text := L("🏢 %s\n%s · مالک: %s\n\n📈 تولید امروز: 120 واحد\n👥 کارمندان: 8" % [nm["fa"], tname, p["ref"]["owner"]],
 				"🏢 %s\n%s · Owner: %s\n\n📈 Output today: 120 units\n👥 Staff: 8" % [nm["en"], tname, p["ref"]["owner"]])
 			return _resp("company", text, {"company": {"id": id, "type": t, "name": nm[st["lang"]], "owner": p["ref"]["owner"], "staff": 8}},
 				[_act(L("شروع تولید", "Start production"), "company.produce", {"id": id}, "primary", "action:production"),
 				_act(L("انبار", "Stock"), "company.stock", {"id": id}, "", "action:inventory"),
-				_act(L("کارمندان", "Staff"), "company.staff", {"id": id}, "", "action:social"),
+				_act(L("کارمندان", "Staff"), "company.staff", {"id": id}, "", "action:staff"),
 				_act(L("پژوهش", "Research"), "company.research", {"id": id}, "", "action:research"),
 				_act(L("فروش در بازار", "Sell on market"), "market.sell", {"company": id}, "", "action:market"),
 				_act(L("انحلال شرکت", "Close company"), "company.close", {"id": id}, "danger", "action:danger"),
@@ -728,13 +728,13 @@ func _settings() -> Dictionary:
 ## Any other command: a text card, the way the bot would answer it.
 func _generic(cmd: String) -> Dictionary:
 	var titles := {
-		"skills.list": ["🛠 مهارت‌ها\n• مدیریت - سطح ۳ - ٪۴۰ تا سطح بعد\n• رانندگی - سطح ۲ - ٪۷۵ تا سطح بعد\n• آشپزی - سطح ۱ - ٪۱۰ تا سطح بعد", "🛠 Skills\n• Management - level 3 - 40% to next level\n• Driving - level 2 - 75% to next level\n• Cooking - level 1 - 10% to next level"],
-		"social.friend.list": ["👥 دوستان\n• نیما - سطح ۹ - در فنویک اسپن\n• مریم - سطح ۵ - در برنهاون", "👥 Friends\n• Nima - level 9 - in Fenwick Span\n• Maryam - level 5 - in Brennhaven"],
+		"skills.list": ["🛠 مهارت‌ها\n• مدیریت - سطح 3 - ٪40 تا سطح بعد\n• رانندگی - سطح 2 - ٪75 تا سطح بعد\n• آشپزی - سطح 1 - ٪10 تا سطح بعد", "🛠 Skills\n• Management - level 3 - 40% to next level\n• Driving - level 2 - 75% to next level\n• Cooking - level 1 - 10% to next level"],
+		"social.friend.list": ["👥 دوستان\n• نیما - سطح 9 - در فنویک اسپن\n• مریم - سطح 5 - در برنهاون", "👥 Friends\n• Nima - level 9 - in Fenwick Span\n• Maryam - level 5 - in Brennhaven"],
 		"crime.hub": ["🕶 خلاف\nهر خلاف فقط در جای خودش شدنی است. خطر، پاداش و احتمال گیر افتادن را پیش از شروع ببینید.", "🕶 Crime\nEach crime can only be done at its own place. See the risk, the reward and the chance of arrest before you start."],
-		"education.list": ["🎓 آموزش\n📖 دورهٔ مدیریت پایه - ۳ ساعت - شهریه ۲٬۰۰۰ نیل\n📖 رانندگی حرفه‌ای - ۲ ساعت - شهریه ۱٬۲۰۰ نیل", "🎓 Education\n📖 Basic management - 3h - fee 2,000 Nil\n📖 Professional driving - 2h - fee 1,200 Nil"],
+		"education.list": ["🎓 آموزش\n📖 دورهٔ مدیریت پایه - 3 ساعت - شهریه 2٬000 نیل\n📖 رانندگی حرفه‌ای - 2 ساعت - شهریه 1٬200 نیل", "🎓 Education\n📖 Basic management - 3h - fee 2,000 Nil\n📖 Professional driving - 2h - fee 1,200 Nil"],
 		"company.list": ["🏢 شرکت‌ها\nهنوز شرکتی ندارید. با ثبت شرکت، کارمند استخدام کنید و کالا تولید کنید.", "🏢 Companies\nYou do not own a company yet. Register one to hire staff and make goods."],
-		"market.list": ["🏪 بازار معاملات\n• نان - ۱۲ نیل\n• فولاد - ۴۸۰ نیل\n• گوشی هوشمند - ۹٬۵۰۰ نیل", "🏪 Market\n• Bread - 12 Nil\n• Steel - 480 Nil\n• Smartphone - 9,500 Nil"],
-		"mission.board": ["📋 تابلوی مأموریت\n🎯 تحویل بسته به بازار - پاداش ۶۰۰ نیل\n🎯 گشت در پارک - پاداش ۳۰۰ نیل", "📋 Mission board\n🎯 Deliver a parcel to the bazaar - reward 600 Nil\n🎯 Patrol the park - reward 300 Nil"],
+		"market.list": ["🏪 بازار معاملات\n• نان - 12 نیل\n• فولاد - 480 نیل\n• گوشی هوشمند - 9٬500 نیل", "🏪 Market\n• Bread - 12 Nil\n• Steel - 480 Nil\n• Smartphone - 9,500 Nil"],
+		"mission.board": ["📋 تابلوی مأموریت\n🎯 تحویل بسته به بازار - پاداش 600 نیل\n🎯 گشت در پارک - پاداش 300 نیل", "📋 Mission board\n🎯 Deliver a parcel to the bazaar - reward 600 Nil\n🎯 Patrol the park - reward 300 Nil"],
 	}
 	var t = titles.get(cmd)
 	var text: String = (t[0] if st["lang"] == "fa" else t[1]) if t != null else L("ℹ️ این بخش را سرور زنده نشان می‌دهد. (حالت آزمایشی)", "ℹ️ The live server shows this screen. (mock mode)")

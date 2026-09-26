@@ -82,7 +82,7 @@ func _card(c: Dictionary) -> Control:
 		bar.set_value(prog * 100.0, 100.0)
 	# stats
 	var stats := UI.hbox(10)
-	stats.add_child(_stat("action:social", I18n.num(int(c.get("staff", 0))), I18n.t("companies.staff")))
+	stats.add_child(_stat("action:staff", I18n.num(int(c.get("staff", 0))), I18n.t("companies.staff")))
 	stats.add_child(_stat("res:cash", I18n.money_short(int(c.get("cash", 0))), I18n.t("companies.cash")))
 	box.add_child(stats)
 	# the whole card opens the company (the server's row action)
