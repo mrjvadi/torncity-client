@@ -46,10 +46,10 @@ func _draw() -> void:
 	var r := d / 2.0
 	var ring_w := maxf(4.0, d * 0.075)
 	# track + progress
-	draw_arc(c, r - ring_w / 2.0, 0, TAU, 64, Color("#0B1422"), ring_w, true)
+	draw_arc(c, r - ring_w / 2.0, 0, TAU, 64, Color("#0A0F1E"), ring_w, true)
 	if _shown > 0.001:
 		var start := -PI / 2.0
-		draw_arc(c, r - ring_w / 2.0, start, start + TAU * clampf(_shown, 0, 1), 64, Color("#56CCF2"), ring_w, true)
+		draw_arc(c, r - ring_w / 2.0, start, start + TAU * clampf(_shown, 0, 1), 64, Color("#2EC4B6"), ring_w, true)
 	# the face
 	var inner := r - ring_w - 3.0
 	var pts := PackedVector2Array()
@@ -59,7 +59,7 @@ func _draw() -> void:
 		var v := Vector2(cos(a), sin(a))
 		pts.append(c + v * inner)
 		uvs.append(Vector2(0.5, 0.5) + v * (0.5 if not _glyph else 0.78))
-	draw_colored_polygon(pts, Color("#24406B"))
+	draw_colored_polygon(pts, Color("#1A2340"))
 	if _tex:
 		if _glyph:
 			var g := inner * 1.1
@@ -74,6 +74,6 @@ func _draw() -> void:
 		var tw := font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
 		var bw := maxf(tw + fs * 0.9, fs * 1.6)
 		var br := Rect2(Vector2(c.x - bw / 2.0, d - fs * 1.15), Vector2(bw, fs * 1.3))
-		draw_colored_polygon(GlowPanel.rounded_rect(br.grow(2), br.size.y / 2.0 + 2, 6), Color("#0B1422"))
-		draw_colored_polygon(GlowPanel.rounded_rect(br, br.size.y / 2.0, 6), Color("#F2C94C"))
+		draw_colored_polygon(GlowPanel.rounded_rect(br.grow(2), br.size.y / 2.0 + 2, 6), Color("#0A0F1E"))
+		draw_colored_polygon(GlowPanel.rounded_rect(br, br.size.y / 2.0, 6), Color("#F6B93B"))
 		draw_string(font, Vector2(c.x - tw / 2.0, br.position.y + br.size.y * 0.78), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color("#1B1400"))

@@ -8,9 +8,8 @@ func build() -> void:
 	scroll_body(18)
 	var v := view
 	var hero := GlowPanel.new()
-	hero.top_color = Color("#1F3150")
-	hero.bottom_color = Color("#132139")
-	hero.accent = AppTheme.col("blue", 0.8)
+	hero.tint_with(AppTheme.col("primary"), 0.12)
+	hero.accent = AppTheme.col("primary")
 	hero.padding = 24
 	var hbox := UI.hbox(20)
 	var av := AvatarBadge.new()
@@ -41,7 +40,7 @@ func build() -> void:
 	if nxt > 0:
 		var bar := StatBar.new()
 		bar.icon_name = "xp"
-		bar.color = AppTheme.col("blue")
+		bar.color = AppTheme.col("primary")
 		bar.set_value(xp, nxt, I18n.of(xp, nxt))
 		hv.add_child(bar)
 	hero.add_child(hv)
@@ -62,7 +61,7 @@ func build() -> void:
 		where.add_child(_walk_label)
 	elif place is Dictionary:
 		where.add_child(UI.label("%s - %s" % [I18n.name_of("place", str(place.get("code", "")), str(place.get("name", ""))), city], "", -1, true))
-	var go := UI.button(I18n.t("nav.city"), "map", "GhostButton", func(): shell.open_tab("city"))
+	var go := UI.button(I18n.t("nav.city"), "map", "GhostButton", func(): shell.open_tab("map"))
 	where.add_child(go)
 
 	# money & vitals tiles

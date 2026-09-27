@@ -24,14 +24,11 @@ func build() -> void:
 func _hero(p: Dictionary) -> Control:
 	var cmd := str(req.get("command", ""))
 	var g := AssetLib.action_glyph(cmd)
-	var tint: Color = g.get("tint", AppTheme.col("blue"))
+	var tint: Color = g.get("tint", AppTheme.col("primary"))
 	var hero := GlowPanel.new()
-	hero.radius = 14
 	hero.padding = 22
-	hero.top_color = Color("#16243A").lerp(tint, 0.28)
-	hero.bottom_color = Color("#0F1A2B").lerp(tint, 0.08)
-	hero.border_color = Color(tint, 0.55)
-	hero.accent = Color(tint, 0.9)
+	hero.tint_with(tint, 0.22)
+	hero.accent = tint
 	var row := UI.hbox(18)
 	hero.add_child(row)
 	row.add_child(IconBadge.make(g, 104))
@@ -57,7 +54,6 @@ func _hero(p: Dictionary) -> Control:
 
 func _block(b: Dictionary) -> Control:
 	var p := GlowPanel.new()
-	p.radius = 12
 	p.padding = 20
 	var box := UI.vbox(12)
 	p.add_child(box)
@@ -113,7 +109,7 @@ func _row(text: String, last: bool) -> Control:
 	else:
 		var dot := ColorRect.new()
 		dot.custom_minimum_size = Vector2(8, 8)
-		dot.color = AppTheme.col("blue")
+		dot.color = AppTheme.col("primary")
 		dot.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		h.add_child(dot)
 	var l := UI.rich(TextIcons.strip(text) if ic != "" else text, 24)
@@ -124,7 +120,7 @@ func _row(text: String, last: bool) -> Control:
 	if not last:
 		var sep := ColorRect.new()
 		sep.custom_minimum_size.y = 1
-		sep.color = Color("#2B4468", 0.6)
+		sep.color = AppTheme.col("stroke")
 		r.add_child(sep)
 	return r
 

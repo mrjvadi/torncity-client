@@ -37,9 +37,8 @@ func _name(c: Dictionary) -> String:
 
 func _active(c: Dictionary) -> Control:
 	var p := GlowPanel.new()
-	p.radius = 14
 	p.padding = 22
-	p.top_color = Color("#1F3150").lerp(AppTheme.col("violet"), 0.2)
+	p.tint_with(AppTheme.col("violet"), 0.2)
 	p.accent = AppTheme.col("violet")
 	var box := UI.vbox(12)
 	p.add_child(box)
@@ -57,7 +56,7 @@ func _active(c: Dictionary) -> Control:
 	bar.custom_minimum_size = Vector2(100, 30)
 	box.add_child(bar)
 	var left := UI.label("", "SmallLabel")
-	left.add_theme_color_override("font_color", AppTheme.col("cyan"))
+	left.add_theme_color_override("font_color", AppTheme.col("info"))
 	box.add_child(left)
 	var prog := float(c.get("progress", 0))
 	var secs := float(c.get("seconds_left", 0))
@@ -70,7 +69,6 @@ func _course(c: Dictionary) -> Control:
 	var status := str(c.get("status", ""))
 	var co: Dictionary = c.get("course", {})
 	var p := GlowPanel.new()
-	p.radius = 14
 	p.padding = 16
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var box := UI.vbox(10)
@@ -83,7 +81,7 @@ func _course(c: Dictionary) -> Control:
 	nm.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(nm)
 	if status == "done":
-		box.add_child(UI.chip("check", I18n.t("education.done"), Color(AppTheme.col("green"), 0.3)))
+		box.add_child(UI.chip("check", I18n.t("education.done"), Color(AppTheme.col("success"), 0.3)))
 	else:
 		box.add_child(UI.chip("cash", I18n.money(int(c.get("fee", 0)))))
 		var a := row_action("course", co.get("code", ""))

@@ -40,12 +40,12 @@ func tick() -> void:
 ## A scrolling column with the standard margins; returns the column.
 func scroll_body(sep := 18) -> VBoxContainer:
 	content = UI.vbox(sep)
-	var m := UI.margin(content, 22, 20, 22, 28)
+	var m := UI.margin(content, AppTheme.GUTTER, 20, AppTheme.GUTTER, 28)
 	_body_margin = m
 	# keep a readable measure on wide screens (~1040 px), and clear the
 	# floating HUD and tab bar (content scrolls under their glass)
 	var fit := func():
-		var side := maxi(22, int((size.x - 1040.0) / 2.0))
+		var side := maxi(AppTheme.GUTTER, int((size.x - 1040.0) / 2.0))
 		m.add_theme_constant_override("margin_left", side)
 		m.add_theme_constant_override("margin_right", side)
 		var ins := insets()
@@ -62,17 +62,22 @@ func scroll_body(sep := 18) -> VBoxContainer:
 	return content
 
 
+## The screen's app bar: back (when there is somewhere to go back to) or the
+## domain's badge at the reading start, the title, and refresh at the end.
 func title_row(title: String, icon_name: String, refresh := true) -> HBoxContainer:
 	var row := UI.hbox(14)
-	# the badge for the screen's command domain; local screens use their key
 	var cmd := str(req.get("command", ""))
-	row.add_child(IconBadge.make(AssetLib.action_glyph(cmd if cmd != "" else icon_name), 58))
+	if Game.can_go_back() and not (cmd in ["map.list", "player.profile.get", "bank.show", "job.status"]):
+		row.add_child(round_button("back" if not I18n.is_rtl() else "forward", func(): Game.back()))
+	else:
+		# the badge for the screen's command domain; local screens use their key
+		var badge := IconBadge.make(AssetLib.action_glyph(cmd if cmd != "" else icon_name), 60)
+		badge.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		row.add_child(badge)
 	var t := UI.label(title, "TitleLabel")
 	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	t.clip_text = true
 	row.add_child(t)
-	if Game.can_go_back() and not (req.get("command", "") in ["map.list", "player.profile.get", "bank.show", "job.status"]):
-		row.add_child(round_button("back" if not I18n.is_rtl() else "forward", func(): Game.back()))
 	if refresh:
 		row.add_child(round_button("refresh", func(): Game.refresh_current()))
 	return row
@@ -83,13 +88,17 @@ func round_button(icon_name: String, fn: Callable) -> Button:
 	b.theme_type_variation = "GhostButton"
 	b.icon = AppTheme.icon(icon_name)
 	b.expand_icon = true
-	b.custom_minimum_size = Vector2(72, 72)
+	b.custom_minimum_size = Vector2(60, 60)
+	b.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	b.focus_mode = Control.FOCUS_NONE
-	b.add_theme_constant_override("icon_max_width", 34)
-	var sb: StyleBoxFlat = AppTheme.button_box(AppTheme.col("panel_hi"), false, 36)
-	sb.content_margin_left = 16
-	sb.content_margin_right = 16
-	b.add_theme_stylebox_override("normal", sb)
+	b.add_theme_constant_override("icon_max_width", 28)
+	for st in ["normal", "hover", "pressed", "hover_pressed"]:
+		var sb := AppTheme.button_box(AppTheme.col("surface_3" if st != "normal" else "surface_2"), st.ends_with("pressed"), 30, AppTheme.col("stroke_hi"))
+		sb.content_margin_left = 16
+		sb.content_margin_right = 16
+		sb.content_margin_top = 16
+		sb.content_margin_bottom = 16
+		b.add_theme_stylebox_override(st, sb)
 	b.pressed.connect(fn)
 	Fx.press_feedback(b)
 	return b
@@ -98,14 +107,12 @@ func round_button(icon_name: String, fn: Callable) -> Button:
 ## A notice from the response (what just happened), as a coloured banner.
 func notice_banner(text: String, kind := "ok") -> Control:
 	var p := GlowPanel.new()
-	var c := AppTheme.col("leaf" if kind == "ok" else ("pomegranate" if kind == "error" else "saffron"))
-	p.top_color = c.darkened(0.55)
-	p.bottom_color = c.darkened(0.65)
-	p.border_color = Color(c, 0.6)
-	p.highlight = Color(c, 0.3)
-	p.radius = 10
+	var c := AppTheme.col("success" if kind == "ok" else ("danger" if kind == "error" else "gold"))
+	p.tint_with(c, 0.2)
+	p.border_color = Color(c, 0.5)
+	p.radius = AppTheme.R_CONTROL
 	p.padding = 16
-	p.shadow = 8
+	p.shadow = 0
 	var ic := TextIcons.lead_icon(text)
 	var row := UI.hbox(12, [UI.icon(ic if ic != "" else ("check" if kind == "ok" else "warning"), 40)])
 	row.add_child(UI.rich(TextIcons.strip(text) if ic != "" else text, 24))
@@ -198,8 +205,13 @@ func pin_cta(a: Dictionary) -> void:
 	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var b := ActionKit.cta(a, self)
 	b.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	b.offset_left = 22
-	b.offset_right = -22
+	# as wide as the content column (the readable measure on wide screens)
+	var fit := func():
+		var side := maxi(AppTheme.GUTTER, int((size.x - 1040.0) / 2.0))
+		b.offset_left = side
+		b.offset_right = -side
+	fit.call()
+	resized.connect(fit)
 	b.offset_bottom = -18
 	b.offset_top = -106
 	bar.add_child(b)
@@ -228,7 +240,7 @@ func page_actions() -> Array:
 ## A small pill button for a row (Buy, Sell, Enrol...). style: buy | danger | primary | ghost.
 func pill(text: String, style: String, fn: Callable) -> Button:
 	var b := Button.new()
-	b.theme_type_variation = {"buy": "GoldButton", "danger": "DangerButton", "ghost": "GhostButton"}.get(style, "Button")
+	b.theme_type_variation = {"buy": "TonalGold", "danger": "TonalDanger", "ghost": "GhostButton"}.get(style, "TonalPrimary")
 	b.text = text
 	b.focus_mode = Control.FOCUS_NONE
 	b.custom_minimum_size = Vector2(112, 56)
@@ -250,7 +262,7 @@ func segmented(labels: Array, active: int, fn: Callable) -> Control:
 	var restyle := func(sel: int):
 		for i in buttons.size():
 			var bb := buttons[i]
-			bb.theme_type_variation = "Button" if i == sel else "NavButton"
+			bb.theme_type_variation = "SegmentButton" if i == sel else "NavButton"
 			if i == sel:
 				bb.remove_theme_color_override("font_color")
 			else:
@@ -275,7 +287,6 @@ func segmented(labels: Array, active: int, fn: Callable) -> Control:
 ## A card: the navy glow panel with padding; returns its content column.
 func panel_card(pad := 20, accent := Color(0, 0, 0, 0)) -> VBoxContainer:
 	var p := GlowPanel.new()
-	p.radius = 12
 	p.padding = pad
 	p.accent = accent
 	var box := UI.vbox(12)
@@ -289,10 +300,12 @@ func card(heading := "", icon_name := "") -> VBoxContainer:
 	var p := GlowPanel.new()
 	var box := UI.vbox(14)
 	if heading != "":
-		var h := UI.hbox(10)
+		var h := UI.hbox(12)
 		if icon_name != "":
-			h.add_child(UI.icon(icon_name, 38))
-		h.add_child(UI.label(heading, "HeadLabel"))
+			h.add_child(UI.icon(icon_name, 34))
+		var hl := UI.label(heading, "HeadLabel")
+		hl.add_theme_font_size_override("font_size", 25)
+		h.add_child(hl)
 		box.add_child(h)
 	p.add_child(box)
 	content.add_child(p)

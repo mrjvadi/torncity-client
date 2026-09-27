@@ -31,9 +31,9 @@ func _build(title: String, text: String, on_yes: Callable, danger: bool) -> void
 	dim.gui_input.connect(func(e): if e is InputEventMouseButton and e.pressed: _close())
 	add_child(dim)
 	var sheet := GlowPanel.new()
-	sheet.radius = 14
+	sheet.radius = AppTheme.R_CARD
 	sheet.padding = 26
-	sheet.accent = AppTheme.col("red" if danger else "blue")
+	sheet.accent = AppTheme.col("danger" if danger else "blue")
 	sheet.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	sheet.offset_left = 16
 	sheet.offset_right = -16

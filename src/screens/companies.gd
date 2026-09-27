@@ -28,12 +28,11 @@ func build() -> void:
 func _card(c: Dictionary) -> Control:
 	var t := str(c.get("type", ""))
 	var gl := AssetLib.glyph_for("company_type", t)
-	var tint: Color = gl.get("tint", AppTheme.col("blue"))
+	var tint: Color = gl.get("tint", AppTheme.col("primary"))
 	var p := GlowPanel.new()
-	p.radius = 14
 	p.padding = 20
-	p.top_color = Color("#1A2A43").lerp(tint, 0.14)
-	p.accent = Color(tint, 0.8)
+	p.tint_with(tint, 0.1)
+	p.accent = tint
 	var box := UI.vbox(14)
 	p.add_child(box)
 	var head := UI.hbox(16)
@@ -43,7 +42,7 @@ func _card(c: Dictionary) -> Control:
 	col.add_child(UI.label(str(c.get("name", "")), "HeadLabel"))
 	var sub := UI.hbox(8)
 	sub.add_child(UI.chip("", Content.name_of("company_type", t), Color(tint, 0.25)))
-	sub.add_child(UI.chip("", I18n.t("profile.level", {"level": I18n.num(int(c.get("level", 1)))}), Color("#2B4468")))
+	sub.add_child(UI.chip("", I18n.t("profile.level", {"level": I18n.num(int(c.get("level", 1)))}), AppTheme.col("surface_3")))
 	col.add_child(sub)
 	head.add_child(col)
 	box.add_child(head)
@@ -61,7 +60,7 @@ func _card(c: Dictionary) -> Control:
 		what.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		top.add_child(what)
 		var eta := UI.label("", "SmallLabel")
-		eta.add_theme_color_override("font_color", AppTheme.col("cyan"))
+		eta.add_theme_color_override("font_color", AppTheme.col("info"))
 		top.add_child(eta)
 		pc.add_child(top)
 		var bar := StatBar.new()
@@ -69,7 +68,7 @@ func _card(c: Dictionary) -> Control:
 		bar.compact = true
 		bar.show_text = false
 		bar.custom_minimum_size = Vector2(80, 14)
-		bar.color = AppTheme.col("green")
+		bar.color = AppTheme.col("success")
 		pc.add_child(bar)
 		var rate := UI.label(I18n.t("companies.rate", {"n": I18n.num(int(pr.get("per_hour", 0)))}), "DimLabel")
 		rate.add_theme_font_size_override("font_size", 18)

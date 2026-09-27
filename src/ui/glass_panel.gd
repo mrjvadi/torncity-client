@@ -7,10 +7,10 @@ extends PanelContainer
 const SHADER := preload("res://src/ui/shaders/glass.gdshader")
 
 @export var radius := 22
-@export var tint_color := Color("#13213A")
-@export var tint := 0.74
+@export var tint_color := Color("#0E1528")
+@export var tint := 0.82
 @export var pad := Vector4(18, 14, 18, 14)   # left, top, right, bottom
-@export var border := Color(0.55, 0.7, 1.0, 0.22)
+@export var border := Color(0.62, 0.72, 1.0, 0.14)
 @export var drop_shadow := true
 
 

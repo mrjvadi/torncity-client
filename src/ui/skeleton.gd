@@ -24,8 +24,8 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
-	draw_colored_polygon(GlowPanel.rounded_rect(r, 22, 6), Color("#16243A"))
-	var bone := Color("#22375A")
+	draw_colored_polygon(GlowPanel.rounded_rect(r, 24, 6), Color("#131A2E"))
+	var bone := Color("#1E2848")
 	var x0 := 20.0
 	var rtl := I18n.is_rtl()
 	if with_badge:
@@ -41,6 +41,6 @@ func _draw() -> void:
 	# the shimmer band
 	var x := (_t - 0.3) * size.x
 	var band := PackedVector2Array([Vector2(x, 0), Vector2(x + size.x * 0.18, 0), Vector2(x + size.x * 0.08, size.y), Vector2(x - size.x * 0.1, size.y)])
-	var clipped := Geometry2D.intersect_polygons(band, GlowPanel.rounded_rect(r, 22, 6))
+	var clipped := Geometry2D.intersect_polygons(band, GlowPanel.rounded_rect(r, 24, 6))
 	for poly in clipped:
 		draw_colored_polygon(poly, Color(1, 1, 1, 0.05))

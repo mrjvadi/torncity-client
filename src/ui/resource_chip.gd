@@ -15,26 +15,29 @@ static func make(asset_key: String, with_bar: bool, format: Callable) -> Resourc
 	c.key = asset_key
 	c._format = format
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.03, 0.07, 0.13, 0.5)
-	sb.set_corner_radius_all(16)
-	sb.border_color = Color(0.55, 0.7, 1.0, 0.12)
+	sb.bg_color = Color(AppTheme.col("bg"), 0.55)
+	sb.set_corner_radius_all(20)
+	sb.border_color = AppTheme.col("stroke")
 	sb.set_border_width_all(1)
-	sb.content_margin_left = 8
-	sb.content_margin_right = 10
+	sb.anti_aliasing = true
+	sb.content_margin_left = 6
+	sb.content_margin_right = 12
 	sb.content_margin_top = 6
 	sb.content_margin_bottom = 6
 	c.add_theme_stylebox_override("panel", sb)
 	c.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var row := UI.hbox(8)
 	var g := AssetLib.glyph(asset_key)
-	row.add_child(IconBadge.make(g, 36))
+	var badge := IconBadge.make(g, 34)
+	badge.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(badge)
 	var col := UI.vbox(3)
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	col.alignment = BoxContainer.ALIGNMENT_CENTER
 	c._value = Label.new()
 	c._value.add_theme_font_override("font", AppTheme.font_black)
-	c._value.add_theme_font_size_override("font_size", 23)
-	c._value.add_theme_color_override("font_color", AppTheme.col("text"))
+	c._value.add_theme_font_size_override("font_size", 22)
+	c._value.add_theme_color_override("font_color", AppTheme.col("gold") if asset_key == "res:cash" else AppTheme.col("text"))
 	c._value.clip_text = true
 	col.add_child(c._value)
 	if with_bar:

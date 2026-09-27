@@ -30,12 +30,12 @@ func _draw() -> void:
 	var r := Rect2(Vector2.ZERO, size)
 	var rad := minf(size.x, size.y) * 0.18
 	var outer := GlowPanel.rounded_rect(r, rad, 6)
-	draw_colored_polygon(outer, Color("#2F80ED"))
+	draw_colored_polygon(outer, Color("#2EC4B6"))
 	var inner_r := r.grow(-3)
 	var pts := GlowPanel.rounded_rect(inner_r, rad - 2, 6)
 	var cols := PackedColorArray()
 	for p in pts:
-		cols.append(Color("#24406B").lerp(Color("#132139"), p.y / maxf(1.0, size.y)))
+		cols.append(Color("#1A2340").lerp(Color("#131A2E"), p.y / maxf(1.0, size.y)))
 	draw_polygon(pts, cols)
 	if _tex:
 		var pad := size.x * (0.2 if _glyph else 0.06)

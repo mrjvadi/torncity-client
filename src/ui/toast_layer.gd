@@ -16,14 +16,15 @@ func _ready() -> void:
 
 ## kind picks the accent: "notice", "announce", "error", "ok".
 func show_toast(text: String, kind := "notice", icon_name := "") -> void:
-	var accent := {"announce": "saffron", "error": "pomegranate", "ok": "leaf"}.get(kind, "turquoise")
+	var accent := {"announce": "gold", "error": "danger", "ok": "success"}.get(kind, "primary")
 	var p := GlowPanel.new()
-	p.top_color = Color("#1F3150")
-	p.bottom_color = Color("#16243A")
+	p.top_color = AppTheme.col("surface_2")
+	p.bottom_color = AppTheme.col("surface_2")
+	p.border_color = AppTheme.col(accent, 0.45)
 	p.accent = AppTheme.col(accent)
-	p.radius = 10
+	p.radius = 20
 	p.padding = 18
-	p.shadow = 20
+	p.shadow = 24
 	p.mouse_filter = Control.MOUSE_FILTER_STOP
 	var ic := icon_name if icon_name != "" else TextIcons.lead_icon(text)
 	if ic == "":

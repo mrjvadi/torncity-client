@@ -36,7 +36,7 @@ func build() -> void:
 		strip.add_theme_constant_override("v_separation", 6)
 		for icon_name in by_author[a]:
 			var tex = AssetService.get_asset("glyph:" + icon_name, AssetService.PREFETCH)
-			strip.add_child(IconBadge.make({"texture": tex if tex is Texture2D else AssetLib.icon("*"), "tint": AppTheme.col("blue"),
+			strip.add_child(IconBadge.make({"texture": tex if tex is Texture2D else AssetLib.icon("*"), "tint": AppTheme.col("primary"),
 				"pending": not (tex is Texture2D), "key": "glyph:" + icon_name}, 44))
 		row.add_child(strip)
 		g.add_child(row)

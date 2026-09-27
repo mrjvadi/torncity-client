@@ -54,7 +54,7 @@ func _item(l: Dictionary) -> Control:
 	b.add_child(box)
 	var qty := int(l.get("qty", 1))
 	if qty > 1:
-		var badge := UI.chip("", "×" + I18n.num(qty), AppTheme.col("blue_dk"))
+		var badge := UI.chip("", "×" + I18n.num(qty), AppTheme.col("surface_3"))
 		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		badge.position = Vector2(10, 10)
 		b.add_child(badge)
@@ -64,7 +64,7 @@ func _item(l: Dictionary) -> Control:
 		bar.icon_name = ""
 		bar.compact = true
 		bar.show_text = false
-		bar.color = AppTheme.col("green")
+		bar.color = AppTheme.col("success")
 		bar.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 		bar.offset_top = -22
 		bar.offset_bottom = -12

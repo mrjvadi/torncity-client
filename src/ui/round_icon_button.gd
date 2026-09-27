@@ -10,7 +10,7 @@ var count := 0:
 			Fx.pulse(self)
 		count = v
 		queue_redraw()
-var tint := Color("#D6E4FA")
+var tint := Color("#DDE5F5")
 
 
 static func make(t: Texture2D, fn: Callable, px := 64.0) -> RoundIconButton:
@@ -39,9 +39,8 @@ func _draw() -> void:
 	var d := minf(size.x, size.y)
 	var c := size / 2.0
 	var hover := is_hovered()
-	draw_circle(c + Vector2(0, 2), d / 2.0, Color(0, 0, 0, 0.25))
-	draw_circle(c, d / 2.0, Color("#2A4468") if hover else Color("#1C2F4C"))
-	draw_arc(c, d / 2.0 - 0.5, 0, TAU, 48, Color(0.6, 0.75, 1.0, 0.28), 1.2, true)
+	draw_circle(c, d / 2.0, Color("#232E52") if hover else Color("#1A2340"))
+	draw_arc(c, d / 2.0 - 0.5, 0, TAU, 48, Color("#34426C"), 1.2, true)
 	if tex:
 		var g := d * 0.5
 		draw_texture_rect(tex, Rect2(c - Vector2(g, g) / 2.0, Vector2(g, g)), false, tint)
@@ -52,6 +51,6 @@ func _draw() -> void:
 		var tw := font.get_string_size(txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
 		var bw := maxf(tw + fs * 0.8, fs * 1.35)
 		var br := Rect2(Vector2(size.x - bw * 0.85, -fs * 0.1), Vector2(bw, fs * 1.35))
-		draw_colored_polygon(GlowPanel.rounded_rect(br.grow(2.5), br.size.y / 2.0 + 2.5, 6), Color("#0F1A2B"))
-		draw_colored_polygon(GlowPanel.rounded_rect(br, br.size.y / 2.0, 6), Color("#EB5757"))
+		draw_colored_polygon(GlowPanel.rounded_rect(br.grow(2.5), br.size.y / 2.0 + 2.5, 6), Color("#0A0F1E"))
+		draw_colored_polygon(GlowPanel.rounded_rect(br, br.size.y / 2.0, 6), Color("#EF5A5F"))
 		draw_string(font, Vector2(br.position.x + (bw - tw) / 2.0, br.position.y + br.size.y * 0.76), txt, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color.WHITE)

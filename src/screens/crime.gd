@@ -10,13 +10,13 @@ func build() -> void:
 	content.add_child(title_row(TextIcons.strip(str(resp.get("text", "")).split("\n")[0]), "crime"))
 	maybe_notice()
 	var heat := int(view.get("heat", 0))
-	var hb := panel_card(18, AppTheme.col("red", 0.8))
+	var hb := panel_card(18, AppTheme.col("danger", 0.8))
 	var hrow := UI.hbox(12)
 	hrow.add_child(IconBadge.make(AssetLib.glyph("action:crime"), 52))
 	var bar := StatBar.new()
 	bar.icon_name = ""
 	bar.label_text = I18n.t("crime.heat")
-	bar.color = AppTheme.col("red")
+	bar.color = AppTheme.col("danger")
 	bar.invert = true
 	bar.custom_minimum_size = Vector2(100, 48)
 	bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -40,9 +40,8 @@ func _card(c: Dictionary) -> Control:
 	var cr: Dictionary = c.get("crime", {})
 	var code := str(cr.get("code", ""))
 	var chance := int(c.get("chance", 0))
-	var col := AppTheme.col("green") if chance >= 60 else (AppTheme.col("yellow") if chance >= 30 else AppTheme.col("red"))
+	var col := AppTheme.col("success") if chance >= 60 else (AppTheme.col("gold") if chance >= 30 else AppTheme.col("danger"))
 	var p := GlowPanel.new()
-	p.radius = 14
 	p.padding = 16
 	p.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var box := UI.vbox(10)
