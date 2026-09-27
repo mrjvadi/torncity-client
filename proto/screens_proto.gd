@@ -6,13 +6,14 @@ extends "res://proto/home_proto.gd"
 ## Names: profile, activity, job, crime, education, hospital, missions,
 ## economy, inventory, market, bank, company, property, stocks, society,
 ## inbox, faction, elections, government, war, forces [--branch=ground|air|navy|air_defence],
-## unit [--unit=fighter|tank], arsenal, airdefence, family, proposal, child, divorce, wedding,
+## unit [--unit=fighter|tank], arsenal, airdefence, meet, relationship, date, family, proposal,
+## child, divorce, wedding,
 ## travel, levelup, leaderboard.
 
 const TAB := {"profile": 0, "activity": 1, "job": 1, "crime": 1, "education": 1, "hospital": 1, "missions": 1,
 	"leaderboard": 1, "economy": 3, "inventory": 3, "market": 3, "bank": 3, "company": 3, "property": 3,
 	"stocks": 3, "society": 4, "inbox": 4, "faction": 4, "elections": 4, "government": 4, "war": 4,
-	"forces": 4, "unit": 4, "arsenal": 4, "airdefence": 4, "family": 4, "proposal": 4, "child": 4, "divorce": 4, "wedding": 4,
+	"forces": 4, "unit": 4, "arsenal": 4, "airdefence": 4, "family": 4, "proposal": 4, "child": 4, "divorce": 4, "wedding": 4, "meet": 4, "relationship": 4, "date": 4,
 	"travel": 2, "levelup": 2}
 
 var _scr := "profile"
@@ -1741,3 +1742,154 @@ func _s_wedding() -> void:
 		_emboss(rw[0], Rect2(x + 30, 754, 116, 116), rw[1])
 		_txt(Rect2(x, 878, 176, 50), rw[2], 18, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, display_font, 4)
 	_btn(Rect2(160, 1016, 400, 90), "به خانه برویم", "gold")
+
+
+# -- meeting someone ---------------------------------------------------------------------------------------
+# Players meet where the game already puts them together: the venue they
+# stand in (internal/domain/crime/venue.go: the station, the workplace, the
+# city centre), a course's classmates, a company's colleagues, a faction's
+# members. Only those who opted in are listed. A greeting accepted makes two
+# players acquainted; messages, gifts and dates move them up a ladder, with
+# daily caps so it cannot be farmed; a proposal opens only near the top.
+
+const LADDER := ["غریبه", "آشنا", "دوست", "صمیمی", "دلداده", "نامزد", "همسر"]
+
+
+func _switch(r: Rect2, on: bool) -> void:
+	var f := _frame(r, r.size.y / 2.0, Color(LEAF.darkened(0.3) if on else Color("#2A3050")), Color(LEAF.darkened(0.6) if on else Color("#151A30")), Color(GOLD, 0.6), 0.0, 2.0)
+	(f.material as ShaderMaterial).set_shader_parameter("shadow", 0.0)
+	var d := r.size.y - 8.0
+	var x := r.position.x + 4.0 if on else r.end.x - 4.0 - d
+	_button(Rect2(x, r.position.y + 4, d, d), Color("#FFFFFF"), Color("#C9D2EE"), Color("#8E97B4"), d / 2.0, 3.0)
+
+
+func _s_meet() -> void:
+	_hdr("آشنایی", Color("#B0306A"))
+	_card(Rect2(20, 256, 680, 92), Color(ROSE, 0.3))
+	_emboss("f_heartplus", Rect2(620, 262, 72, 72), "ruby")
+	ui.add_child(_label("پذیرای آشنایی", display_font, 23, Color.WHITE, Rect2(300, 262, 312, 36), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+	_txt(Rect2(180, 298, 432, 26), "فقط کسانی که این را روشن کرده‌اند دیده می‌شوند", 14, Color("#AEB8D8"))
+	_switch(Rect2(40, 282, 96, 44), true)
+	_txt(Rect2(140, 318, 150, 24), "سلام امروز: 3 از 5", 13, Color("#FFD0E0"), HORIZONTAL_ALIGNMENT_LEFT)
+	var tabs := [["اینجا", true], ["همکلاسی‌ها", false], ["همکارها", false], ["هم‌جناح‌ها", false]]
+	for i in tabs.size():
+		var t: Array = tabs[i]
+		var r := Rect2(536.0 - i * 172.0, 362, 164, 56)
+		if t[1]:
+			var f := _frame(r, 18.0, Color("#C0407A"), Color("#6A1A3E"), GOLD, 0.04, 3.0)
+			(f.material as ShaderMaterial).set_shader_parameter("glow", Color(ROSE, 0.5))
+		else:
+			_inset(r, Color(GOLD, 0.25))
+		ui.add_child(_label(t[0], display_font, 20, Color.WHITE if t[1] else Color("#AEB8D8"), Rect2(r.position.x, r.position.y, r.size.x, r.size.y), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	_emboss("walk", Rect2(652, 428, 44, 44), "cream")
+	_txt(Rect2(200, 432, 450, 36), "مرکز شهر فنویک  ·  14 نفر پذیرای آشنایی", 17, Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT, display_font, 3)
+	# name, avatar, palette, tint, line, what you share, state
+	var people := [
+		["آرش", "a_wolf", "steel", Color("#1E2A5A"), "سطح 9  ·  مهندس ارشد", "هم‌کلاس اقتصاد", "known"],
+		["مهتاب", "a_raccoon", "cream", Color("#3A2A5A"), "سطح 6  ·  پرستار", "هم‌جناح", "new"],
+		["بردیا", "lion", "gold", Color("#4A2A10"), "سطح 12  ·  وکیل", "", "pending"],
+		["نگار", "eagle", "sapphire", Color("#101E60"), "سطح 4  ·  دانشجو", "تازه‌وارد", "new"],
+		["کاوه", "a_rabbit", "cream", Color("#2A3A6A"), "سطح 7  ·  راننده", "همکار", "new"],
+	]
+	for i in people.size():
+		var p: Array = people[i]
+		var r := Rect2(20, 478 + i * 120, 680, 110)
+		_inset(r, Color(ROSE, 0.45) if p[6] == "known" else Color(GOLD, 0.3))
+		_plate(p[1], Rect2(596, r.position.y + 10, 90, 90), p[2], p[3])
+		ui.add_child(_label(p[0], display_font, 25, Color.WHITE, Rect2(300, r.position.y + 10, 286, 38), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+		_txt(Rect2(260, r.position.y + 48, 326, 26), p[4], 15, Color("#C9D2EE"))
+		if p[5] != "":
+			_chip(Rect2(456, r.position.y + 76, 130, 28), p[5], VIOLET, 14)
+		match p[6]:
+			"known":
+				_btn(Rect2(36, r.position.y + 22, 190, 64), "پیام", "blue")
+				_chip(Rect2(236, r.position.y + 14, 90, 28), "آشنا", ROSE, 14)
+			"pending":
+				_btn(Rect2(36, r.position.y + 22, 190, 64), "منتظر پاسخ", "steel")
+			_:
+				_btn(Rect2(36, r.position.y + 22, 190, 64), "سلام", "green")
+				_emboss("m_hand", Rect2(40, r.position.y + 24, 50, 50), "cream")
+
+
+func _s_relationship() -> void:
+	var level := 3
+	_hdr("آرش", Color("#B0306A"))
+	_card(Rect2(20, 256, 680, 220), Color(ROSE, 0.35))
+	_avatar_big(Rect2(560, 276, 118, 118), "fox", "fox", Color("#0E5E58"), ROSE)
+	_avatar_big(Rect2(42, 276, 118, 118), "a_wolf", "steel", Color("#1E2A5A"), ROSE)
+	_emboss("f_hearts", Rect2(318, 262, 84, 84), "ruby")
+	_big(Rect2(180, 344, 360, 56), LADDER[level], 44, "#FFFFFF", "#FFD0E0", HORIZONTAL_ALIGNMENT_CENTER)
+	_txt(Rect2(180, 400, 360, 26), "12 روز آشنایی  ·  از کلاس اقتصاد", 16, Color("#FFD0E0"), HORIZONTAL_ALIGNMENT_CENTER)
+	_chip(Rect2(40, 426, 160, 32), "مسدود یا گزارش", Color("#59607A"), 14)
+	# the ladder, right to left
+	var x0 := 650.0
+	var x1 := 70.0
+	var step := (x0 - x1) / (LADDER.size() - 1)
+	_rect(Rect2(x1, 520, x0 - x1, 8), Color(0.2, 0.23, 0.4))
+	var reach := x0 - step * (level + 0.64)
+	_rect(Rect2(reach, 520, x0 - reach, 8), ROSE)
+	for i in LADDER.size():
+		var sx := x0 - step * i
+		var done := i <= level
+		_circle(Vector2(sx, 524), 14 if i == level else 11, GOLD, 3.0, ROSE if done else Color(0.12, 0.14, 0.28))
+		_txt(Rect2(sx - 50, 544, 100, 26), LADDER[i], 15 if i != level else 17, Color.WHITE if done else Color("#8E97B4"), HORIZONTAL_ALIGNMENT_CENTER, display_font, 3)
+	_txt(Rect2(40, 484, 640, 26), "تا «دلداده»: 64٪", 15, Color("#FFD0E0"), HORIZONTAL_ALIGNMENT_CENTER)
+	var stats := [["34", "پیام"], ["2", "قرار"], ["3", "هدیه"], ["12", "روز"]]
+	for i in stats.size():
+		var s: Array = stats[i]
+		var r := Rect2(532.0 - i * 170.0, 584, 160, 80)
+		_inset(r)
+		_big(Rect2(r.position.x, r.position.y + 2, r.size.x, 46), s[0], 36, "#FFFFFF", "#FFD0E0", HORIZONTAL_ALIGNMENT_CENTER)
+		_txt(Rect2(r.position.x, r.position.y + 48, r.size.x, 26), s[1], 15, Color("#C9D2EE"), HORIZONTAL_ALIGNMENT_CENTER)
+	var acts := [["m_chat", "sapphire", "پیام", "+1 روزانه تا 5"], ["f_rose", "ruby", "هدیه", "بسته به هدیه"], ["m_coffee", "amber", "قرار", "+4 تا +12"]]
+	for i in acts.size():
+		var a: Array = acts[i]
+		var r := Rect2(478.0 - i * 229.0, 680, 222, 100)
+		var b := _button(r, Color("#3F55A8"), Color("#1A2560"), Color("#0A1030"), 22.0, 7.0)
+		_emboss(a[0], Rect2(r.end.x - 82, r.position.y + 10, 72, 72), a[1])
+		b.add_child(_label(a[2], display_font, 26, Color.WHITE, Rect2(10, 8, r.size.x - 96, 44), HORIZONTAL_ALIGNMENT_CENTER, 5))
+		b.add_child(_label(a[3], body_bold, 13, Color("#C9D2EE"), Rect2(10, 50, r.size.x - 96, 30), HORIZONTAL_ALIGNMENT_CENTER, 0))
+	# the proposal, locked until the conditions hold
+	_card(Rect2(20, 800, 680, 296), Color(0, 0, 0, 0))
+	_emboss("m_lock", Rect2(614, 812, 74, 74), "steel")
+	ui.add_child(_label("خواستگاری", display_font, 27, Color.WHITE, Rect2(300, 814, 306, 40), HORIZONTAL_ALIGNMENT_RIGHT, 5))
+	_txt(Rect2(260, 852, 346, 26), "وقتی همه‌ی شرط‌ها برقرار شد باز می‌شود", 14, Color("#AEB8D8"))
+	var conds := [["هر دو مجرد", true], ["دست‌کم 7 روز آشنایی  (12 روز)", true], ["هر دو سطح 5 یا بالاتر", true], ["رابطه در «دلداده»  (الان: صمیمی)", false]]
+	for i in conds.size():
+		var c: Array = conds[i]
+		var y := 896.0 + i * 48.0
+		_emboss("m_check" if c[1] else "close", Rect2(630, y, 40, 40), "emerald" if c[1] else "ruby")
+		_txt(Rect2(200, y + 2, 420, 36), c[0], 19, Color.WHITE if c[1] else Color("#FFB0B4"), HORIZONTAL_ALIGNMENT_RIGHT, display_font, 3)
+	_btn(Rect2(40, 1000, 190, 70), "خواستگاری", "steel")
+
+
+func _s_date() -> void:
+	_hdr("قرار", Color("#B0306A"))
+	_card(Rect2(20, 256, 680, 110), Color(ROSE, 0.3))
+	_avatar_big(Rect2(596, 268, 86, 86), "a_wolf", "steel", Color("#1E2A5A"))
+	ui.add_child(_label("دعوت از آرش", display_font, 26, Color.WHITE, Rect2(300, 266, 284, 40), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+	_emboss("m_check", Rect2(548, 312, 32, 32), "emerald")
+	_txt(Rect2(200, 310, 344, 30), "هر دو در فنویک هستید", 16, Color("#BFFFD0"))
+	_chip(Rect2(40, 290, 150, 34), "صمیمی", ROSE, 16)
+	_sec(380, "کجا؟")
+	# venue, icon, palette, price, energy, bond
+	var venues := [["کافه", "m_coffee", "amber", "200 نیل", "1 انرژی", "+6"], ["رستوران", "m_meal", "gold", "800 نیل", "1 انرژی", "+12"],
+		["سینما", "m_popcorn", "ruby", "400 نیل", "2 انرژی", "+9"], ["پارک", "m_bench", "emerald", "رایگان", "2 انرژی", "+4"]]
+	for i in venues.size():
+		var v: Array = venues[i]
+		var r := Rect2(366.0 - (i % 2) * 346.0, 436 + (i / 2) * 206, 334, 194)
+		var on := i == 1
+		_card(r, Color(GOLD, 0.6) if on else Color(0, 0, 0, 0))
+		if on:
+			_chip(Rect2(r.position.x + 12, r.position.y + 12, 56, 30), "✓", LEAF, 18)
+		_emboss(v[1], Rect2(r.end.x - 124, r.position.y + 12, 108, 108), v[2])
+		_big(Rect2(r.position.x + 14, r.position.y + 50, 190, 44), v[0], 32, "#FFFFFF", "#FFE3B0")
+		_txt(Rect2(r.position.x + 14, r.position.y + 128, r.size.x - 28, 26), "%s  ·  %s" % [v[3], v[4]], 16, Color("#C9D2EE"), HORIZONTAL_ALIGNMENT_CENTER)
+		_big(Rect2(r.position.x + 14, r.position.y + 152, r.size.x - 28, 34), "صمیمیت " + v[5], 22, "#FFFFFF", "#FFB0CC", HORIZONTAL_ALIGNMENT_CENTER)
+	_sec(854, "کی؟")
+	var times := [["الان", false], ["امشب 20:00", true], ["فردا", false]]
+	for i in times.size():
+		var t: Array = times[i]
+		_chip(Rect2(478.0 - i * 229.0, 910, 222, 48), t[0], ROSE if t[1] else Color("#59607A"), 20)
+	_txt(Rect2(40, 968, 640, 28), "آرش باید دعوت را بپذیرد  ·  هزینه با دعوت‌کننده  ·  روزی یک قرار", 15, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_CENTER)
+	_btn(Rect2(120, 1006, 480, 86), "فرستادن دعوت  ·  800 نیل", "gold")
