@@ -21,8 +21,17 @@ func _ready() -> void:
 
 
 ## Decide how this start-up logs in and try it. Returns true when playing.
+## A boot milestone: printed, and on the web handed to the page's reporter
+## (window.tcLog, when the page has one) so a device that stops can say where.
+static func mark(stage: String) -> void:
+	print("[boot] " + stage)
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.tcLog && window.tcLog('boot', %s)" % JSON.stringify(stage), true)
+
+
 func boot() -> bool:
 	var method := AuthFlow.decide(TelegramApp.init_data if TelegramApp.available else "", Session.refresh_token)
+	mark("boot method=%d telegram=%s" % [method, TelegramApp.available])
 	if TelegramApp.available and TelegramApp.language_code != "" and not FileAccess.file_exists("user://client.cfg"):
 		# First run inside Telegram: speak the user's Telegram language.
 		I18n.set_lang("fa" if TelegramApp.language_code.begins_with("fa") else "en", false)
@@ -51,7 +60,9 @@ func login_with_code(code: String) -> Dictionary:
 
 
 func start_playing() -> bool:
+	mark("signed in")
 	var b := await Api.bootstrap()
+	mark("bootstrap %d" % b.status)
 	if b.status != 200:
 		return false
 	var plang := str(Session.player.get("lang", ""))
@@ -60,6 +71,7 @@ func start_playing() -> bool:
 	Realtime.set_city(Session.city_code)
 	Realtime.start()
 	await Content.sync()
+	mark("content synced")
 	# the main menu and the HUD come from the profile screen
 	var hub := await Api.command("player.profile.get", {})
 	if hub.get("ok", false):

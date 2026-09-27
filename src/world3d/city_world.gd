@@ -79,7 +79,9 @@ func _environment() -> void:
 	sun.rotation_degrees = Vector3(-52, -28, 0)
 	sun.light_energy = 1.0
 	sun.light_color = Color("#FFF1DC")
-	sun.shadow_enabled = true
+	# Shadow maps are the city's largest GPU allocation; an iPhone's web view
+	# reloads the page when WebGL runs out, so the web build draws without.
+	sun.shadow_enabled = not OS.has_feature("web")
 	sun.shadow_bias = 0.03
 	sun.directional_shadow_max_distance = 90.0
 	sun.directional_shadow_mode = DirectionalLight3D.SHADOW_PARALLEL_2_SPLITS

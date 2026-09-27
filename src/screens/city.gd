@@ -13,6 +13,7 @@ var _walk_to := ""
 
 
 func build() -> void:
+	Game.mark("city screen")
 	map = CityWorldView.new()
 	map.set_anchors_preset(Control.PRESET_FULL_RECT)
 	map.place_tapped.connect(_show_place)

@@ -51,6 +51,7 @@ func show_login() -> Control:
 func show_shell() -> Control:
 	if _screen and _screen.name == "Shell":
 		return _screen
+	Game.mark("shell")
 	var s: Control = load("res://src/scenes/shell.tscn").instantiate()
 	s.name = "Shell"
 	_swap(s)
