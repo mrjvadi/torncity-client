@@ -25,6 +25,11 @@ func _init() -> void:
 
 
 func _ready() -> void:
+	# An iPhone's web view has little GPU memory and kills the page when it
+	# runs out; the 3D city renders at half the screen's pixels there (the
+	# screen is 3x dense, so it stays sharp), a quarter of the memory.
+	if Config.phone_web():
+		stretch_shrink = 2
 	_vp = SubViewport.new()
 	# WebGL resolves a multisampled viewport with a framebuffer blit Safari
 	# refuses; the web build draws without it.

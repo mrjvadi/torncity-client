@@ -795,7 +795,7 @@ func _spawn_traffic() -> void:
 	var keys := ["vehicle:sedan", "vehicle:taxi", "vehicle:van", "vehicle:police", "vehicle:truck", "vehicle:sedan", "vehicle:bus"]
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 42
-	for i in 16:
+	for i in (6 if Config.phone_web() else 16):
 		var n := AssetLib.instantiate(keys[i % keys.size()], AssetService.PREFETCH)
 		for k in n.get_meta("pending", []):
 			_wait(k, "#traffic")

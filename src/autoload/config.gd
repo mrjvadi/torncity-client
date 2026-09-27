@@ -36,6 +36,21 @@ func _ready() -> void:
 		api_url = str(JavaScriptBridge.eval("window.location.origin", true))
 
 
+## A phone's browser: less memory, a canvas keyboard it does not show, and
+## a touchscreen Godot's own check can miss on a real iPhone.
+static var _phone_web := -1
+
+
+static func phone_web() -> bool:
+	if _phone_web < 0:
+		_phone_web = 0
+		if OS.has_feature("web"):
+			var ua = JavaScriptBridge.eval("navigator.userAgent + ' ' + (navigator.maxTouchPoints || 0)", true)
+			if DisplayServer.is_touchscreen_available() or (ua is String and ((ua as String).contains("iPhone") or (ua as String).contains("iPad") or (ua as String).contains("Android") or not (ua as String).ends_with(" 0"))):
+				_phone_web = 1
+	return _phone_web == 1
+
+
 func _load(path: String) -> void:
 	var cf := ConfigFile.new()
 	if cf.load(path) != OK:

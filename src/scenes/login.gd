@@ -6,6 +6,7 @@ extends Control
 signal done
 
 var _code: LineEdit
+var _last_prompt := -10000
 var _error: Label
 var _go: Button
 
@@ -88,11 +89,16 @@ func _ready() -> void:
 	# A phone's web view hands a canvas text field its keyboard unreliably (an
 	# iPhone may not show one at all); there the browser's own prompt takes the
 	# code, pasting included, and signs in at once.
-	if _phone_web():
+	if Config.phone_web():
 		_code.editable = false
+		# a tap arrives twice (the touch, and the mouse press emulated from
+		# it): one prompt per tap
 		_code.gui_input.connect(func(e):
 			if (e is InputEventScreenTouch or e is InputEventMouseButton) and not e.pressed:
-				_ask_code())
+				var now := Time.get_ticks_msec()
+				if now - _last_prompt > 800:
+					_last_prompt = now
+					_ask_code())
 	_error = UI.label("", "SmallLabel", HORIZONTAL_ALIGNMENT_CENTER, true)
 	_error.add_theme_color_override("font_color", AppTheme.col("rose"))
 	box.add_child(_error)
@@ -103,17 +109,6 @@ func _ready() -> void:
 	card.add_child(box)
 	col.add_child(card)
 	Fx.stagger_in(col, 0.06)
-
-
-## A phone's browser, by what it says it is: Godot's touchscreen check can
-## answer no on a real iPhone.
-static func _phone_web() -> bool:
-	if not OS.has_feature("web"):
-		return false
-	if DisplayServer.is_touchscreen_available():
-		return true
-	var ua = JavaScriptBridge.eval("navigator.userAgent + ' ' + (navigator.maxTouchPoints || 0)", true)
-	return ua is String and ((ua as String).contains("iPhone") or (ua as String).contains("iPad") or (ua as String).contains("Android") or not (ua as String).ends_with(" 0"))
 
 
 func _ask_code() -> void:
