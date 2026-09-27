@@ -30,10 +30,20 @@ static func is_plausible_init_data(init_data: String) -> bool:
 	return init_data.contains("hash=") and (init_data.contains("auth_date=") or init_data.contains("user="))
 
 
+## Zero-width marks a chat app copies along with a code: LRM, RLM, the bidi
+## embeddings and isolates, and the byte-order mark.
+const INVISIBLE_MARKS := ["\u200e", "\u200f", "\u202a", "\u202b", "\u202c", "\u202d", "\u202e",
+	"\u2066", "\u2067", "\u2068", "\u2069", "\ufeff"]
+
+
 ## A link code as the player may type it: 8 letters/digits, any case, spaces,
-## dashes and Persian digits tolerated. Returns "" when it cannot be one.
+## dashes and Persian digits tolerated, and the invisible bidi marks a
+## right-to-left chat wraps a Latin run in (copied along with the code).
+## Returns "" when it cannot be one.
 static func normalize_code(raw: String) -> String:
 	var s := Fmt.to_latin(raw).strip_edges().to_upper().replace(" ", "").replace("-", "")
+	for mark in INVISIBLE_MARKS:
+		s = s.replace(mark, "")
 	if s.length() != 8:
 		return ""
 	for ch in s:

@@ -19,6 +19,8 @@ func test_after_failure() -> void:
 func test_normalize_code() -> void:
 	eq(AuthFlow.normalize_code("abcd-1234"), "ABCD1234")
 	eq(AuthFlow.normalize_code(" ab cd ۱۲۳۴ "), "ABCD1234")
+	eq(AuthFlow.normalize_code("\u2068DVLKJAUH\u2069"), "DVLKJAUH")
+	eq(AuthFlow.normalize_code("\u200fdvlk-jauh\u200e"), "DVLKJAUH")
 	eq(AuthFlow.normalize_code("ABC123"), "")
 	eq(AuthFlow.normalize_code("ABCD123!"), "")
 
