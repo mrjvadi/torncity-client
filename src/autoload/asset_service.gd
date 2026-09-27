@@ -170,6 +170,51 @@ func _fetch(url: String, timeout: float) -> Dictionary:
 	return {"ok": res[0] == HTTPRequest.RESULT_SUCCESS and res[1] == 200, "body": res[3]}
 
 
+## Textures by content, shared across models.
+var _textures := {}
+
+
+## Every model of a kit carries its own copy of the kit's colour-map
+## texture: forty models, forty copies in GPU memory, which an iPhone's web
+## view cannot hold (it loses the WebGL context). The same image is one
+## texture here, whichever model brought it; on a phone's browser it is also
+## brought down to 128 px (a kit's colour map is flat swatches of colour).
+func _share_textures(root: Node) -> void:
+	for n in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := n as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		for i in mi.mesh.get_surface_count():
+			for mat in [mi.mesh.surface_get_material(i), mi.get_surface_override_material(i)]:
+				if mat is BaseMaterial3D:
+					for prop in ["albedo_texture", "normal_texture", "emission_texture", "roughness_texture", "metallic_texture", "ao_texture"]:
+						var t = mat.get(prop)
+						if t is Texture2D:
+							mat.set(prop, _shared_texture(t))
+
+
+func _shared_texture(t: Texture2D) -> Texture2D:
+	var img := t.get_image()
+	if img == null or img.is_empty():
+		return t
+	img = img.duplicate()
+	if img.is_compressed():
+		img.decompress()
+	img.clear_mipmaps()
+	var cap := 128 if Config.phone_web() else 1024
+	if img.get_width() > cap or img.get_height() > cap:
+		var k := float(cap) / float(maxi(img.get_width(), img.get_height()))
+		img.resize(maxi(1, int(img.get_width() * k)), maxi(1, int(img.get_height() * k)), Image.INTERPOLATE_BILINEAR)
+	var h := HashingContext.new()
+	h.start(HashingContext.HASH_MD5)
+	h.update(img.get_data())
+	var key := "%dx%d:%s" % [img.get_width(), img.get_height(), h.finish().hex_encode()]
+	if not _textures.has(key):
+		img.generate_mipmaps()
+		_textures[key] = ImageTexture.create_from_image(img)
+	return _textures[key]
+
+
 func _decode(key: String, e: Dictionary, bytes: PackedByteArray) -> bool:
 	var v = null
 	match str(e.get("type", "")):
@@ -179,6 +224,7 @@ func _decode(key: String, e: Dictionary, bytes: PackedByteArray) -> bool:
 			if doc.append_from_buffer(bytes, "", st) == OK:
 				var root := doc.generate_scene(st)
 				if root:
+					_share_textures(root)
 					var ps := PackedScene.new()
 					_own(root, root)
 					if ps.pack(root) == OK:
