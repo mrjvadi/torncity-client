@@ -159,6 +159,7 @@ static func scroll(child: Control) -> ScrollContainer:
 	s.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	child.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	s.add_child(child)
+	DragScroll.attach(s)
 	return s
 
 

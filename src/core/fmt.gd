@@ -69,7 +69,7 @@ static func decimal(v: float, places: int, lang: String) -> String:
 		frac = 0
 	var s := number(whole if v >= 0 else -whole, lang)
 	if places > 0:
-		s += (FA_DECIMAL if lang == "fa" else ".") + digits(str(frac).pad_zeros(places), lang)
+		s += "." + digits(str(frac).pad_zeros(places), lang)
 	return s
 
 

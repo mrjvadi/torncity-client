@@ -562,3 +562,15 @@ msgstr "گذرانده شد"
 
 msgid "education.left"
 msgstr "{time} مانده"
+
+msgid "nav.activity"
+msgstr "فعالیت"
+
+msgid "nav.economy"
+msgstr "اقتصاد"
+
+msgid "nav.society"
+msgstr "جامعه"
+
+msgid "hud.full_at"
+msgstr "پر {time}"

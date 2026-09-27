@@ -31,7 +31,9 @@ func test_every_native_scene_exists() -> void:
 func test_tabs() -> void:
 	eq(ViewRouter.tab_for("city"), "map")
 	eq(ViewRouter.tab_for("travel_options"), "world")
-	eq(ViewRouter.tab_for("bank"), "profile")
+	eq(ViewRouter.tab_for("bank"), "market")
+	eq(ViewRouter.tab_for("job"), "activity")
+	eq(ViewRouter.tab_for("notifications"), "society")
 	eq(ViewRouter.tab_for("card", "company.lab"), "companies")
 	eq(ViewRouter.tab_for("card", "market.list"), "market")
 	eq(ViewRouter.tab_for("card", "crime.hub"), "")

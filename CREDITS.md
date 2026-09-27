@@ -36,3 +36,17 @@ The list of icons used, with their authors, is in
 
 Vazirmatn by Saber Rastikerdar — https://github.com/rastikerdar/vazirmatn —
 SIL Open Font License 1.1, `assets/fonts/vazirmatn/OFL.txt`.
+
+## Chrome kit icons — game-icons.net (CC BY 3.0)
+
+The icons of the HUD, the dock and the home screen (`assets/kit/icons/`),
+taken from the home screen prototype: game-icons.net, CC BY 3.0 — by Lorc,
+Delapouite, Sbed, John Colburn, Guard13007, Faithtoken, Caro Asercion, Carl
+Olsen, Skoll, Pierre Leducq, Lord Berandas, Cathelineau, Zeromancer,
+Felbrigg, Willdabeast and the "badges" set — https://game-icons.net.
+`menu.svg` is our own.
+
+## Font — Lalezar (SIL OFL 1.1)
+
+Lalezar by Borna Izadpanah — SIL Open Font License 1.1,
+`assets/fonts/lalezar/OFL.txt`.

@@ -24,7 +24,7 @@ func test_money() -> void:
 func test_money_short() -> void:
 	eq(Fmt.money_short(9999, "en"), "9,999")
 	eq(Fmt.money_short(12450, "en"), "12.5K")
-	eq(Fmt.money_short(86300, "fa"), "86٫3 هزار")
+	eq(Fmt.money_short(86300, "fa"), "86.3 هزار")
 	eq(Fmt.money_short(2000000, "en"), "2M")
 
 

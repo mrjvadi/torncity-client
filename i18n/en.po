@@ -562,3 +562,15 @@ msgstr "Completed"
 
 msgid "education.left"
 msgstr "{time} left"
+
+msgid "nav.activity"
+msgstr "Activity"
+
+msgid "nav.economy"
+msgstr "Economy"
+
+msgid "nav.society"
+msgstr "Society"
+
+msgid "hud.full_at"
+msgstr "full {time}"

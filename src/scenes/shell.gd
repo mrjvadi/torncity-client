@@ -7,8 +7,9 @@ extends Control
 signal insets_changed
 ## Screens are loaded lazily from res://src/screens/<name>.tscn.
 
-var hud: Hud
-var nav: BottomNav
+var hud: Hud                    # the desktop sidebar's player card
+var ghud: GameHud               # the phone HUD
+var nav: GameDock
 var host: Control
 var toasts: ToastLayer
 var current: GameScreen
@@ -51,18 +52,20 @@ func _ready() -> void:
 	hud.bell_pressed.connect(func(): open_tab("messages"))
 	hud.avatar_pressed.connect(func(): open_tab("profile"))
 	hud.menu_pressed.connect(toggle_drawer)
+	ghud = GameHud.new()
+	ghud.bell_pressed.connect(func(): open_tab("messages"))
+	ghud.avatar_pressed.connect(func(): open_tab("profile"))
+	ghud.menu_pressed.connect(toggle_drawer)
 	side = SideMenu.new()
 	side.picked.connect(_menu_pick)
-	nav = BottomNav.new()
+	nav = GameDock.new()
 	nav.tab_pressed.connect(open_tab)
 	nav.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	nav.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	nav.offset_left = 12
-	nav.offset_right = -12
-	nav.offset_bottom = -12
 	_stage.add_child(nav)
 	nav.resized.connect(func(): insets_changed.emit())
 	hud.resized.connect(func(): insets_changed.emit())
+	ghud.resized.connect(func(): insets_changed.emit())
 	_busy = ColorRect.new()
 	_busy.color = AppTheme.col("primary")
 	_busy.custom_minimum_size = Vector2(0, 4)
@@ -106,11 +109,13 @@ func start() -> void:
 ## the menu beside the content.
 func _relayout() -> void:
 	var w := size.x >= WIDE_FROM
-	if w == wide and hud.get_parent() != null:
+	if w == wide and (hud.get_parent() != null or ghud.get_parent() != null):
 		return
 	wide = w
 	if hud.get_parent():
 		hud.get_parent().remove_child(hud)
+	if ghud.get_parent():
+		ghud.get_parent().remove_child(ghud)
 	if side.get_parent():
 		side.get_parent().remove_child(side)
 	if wide:
@@ -123,21 +128,20 @@ func _relayout() -> void:
 		_sidebar.add_child(side)
 	else:
 		_sidebar_box.visible = false
-		hud.set_sidebar(false)
-		_stage.add_child(hud)
-		hud.set_anchors_preset(Control.PRESET_TOP_WIDE)
-		hud.offset_left = 12
-		hud.offset_right = -12
-		hud.offset_top = 10
+		_stage.add_child(ghud)
+		ghud.set_anchors_preset(Control.PRESET_TOP_WIDE)
+		ghud.offset_left = 0
+		ghud.offset_right = 0
+		ghud.offset_top = 0
 	insets_changed.emit.call_deferred()
 
 
 ## How much of the stage the floating chrome covers: {top, bottom}.
 func insets() -> Dictionary:
 	var top := 0.0
-	if hud.get_parent() == _stage:
-		top = hud.offset_top + hud.get_combined_minimum_size().y + 10.0
-	var bottom := nav.get_combined_minimum_size().y + 12.0 + 10.0
+	if ghud.get_parent() == _stage:
+		top = ghud.get_combined_minimum_size().y + 6.0
+	var bottom := nav.get_combined_minimum_size().y + 10.0
 	return {"top": top, "bottom": bottom}
 
 

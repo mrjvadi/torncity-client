@@ -543,7 +543,7 @@ func _bank(notice: String) -> Dictionary:
 		acts.append(_act((L("📤 برداشت همه - %s", "📤 Withdraw all - %s") if d["all"] else L("📤 برداشت %s", "📤 Withdraw %s")) % money(d["amount"]), "bank.withdraw", {"amount": str(d["amount"]), "nonce": d["nonce"]}))
 	acts.append({"label": L("✏️ واریز مبلغ دلخواه", "✏️ Deposit another amount"), "command": "bank.deposit", "args": {}, "input": {"field": "amount", "text": L("چه مبلغی واریز شود؟", "How much to deposit?")}})
 	acts.append({"label": L("✏️ برداشت مبلغ دلخواه", "✏️ Withdraw another amount"), "command": "bank.withdraw", "args": {}, "input": {"field": "amount", "text": L("چه مبلغی برداشت شود؟", "How much to withdraw?")}})
-	var text := L("🏦 بانک %s\n💵 پول نقد: %s\n🏦 موجودی بانک: %s\nکارمزد برداشت: ٪0٫5", "🏦 Bank of %s\n💵 Cash: %s\n🏦 Bank: %s\nWithdrawal fee: 0.5%%") % [city_name(st["city"]), money(st["cash"]), money(st["bank"])]
+	var text := L("🏦 بانک %s\n💵 پول نقد: %s\n🏦 موجودی بانک: %s\nکارمزد برداشت: 0.5٪", "🏦 Bank of %s\n💵 Cash: %s\n🏦 Bank: %s\nWithdrawal fee: 0.5%%") % [city_name(st["city"]), money(st["cash"]), money(st["bank"])]
 	return _resp("bank", text, v, acts, notice)
 
 
