@@ -16,6 +16,7 @@ exports/
 # Downloaded tools (Godot, Blender, Xvfb) — see docs/tooling.md
 tools/*
 !tools/build_assets/
+!tools/build_web_template.sh
 
 # Local runtime overrides and secrets
 config/client.local.cfg
