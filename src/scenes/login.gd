@@ -11,6 +11,7 @@ var _go: Button
 
 
 func _ready() -> void:
+	Game.mark("login shown")
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	layout_direction = I18n.direction()
 	var art := TextureRect.new()
@@ -83,6 +84,14 @@ func _ready() -> void:
 			_code.caret_column = c
 		_error.text = "")
 	box.add_child(_code)
+	# A phone's web view hands a canvas text field its keyboard unreliably (an
+	# iPhone may not show one at all); there the browser's own prompt takes the
+	# code, pasting included, and signs in at once.
+	if OS.has_feature("web") and DisplayServer.is_touchscreen_available():
+		_code.editable = false
+		_code.gui_input.connect(func(e):
+			if (e is InputEventScreenTouch or e is InputEventMouseButton) and not e.pressed:
+				_ask_code())
 	_error = UI.label("", "SmallLabel", HORIZONTAL_ALIGNMENT_CENTER, true)
 	_error.add_theme_color_override("font_color", AppTheme.col("rose"))
 	box.add_child(_error)
@@ -95,7 +104,16 @@ func _ready() -> void:
 	Fx.stagger_in(col, 0.06)
 
 
+func _ask_code() -> void:
+	Game.mark("code prompt")
+	var got = JavaScriptBridge.eval("window.prompt(%s, '') || ''" % JSON.stringify(I18n.t("login.step3")), true)
+	if got is String and (got as String).strip_edges() != "":
+		_code.text = (got as String).strip_edges().to_upper()
+		_submit()
+
+
 func _submit() -> void:
+	Game.mark("code submit")
 	var code := AuthFlow.normalize_code(_code.text)
 	if code == "":
 		_error.text = I18n.t("login.bad_format")

@@ -23,6 +23,9 @@ var headless_capture := false
 
 
 func _ready() -> void:
+	print("[boot] engine up")
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.tcLog && window.tcLog('boot', 'engine up')", true)
 	_load("res://config/client.cfg")
 	_load("res://config/client.local.cfg")
 	_load("user://client.cfg")
