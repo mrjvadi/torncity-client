@@ -2,6 +2,7 @@ extends Control
 ## The root: splash -> (auto login | link screen) -> the game shell.
 
 var _screen: Control
+var _taps := 0
 
 
 func _ready() -> void:
@@ -57,3 +58,13 @@ func show_shell() -> Control:
 	_swap(s)
 	s.start()
 	return s
+
+
+## The first taps a web build gets, for the page's reporter: whether input
+## reaches the game at all on a device that seems not to answer.
+func _input(e: InputEvent) -> void:
+	if _taps >= 4 or not OS.has_feature("web"):
+		return
+	if (e is InputEventScreenTouch or e is InputEventMouseButton) and e.pressed:
+		_taps += 1
+		Game.mark("tap %s at %d,%d" % ["touch" if e is InputEventScreenTouch else "mouse", int(e.position.x), int(e.position.y)])

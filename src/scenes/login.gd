@@ -84,10 +84,11 @@ func _ready() -> void:
 			_code.caret_column = c
 		_error.text = "")
 	box.add_child(_code)
+	_code.focus_entered.connect(func(): Game.mark("code focus"))
 	# A phone's web view hands a canvas text field its keyboard unreliably (an
 	# iPhone may not show one at all); there the browser's own prompt takes the
 	# code, pasting included, and signs in at once.
-	if OS.has_feature("web") and DisplayServer.is_touchscreen_available():
+	if _phone_web():
 		_code.editable = false
 		_code.gui_input.connect(func(e):
 			if (e is InputEventScreenTouch or e is InputEventMouseButton) and not e.pressed:
@@ -102,6 +103,17 @@ func _ready() -> void:
 	card.add_child(box)
 	col.add_child(card)
 	Fx.stagger_in(col, 0.06)
+
+
+## A phone's browser, by what it says it is: Godot's touchscreen check can
+## answer no on a real iPhone.
+static func _phone_web() -> bool:
+	if not OS.has_feature("web"):
+		return false
+	if DisplayServer.is_touchscreen_available():
+		return true
+	var ua = JavaScriptBridge.eval("navigator.userAgent + ' ' + (navigator.maxTouchPoints || 0)", true)
+	return ua is String and ((ua as String).contains("iPhone") or (ua as String).contains("iPad") or (ua as String).contains("Android") or not (ua as String).ends_with(" 0"))
 
 
 func _ask_code() -> void:
