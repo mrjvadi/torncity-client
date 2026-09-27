@@ -129,7 +129,9 @@ func _call(method: String, path: String, body, auth: bool) -> Dictionary:
 func _http(method: String, path: String, body, auth: bool) -> Dictionary:
 	var req := HTTPRequest.new()
 	req.timeout = TIMEOUT
-	req.accept_gzip = true
+	# The browser already undoes the transfer encoding (Safari keeps the header
+	# though), so a web build decoding it again fails the request.
+	req.accept_gzip = not OS.has_feature("web")
 	add_child(req)
 	var headers := PackedStringArray(["Accept: application/json", "Accept-Language: " + I18n.lang])
 	if auth and Session.access_token != "":

@@ -157,7 +157,9 @@ func _download(job: Dictionary) -> void:
 func _fetch(url: String, timeout: float) -> Dictionary:
 	var h := HTTPRequest.new()
 	h.timeout = timeout
-	h.accept_gzip = true
+	# The browser already undoes the transfer encoding (Safari keeps the header
+	# though), so a web build decoding it again fails the request.
+	h.accept_gzip = not OS.has_feature("web")
 	add_child(h)
 	var err := h.request(url)
 	if err != OK:

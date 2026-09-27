@@ -140,7 +140,7 @@ msgid "login.step1"
 msgstr "ربات بازی را در تلگرام باز کنید."
 
 msgid "login.step2"
-msgstr "«/link» یا «اتصال» را بفرستید."
+msgstr "«اتصال» یا «/link» را بفرستید."
 
 msgid "login.step3"
 msgstr "کد 8 حرفی را اینجا وارد کنید."

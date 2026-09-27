@@ -26,6 +26,12 @@ func _ready() -> void:
 	sb.content_margin_right = pad.z
 	sb.content_margin_bottom = pad.w
 	add_theme_stylebox_override("panel", sb)
+	# The blur reads the screen the panel is drawn into, which WebGL does by
+	# blitting a framebuffer onto itself; Safari refuses that and the frame
+	# stops. On the web the panel is its tint alone, a shade more opaque.
+	if OS.has_feature("web"):
+		sb.bg_color = Color(tint_color, maxf(tint_color.a, 0.9))
+		return
 	var m := ShaderMaterial.new()
 	m.shader = SHADER
 	m.set_shader_parameter("tint", tint)

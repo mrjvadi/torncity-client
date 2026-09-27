@@ -26,7 +26,9 @@ func _init() -> void:
 
 func _ready() -> void:
 	_vp = SubViewport.new()
-	_vp.msaa_3d = Viewport.MSAA_2X
+	# WebGL resolves a multisampled viewport with a framebuffer blit Safari
+	# refuses; the web build draws without it.
+	_vp.msaa_3d = Viewport.MSAA_DISABLED if OS.has_feature("web") else Viewport.MSAA_2X
 	_vp.handle_input_locally = true
 	_vp.physics_object_picking = false
 	add_child(_vp)
