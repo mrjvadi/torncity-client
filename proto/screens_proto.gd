@@ -6,12 +6,13 @@ extends "res://proto/home_proto.gd"
 ## Names: profile, activity, job, crime, education, hospital, missions,
 ## economy, inventory, market, bank, company, property, stocks, society,
 ## inbox, faction, elections, government, war, forces [--branch=ground|air|navy|air_defence],
-## unit, arsenal, airdefence, travel, levelup, leaderboard.
+## unit [--unit=fighter|tank], arsenal, airdefence, family, proposal, child, divorce, wedding,
+## travel, levelup, leaderboard.
 
 const TAB := {"profile": 0, "activity": 1, "job": 1, "crime": 1, "education": 1, "hospital": 1, "missions": 1,
 	"leaderboard": 1, "economy": 3, "inventory": 3, "market": 3, "bank": 3, "company": 3, "property": 3,
 	"stocks": 3, "society": 4, "inbox": 4, "faction": 4, "elections": 4, "government": 4, "war": 4,
-	"forces": 4, "unit": 4, "arsenal": 4, "airdefence": 4,
+	"forces": 4, "unit": 4, "arsenal": 4, "airdefence": 4, "family": 4, "proposal": 4, "child": 4, "divorce": 4, "wedding": 4,
 	"travel": 2, "levelup": 2}
 
 var _scr := "profile"
@@ -617,14 +618,14 @@ func _s_stocks() -> void:
 # -- society ----------------------------------------------------------------------------------------
 func _s_society() -> void:
 	_hdr("جامعه", Color("#5A3AA8"))
-	var tiles := [["inbox", "sapphire", "پیام‌ها", "3 نخوانده", 3], ["society", "teal", "دوستان", "12 دوست  ·  4 آنلاین", 1],
-		["lion", "gold", "جناح", "شیرهای البرز", 0], ["rank", "gold", "دولت شهر", "مالیات بازار 2.5٪", 0],
-		["vote", "violet", "انتخابات", "رأی‌گیری شهرداری باز", 1], ["gavel", "steel", "قوانین", "2 لایحه در مجلس", 0],
-		["swords", "ruby", "ارتش و جنگ", "جنگ با کالدریس  ·  روز 3", 0], ["podium", "gold", "رتبه‌ها", "رتبه‌ی 142", 0]]
+	var tiles := [["inbox", "sapphire", "پیام‌ها", "3 نخوانده", 3], ["f_lovers", "ruby", "خانواده", "متأهل  ·  3 فرزند", 1],
+		["society", "teal", "دوستان", "12 دوست  ·  4 آنلاین", 1], ["lion", "gold", "جناح", "شیرهای البرز", 0],
+		["rank", "gold", "دولت شهر", "مالیات بازار 2.5٪", 0], ["vote", "violet", "انتخابات", "رأی‌گیری شهرداری باز", 1],
+		["gavel", "steel", "قوانین", "2 لایحه در مجلس", 0], ["swords", "ruby", "ارتش و جنگ", "جنگ با کالدریس  ·  روز 3", 0]]
 	for i in tiles.size():
 		var t: Array = tiles[i]
 		var r := Rect2(366 - (i % 2) * 346, 256 + (i / 2) * 214, 334, 202)
-		_tile(r, t[0], t[1], t[2], t[3], t[4], Color(ANAR, 0.45) if i == 6 else Color(0, 0, 0, 0))
+		_tile(r, t[0], t[1], t[2], t[3], t[4], Color(ANAR, 0.45) if t[2] == "ارتش و جنگ" else Color(0, 0, 0, 0))
 
 
 func _s_inbox() -> void:
@@ -1485,3 +1486,258 @@ func _s_airdefence() -> void:
 	for i in ad.size():
 		var a: Array = ad[i]
 		_arms_row(690 + i * 104, a[0], a[1], a[4], a[3], a[5], Color(FIROUZEH, 0.45))
+
+
+# -- the family ------------------------------------------------------------------------------------------------
+# Nothing on the server yet: this is the section as the game would draw it.
+# One spouse at a time, by proposal with a ring and an optional dowry; a
+# shared family house and joint account while married; a bond that grows
+# with care and fades with neglect; children who grow up on the game clock
+# (baby, child, teenager, adult) and inherit; a divorce that waits out a
+# reconciliation period and then splits what was shared.
+
+const ROSE := Color("#E0457B")
+
+# child: avatar, palette, plate tint, name, age, stage, needs [health, happiness, education], alert
+const KIDS := [
+	["a_foxkid", "fox", Color("#5E2A10"), "نیلا", 9, "کودک", [0.82, 0.64, 0.71], ""],
+	["a_rabbit", "cream", Color("#2A3A6A"), "کیان", 3, "کودک", [0.9, 0.8, 0.35], ""],
+	["f_baby", "amber", Color("#5A3A10"), "نوزاد", 0, "نوزاد", [0.7, 0.4, 0.0], "گرسنه"],
+]
+
+
+## Wraps a label inside its box: a label grows to its unwrapped text, so the
+## size is set again once wrapping is on.
+func _wrap(l: Label, size: Vector2) -> void:
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.size = size
+
+
+func _avatar_big(r: Rect2, icon: String, pal: String, tint: Color, ring_col := Color(0, 0, 0, 0)) -> void:
+	if ring_col.a > 0.0:
+		_ring(Rect2(r.position - Vector2(10, 10), r.size + Vector2(20, 20)), 1.0, ring_col)
+	_plate(icon, r, pal, tint)
+
+
+func _s_family() -> void:
+	_hdr("خانواده", Color("#B0306A"))
+	_card(Rect2(20, 256, 680, 300), Color(ROSE, 0.4))
+	# the couple, joined by their rings
+	_avatar_big(Rect2(548, 276, 128, 128), "fox", "fox", Color("#0E5E58"), ROSE)
+	_avatar_big(Rect2(44, 276, 128, 128), "a_wolf", "steel", Color("#1E2A5A"), ROSE)
+	_big(Rect2(520, 410, 184, 40), "سارا", 28, "#FFFFFF", "#FFD0E0", HORIZONTAL_ALIGNMENT_CENTER)
+	_big(Rect2(16, 410, 184, 40), "آرش", 28, "#FFFFFF", "#FFD0E0", HORIZONTAL_ALIGNMENT_CENTER)
+	_emboss("f_rings", Rect2(290, 262, 140, 140), "gold")
+	_txt(Rect2(200, 396, 320, 28), "متأهل از 42 روز پیش", 17, Color("#FFD0E0"), HORIZONTAL_ALIGNMENT_CENTER, display_font, 3)
+	_emboss("f_hearts", Rect2(600, 456, 56, 56), "ruby")
+	_txt(Rect2(460, 462, 136, 40), "صمیمیت", 19, Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT, display_font, 3)
+	_pbar(Rect2(60, 470, 390, 28), 0.78, ROSE, "78٪")
+	var perks := [["+10٪ شادی", LEAF], ["خانه‌ی مشترک", SAFFRON], ["حساب مشترک 24,000", LAPIS]]
+	var px := 684.0
+	for pk in perks:
+		var w := 60.0 + (pk[0] as String).length() * 9.0
+		px -= w
+		_chip(Rect2(px, 512, w - 10, 32), pk[0], pk[1], 15)
+	# things to do together
+	var acts := [["f_rose", "ruby", "هدیه"], ["f_letter", "fox", "قرار عاشقانه"], ["bank", "sapphire", "حساب مشترک"], ["f_house", "amber", "خانه"]]
+	for i in acts.size():
+		var a: Array = acts[i]
+		var r := Rect2(532.0 - i * 170.0, 572, 160, 100)
+		var b := _button(r, Color("#3F55A8"), Color("#1A2560"), Color("#0A1030"), 20.0, 7.0)
+		_emboss(a[0], Rect2(r.position.x + 48, r.position.y + 2, 64, 64), a[1])
+		b.add_child(_label(a[2], display_font, 19, Color.WHITE, Rect2(0, 60, r.size.x, 32), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	_sec(688, "فرزندان")
+	_txt(Rect2(40, 690, 300, 40), "ظرفیت خانه: 3 از 4", 16, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_LEFT)
+	for i in KIDS.size():
+		var k: Array = KIDS[i]
+		var r := Rect2(484.0 - i * 232.0, 744, 216, 252)
+		_card(r, Color(ANAR, 0.5) if k[7] != "" else Color(0, 0, 0, 0))
+		_plate(k[0], Rect2(r.position.x + 58, r.position.y + 10, 100, 100), k[1], k[2])
+		if k[7] != "":
+			_chip(Rect2(r.position.x + 8, r.position.y + 10, 80, 30), k[7], ANAR, 15)
+		_big(Rect2(r.position.x, r.position.y + 112, r.size.x, 36), k[3], 26, "#FFFFFF", "#FFE3B0", HORIZONTAL_ALIGNMENT_CENTER)
+		var age := "%d سال" % k[4] if k[4] > 0 else "12 روزه"
+		_txt(Rect2(r.position.x, r.position.y + 146, r.size.x, 24), "%s  ·  %s" % [age, k[5]], 15, Color("#C9D2EE"), HORIZONTAL_ALIGNMENT_CENTER)
+		var needs := [["health", LEAF], ["mood", SAFFRON], ["study", LAPIS]]
+		for j in 3:
+			var y := r.position.y + 178 + j * 22
+			_emboss(needs[j][0], Rect2(r.end.x - 34, y - 3, 24, 24), "cream")
+			var v: float = k[6][j]
+			if j == 2 and k[4] < 3:
+				_txt(Rect2(r.position.x + 14, y - 2, r.size.x - 52, 20), "هنوز مدرسه نمی‌رود", 12, Color("#8E97B4"))
+			else:
+				_bar(Rect2(r.position.x + 14, y + 2, r.size.x - 52, 13), v, needs[j][1] if v > 0.45 else ANAR, false)
+	_btn(Rect2(250, 1012, 450, 80), "بچه‌دار شدن", "green")
+	var dv := _button(Rect2(20, 1012, 214, 80), Color("#8E97B4"), Color("#4A536E"), Color("#1E2436"), 20.0, 7.0)
+	_emboss("f_broken", Rect2(160, 1016, 60, 60), "ruby")
+	dv.add_child(_label("طلاق", display_font, 26, Color.WHITE, Rect2(14, 0, 130, 72), HORIZONTAL_ALIGNMENT_CENTER, 5))
+
+
+func _s_proposal() -> void:
+	_hdr("خواستگاری", Color("#B0306A"))
+	_card(Rect2(20, 256, 680, 150), Color(ROSE, 0.35))
+	_avatar_big(Rect2(566, 270, 112, 112), "a_wolf", "steel", Color("#1E2A5A"))
+	_big(Rect2(300, 270, 256, 46), "آرش", 36, "#FFFFFF", "#FFD0E0")
+	_txt(Rect2(260, 318, 296, 26), "سطح 9  ·  مهندس ارشد  ·  فنویک", 16, Color("#C9D2EE"))
+	_txt(Rect2(260, 346, 296, 26), "آشنایی: 12 روز  ·  34 پیام  ·  2 قرار", 15, Color("#FFD0E0"))
+	_chip(Rect2(40, 272, 110, 34), "مجرد", LEAF, 17)
+	_emboss("f_heartplus", Rect2(60, 314, 72, 72), "ruby")
+	_sec(422, "انگشتر")
+	var rings := [["steel", "نقره", "500", "+5 صمیمیت"], ["gold", "طلا", "2,500", "+15 صمیمیت"], ["sapphire", "الماس", "12,000", "+40 صمیمیت"]]
+	for i in rings.size():
+		var rg: Array = rings[i]
+		var r := Rect2(484.0 - i * 232.0, 478, 216, 214)
+		var on := i == 1
+		var f := _card(r, Color(GOLD, 0.6) if on else Color(0, 0, 0, 0))
+		if on:
+			(f.material as ShaderMaterial).set_shader_parameter("trim", GOLD)
+		_emboss("f_diamond", Rect2(r.position.x + 53, r.position.y + 8, 110, 110), rg[0])
+		_big(Rect2(r.position.x, r.position.y + 116, r.size.x, 36), "انگشتر " + rg[1], 24, "#FFFFFF", "#FFE3B0", HORIZONTAL_ALIGNMENT_CENTER)
+		_txt(Rect2(r.position.x, r.position.y + 150, r.size.x, 26), rg[3], 15, Color("#FFD0E0"), HORIZONTAL_ALIGNMENT_CENTER)
+		_big(Rect2(r.position.x, r.position.y + 176, r.size.x, 32), rg[2] + " نیل", 22, "#FFF6C8", "#FFB21F", HORIZONTAL_ALIGNMENT_CENTER)
+		if on:
+			_chip(Rect2(r.position.x + 8, r.position.y + 8, 64, 30), "✓", LEAF, 18)
+	_sec(706, "مهریه")
+	_inset(Rect2(20, 760, 680, 84), Color(GOLD, 0.5))
+	_emboss("coins", Rect2(620, 766, 72, 72), "gold")
+	_txt(Rect2(330, 764, 286, 36), "1,000 نیل", 26, Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT, display_font, 4)
+	_txt(Rect2(250, 800, 366, 36), "اگر همسر در طلاق بخواهد، پرداخت می‌شود", 14, Color("#AEB8D8"))
+	var minus := _button(Rect2(160, 776, 52, 52), Color("#8E97B4"), Color("#4A536E"), Color("#1E2436"), 16.0, 5.0)
+	minus.add_child(_label("−", display_font, 34, Color.WHITE, Rect2(0, -6, 52, 56), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	var plus := _button(Rect2(40, 776, 52, 52), LEAF.lightened(0.3), LEAF.darkened(0.1), LEAF.darkened(0.55), 16.0, 5.0)
+	plus.add_child(_label("+", display_font, 34, Color.WHITE, Rect2(0, -6, 52, 56), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	_inset(Rect2(20, 860, 680, 110), Color(ROSE, 0.5))
+	_emboss("f_letter", Rect2(614, 876, 76, 76), "fox")
+	_wrap(_txt(Rect2(40, 870, 560, 90), "«از روزی که در بازار آزور دیدمت، هر روزم بهتر شده. با من ازدواج می‌کنی؟»", 19, Color("#FFE8F0"), HORIZONTAL_ALIGNMENT_RIGHT, display_font, 3), Vector2(560, 90))
+	_btn(Rect2(120, 992, 480, 86), "خواستگاری  ·  2,500 نیل", "gold")
+	_txt(Rect2(120, 1076, 480, 26), "آرش تا 24 ساعت فرصت پاسخ دارد", 14, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_CENTER)
+
+
+func _s_child() -> void:
+	var k: Array = KIDS[0]
+	_hdr(k[3], Color("#C0662A"))
+	_card(Rect2(20, 256, 680, 300), Color(SAFFRON, 0.35))
+	_avatar_big(Rect2(510, 276, 170, 170), k[0], k[1], k[2], SAFFRON)
+	_big(Rect2(260, 276, 230, 56), k[3], 46, "#FFFFFF", "#FFE3B0")
+	_txt(Rect2(200, 334, 290, 28), "9 سال  ·  فرزند سارا و آرش", 17, Color("#C9D2EE"))
+	_chip(Rect2(370, 372, 120, 34), "وارث اول", GOLD.darkened(0.2), 16)
+	_chip(Rect2(240, 372, 120, 34), "کلاس سوم", LAPIS, 16)
+	_txt(Rect2(40, 280, 200, 26), "تولد بعدی", 15, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_LEFT)
+	_big(Rect2(40, 304, 200, 44), "4 روز", 34, "#FFFFFF", "#FFD66B", HORIZONTAL_ALIGNMENT_LEFT)
+	# growing up: baby, child, teenager, adult, on the game clock
+	var stages := [["نوزاد", 0], ["کودک", 3], ["نوجوان", 12], ["بزرگسال", 18]]
+	var x0 := 640.0
+	var x1 := 80.0
+	_rect(Rect2(x1, 488, x0 - x1, 8), Color(0.2, 0.23, 0.4))
+	var at := x0 - (x0 - x1) * 9.0 / 18.0
+	_rect(Rect2(at, 488, x0 - at, 8), SAFFRON)
+	for s in stages:
+		var sx := x0 - (x0 - x1) * float(s[1]) / 18.0
+		var done: bool = int(s[1]) <= 9
+		_circle(Vector2(sx, 492), 13, GOLD, 3.0, SAFFRON if done else Color(0.12, 0.14, 0.28))
+		_txt(Rect2(sx - 60, 510, 120, 24), s[0], 15, Color.WHITE if done else Color("#8E97B4"), HORIZONTAL_ALIGNMENT_CENTER, display_font, 3)
+		_txt(Rect2(sx - 60, 452, 120, 22), "%d" % s[1], 13, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_CENTER)
+	_emboss(k[0], Rect2(at - 22, 460, 44, 44), k[1])
+	_sec(572, "حال نیلا")
+	var needs := [["health", "emerald", "سلامت", 0.82, LEAF], ["mood", "amber", "شادی", 0.64, SAFFRON], ["study", "sapphire", "تحصیل", 0.71, LAPIS]]
+	for i in needs.size():
+		var n: Array = needs[i]
+		var y := 628.0 + i * 62.0
+		_emboss(n[0], Rect2(632, y - 6, 56, 56), n[1])
+		_txt(Rect2(500, y, 126, 40), n[2], 20, Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT, display_font, 3)
+		_pbar(Rect2(40, y + 6, 450, 28), n[3], n[4], "%d٪" % int(n[3] * 100))
+	_sec(820, "کارها")
+	var acts := [["f_school", "sapphire", "مدرسه", "هر روز  ·  120 نیل  ·  تحصیل +", "ثبت‌نام شده", "steel"],
+		["f_slide", "emerald", "بازی در پارک", "شادی +15  ·  1 انرژی", "برو", "green"],
+		["f_grad", "violet", "کلاس زبان", "تحصیل +10  ·  300 نیل", "ثبت‌نام", "blue"]]
+	for i in acts.size():
+		var a: Array = acts[i]
+		var r := Rect2(20, 874 + i * 76, 680, 70)
+		_inset(r)
+		_emboss(a[0], Rect2(628, r.position.y + 4, 62, 62), a[1])
+		ui.add_child(_label(a[2], display_font, 21, Color.WHITE, Rect2(260, r.position.y + 2, 360, 34), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+		_txt(Rect2(220, r.position.y + 36, 400, 26), a[3], 14, Color("#AEB8D8"))
+		_btn(Rect2(36, r.position.y + 10, 180, 52), a[4], a[5])
+
+
+func _s_divorce() -> void:
+	_hdr("طلاق", Color("#6E1A24"))
+	_card(Rect2(20, 256, 680, 170), Color(ANAR, 0.4))
+	_emboss("f_broken", Rect2(560, 268, 130, 130), "ruby")
+	_big(Rect2(240, 270, 310, 50), "جدایی از آرش", 36, "#FFFFFF", "#FFC9CC")
+	_txt(Rect2(160, 322, 390, 26), "42 روز ازدواج  ·  صمیمیت 18٪", 16, Color("#FFD0D4"))
+	_wrap(_txt(Rect2(60, 352, 490, 56), "پس از درخواست، 3 روز مهلت آشتی هست. اگر هیچ‌کدام پس نگیرید، طلاق ثبت می‌شود.", 15, Color("#C9D2EE")), Vector2(490, 56))
+	_sec(440, "تقسیم دارایی")
+	_row(Rect2(20, 494, 680, 90), "bank", "sapphire", "حساب مشترک", "24,000 نیل  ·  نصف به نصف", "12,000", Color("#8FB0FF"))
+	_inset(Rect2(20, 592, 680, 118))
+	_plate("f_house", Rect2(610, 604, 76, 76), "amber")
+	ui.add_child(_label("خانه‌ی خانوادگی", display_font, 23, Color.WHITE, Rect2(300, 598, 300, 36), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+	_txt(Rect2(300, 632, 300, 24), "ارزش 180,000 نیل", 15, Color("#AEB8D8"))
+	var opts := [["به سارا", false], ["به آرش", false], ["فروش و تقسیم", true]]
+	for i in opts.size():
+		var o: Array = opts[i]
+		_chip(Rect2(424.0 - i * 196.0, 664, 180, 36), o[0], LEAF if o[1] else Color("#59607A"), 17)
+	_row(Rect2(20, 718, 680, 90), "coins", "gold", "مهریه", "آرش خواسته پرداخت شود", "1,000", Color("#FFB0B4"), Color(ANAR, 0.6))
+	_sec(822, "حضانت فرزندان")
+	for i in KIDS.size():
+		var k: Array = KIDS[i]
+		var r := Rect2(484.0 - i * 232.0, 876, 216, 118)
+		_inset(r)
+		_plate(k[0], Rect2(r.end.x - 74, r.position.y + 8, 64, 64), k[1], k[2])
+		_txt(Rect2(r.position.x + 8, r.position.y + 12, 126, 30), k[3], 20, Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT, display_font, 3)
+		_txt(Rect2(r.position.x + 8, r.position.y + 42, 126, 24), "%d سال" % k[4] if k[4] > 0 else "12 روزه", 14, Color("#AEB8D8"))
+		_chip(Rect2(r.position.x + 112, r.position.y + 78, 96, 30), "سارا", LEAF if i != 1 else Color("#59607A"), 15)
+		_chip(Rect2(r.position.x + 8, r.position.y + 78, 96, 30), "آرش", LEAF if i == 1 else Color("#59607A"), 15)
+	_btn(Rect2(370, 1010, 330, 84), "مشاوره‌ی خانواده", "blue")
+	_btn(Rect2(20, 1010, 330, 84), "درخواست طلاق", "red")
+
+
+func _s_wedding() -> void:
+	var dim := ColorRect.new()
+	dim.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	dim.size = Vector2(W, H)
+	dim.color = Color(0.03, 0.0, 0.03, 0.72)
+	ui.add_child(dim)
+	for k in 16:
+		var ray := Polygon2D.new()
+		var a0 := k * TAU / 16.0
+		ray.polygon = PackedVector2Array([Vector2(360, 560), Vector2(360, 560) + Vector2(cos(a0 - 0.08), sin(a0 - 0.08)) * 540, Vector2(360, 560) + Vector2(cos(a0 + 0.08), sin(a0 + 0.08)) * 540])
+		ray.color = Color(1.0, 0.6, 0.75, 0.10)
+		ui.add_child(ray)
+	# confetti
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
+	for i in 70:
+		var p := Vector2(rng.randf_range(20, 700), rng.randf_range(160, 720))
+		var c: Color = [ROSE, GOLD, Color("#FFFFFF"), Color("#8FD8FF"), LEAF][i % 5]
+		var q := Polygon2D.new()
+		var a := rng.randf() * TAU
+		var d1 := Vector2.from_angle(a) * 8.0
+		var d2 := Vector2.from_angle(a + PI / 2) * 3.5
+		q.polygon = PackedVector2Array([p - d1 - d2, p + d1 - d2, p + d1 + d2, p - d1 + d2])
+		q.color = Color(c, 0.9)
+		ui.add_child(q)
+	_avatar_big(Rect2(420, 470, 170, 170), "fox", "fox", Color("#0E5E58"), ROSE)
+	_avatar_big(Rect2(130, 470, 170, 170), "a_wolf", "steel", Color("#1E2A5A"), ROSE)
+	_emboss("f_rings", Rect2(270, 400, 180, 180), "gold")
+	var rib := ColorRect.new()
+	rib.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	rib.position = Vector2(90, 270)
+	rib.size = Vector2(540, 110)
+	var rm := _mat("ribbon")
+	rm.set_shader_parameter("size", rib.size)
+	rm.set_shader_parameter("face_top", Color("#F06A9A"))
+	rm.set_shader_parameter("face_bottom", Color("#8A1E4A"))
+	rib.material = rm
+	ui.add_child(rib)
+	_big(Rect2(140, 272, 440, 80), "مبارک باشد!", 50, "#FFFFFF", "#FFE6F0", HORIZONTAL_ALIGNMENT_CENTER)
+	_big(Rect2(60, 654, 600, 50), "سارا و آرش ازدواج کردند", 30, "#FFFFFF", "#FFD0E0", HORIZONTAL_ALIGNMENT_CENTER)
+	_card(Rect2(60, 724, 600, 270), Color(ROSE, 0.5))
+	var rewards := [["f_house", "amber", "خانه‌ی مشترک"], ["f_hearts", "ruby", "شادی +20"], ["bank", "sapphire", "حساب مشترک"]]
+	for i in rewards.size():
+		var rw: Array = rewards[i]
+		var x := 460.0 - i * 190.0
+		_inset(Rect2(x, 744, 176, 196))
+		_emboss(rw[0], Rect2(x + 30, 754, 116, 116), rw[1])
+		_txt(Rect2(x, 878, 176, 50), rw[2], 18, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, display_font, 4)
+	_btn(Rect2(160, 1016, 400, 90), "به خانه برویم", "gold")
