@@ -102,6 +102,7 @@ func _apply_insets() -> void:
 
 
 func start() -> void:
+	Game.mark("shell ready")
 	open_tab("map")
 
 

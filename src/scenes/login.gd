@@ -119,6 +119,9 @@ func _ask_code() -> void:
 	_last_prompt = Time.get_ticks_msec()
 	if got is String and (got as String).strip_edges() != "":
 		_code.text = (got as String).strip_edges().to_upper()
+		# the engine stood still under the prompt; let it draw a frame first
+		await get_tree().process_frame
+		await get_tree().process_frame
 		_submit()
 
 

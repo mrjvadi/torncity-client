@@ -3,6 +3,7 @@ extends Control
 
 var _screen: Control
 var _taps := 0
+var _slow := 0
 
 
 func _ready() -> void:
@@ -68,3 +69,11 @@ func _input(e: InputEvent) -> void:
 	if (e is InputEventScreenTouch or e is InputEventMouseButton) and e.pressed:
 		_taps += 1
 		Game.mark("tap %s at %d,%d" % ["touch" if e is InputEventScreenTouch else "mouse", int(e.position.x), int(e.position.y)])
+
+
+## A frame that took over a second, for the page's reporter (the first few):
+## where a device that seems stuck actually spends its time.
+func _process(delta: float) -> void:
+	if delta > 1.0 and _slow < 6 and OS.has_feature("web"):
+		_slow += 1
+		Game.mark("slow frame %d ms on %s" % [int(delta * 1000.0), _screen.name if _screen else "-"])

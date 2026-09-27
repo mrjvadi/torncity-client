@@ -22,6 +22,7 @@ const DOCK := [
 
 var active := "map"
 var _canvas: Control
+var _unread := -1
 
 
 func _ready() -> void:
@@ -33,7 +34,10 @@ func _ready() -> void:
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	shade.offset_top = -230
 	I18n.changed.connect(func(_l): _build())
-	Session.changed.connect(_build)
+	# vitals change many times a minute; the dock only shows the unread count
+	Session.changed.connect(func():
+		if Session.unread != _unread:
+			_build())
 	_build()
 
 
@@ -53,6 +57,7 @@ func _place() -> void:
 
 
 func _build() -> void:
+	_unread = Session.unread
 	if _canvas:
 		_canvas.queue_free()
 	var rtl := I18n.is_rtl()
