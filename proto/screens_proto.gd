@@ -14,6 +14,8 @@ const TAB := {"profile": 0, "activity": 1, "job": 1, "crime": 1, "education": 1,
 	"leaderboard": 1, "economy": 3, "inventory": 3, "market": 3, "bank": 3, "company": 3, "property": 3,
 	"stocks": 3, "society": 4, "inbox": 4, "faction": 4, "elections": 4, "government": 4, "war": 4,
 	"forces": 4, "unit": 4, "arsenal": 4, "airdefence": 4, "family": 4, "proposal": 4, "child": 4, "divorce": 4, "wedding": 4, "meet": 4, "relationship": 4, "date": 4,
+	"chats": 4, "chat": 4, "friends": 4, "tutorial": 1, "daily": 1, "gym": 1, "attack": 1, "fight": 1, "bounty": 1,
+	"news": 4, "invite": 0, "casino": 1, "slots": 1, "race": 1, "plot": 2, "will": 0, "cosmetics": 0, "event": 1,
 	"travel": 2, "levelup": 2}
 
 var _scr := "profile"
@@ -1507,10 +1509,11 @@ const KIDS := [
 ]
 
 
-## Wraps a label inside its box: a label grows to its unwrapped text, so the
-## size is set again once wrapping is on.
+## Wraps a label inside its box. A wrapping label still asks for its whole
+## unwrapped width until it clips, so it clips too.
 func _wrap(l: Label, size: Vector2) -> void:
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.clip_text = true
 	l.size = size
 
 
