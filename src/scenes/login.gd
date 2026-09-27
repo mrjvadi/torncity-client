@@ -114,14 +114,18 @@ func _ready() -> void:
 func _ask_code() -> void:
 	Game.mark("code prompt")
 	var got = JavaScriptBridge.eval("window.prompt(%s, '') || ''" % JSON.stringify(I18n.t("login.step3")), true)
+	# the page stood still while the prompt was up: the tap's second event
+	# (the emulated mouse press) arrives only now, and must not ask again
+	_last_prompt = Time.get_ticks_msec()
 	if got is String and (got as String).strip_edges() != "":
 		_code.text = (got as String).strip_edges().to_upper()
 		_submit()
 
 
 func _submit() -> void:
-	Game.mark("code submit")
 	var code := AuthFlow.normalize_code(_code.text)
+	# never the code itself: only whether it read as one, and its length
+	Game.mark("code submit ok=%s len=%d" % [code != "", _code.text.length()])
 	if code == "":
 		_error.text = I18n.t("login.bad_format")
 		Fx.pulse(_code, Color(1.5, 0.7, 0.7))

@@ -41,15 +41,29 @@ const INVISIBLE_MARKS := ["\u200e", "\u200f", "\u202a", "\u202b", "\u202c", "\u2
 ## right-to-left chat wraps a Latin run in (copied along with the code).
 ## Returns "" when it cannot be one.
 static func normalize_code(raw: String) -> String:
-	var s := Fmt.to_latin(raw).strip_edges().to_upper().replace(" ", "").replace("-", "")
+	var t := Fmt.to_latin(raw).to_upper()
 	for mark in INVISIBLE_MARKS:
-		s = s.replace(mark, "")
+		t = t.replace(mark, "")
+	var s := t.strip_edges().replace(" ", "").replace("-", "")
+	if _is_code(s):
+		return s
+	# pasted with words around it (the bot's whole message, say): the one
+	# eight-character run of letters and digits standing on its own
+	var re := RegEx.create_from_string("(?<![A-Z0-9])[A-Z0-9]{4}-?[A-Z0-9]{4}(?![A-Z0-9])")
+	for m in re.search_all(t):
+		var c := m.get_string().replace("-", "")
+		if _is_code(c):
+			return c
+	return ""
+
+
+static func _is_code(s: String) -> bool:
 	if s.length() != 8:
-		return ""
+		return false
 	for ch in s:
 		if not ((ch >= "A" and ch <= "Z") or (ch >= "0" and ch <= "9")):
-			return ""
-	return s
+			return false
+	return true
 
 
 ## After a failed login attempt, what to do next.

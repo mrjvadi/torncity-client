@@ -21,6 +21,9 @@ func test_normalize_code() -> void:
 	eq(AuthFlow.normalize_code(" ab cd ۱۲۳۴ "), "ABCD1234")
 	eq(AuthFlow.normalize_code("\u2068DVLKJAUH\u2069"), "DVLKJAUH")
 	eq(AuthFlow.normalize_code("\u200fdvlk-jauh\u200e"), "DVLKJAUH")
+	eq(AuthFlow.normalize_code("کد شما: DVLKJAUH"), "DVLKJAUH")
+	eq(AuthFlow.normalize_code("کد شما: \u2068DVLKJAUH\u2069\n\nفقط یک بار و تا 10 دقیقه دیگر کار می‌کند."), "DVLKJAUH")
+	eq(AuthFlow.normalize_code("hello"), "")
 	eq(AuthFlow.normalize_code("ABC123"), "")
 	eq(AuthFlow.normalize_code("ABCD123!"), "")
 
