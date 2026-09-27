@@ -5,11 +5,13 @@ extends "res://proto/home_proto.gd"
 ##   godot --path . res://proto/screens_proto.tscn -- --screen=<name> [--shot=out.png]
 ## Names: profile, activity, job, crime, education, hospital, missions,
 ## economy, inventory, market, bank, company, property, stocks, society,
-## inbox, faction, elections, government, war, travel, levelup, leaderboard.
+## inbox, faction, elections, government, war, forces [--branch=ground|air|navy|air_defence],
+## unit, arsenal, airdefence, travel, levelup, leaderboard.
 
 const TAB := {"profile": 0, "activity": 1, "job": 1, "crime": 1, "education": 1, "hospital": 1, "missions": 1,
 	"leaderboard": 1, "economy": 3, "inventory": 3, "market": 3, "bank": 3, "company": 3, "property": 3,
 	"stocks": 3, "society": 4, "inbox": 4, "faction": 4, "elections": 4, "government": 4, "war": 4,
+	"forces": 4, "unit": 4, "arsenal": 4, "airdefence": 4,
 	"travel": 2, "levelup": 2}
 
 var _scr := "profile"
@@ -778,8 +780,8 @@ func _s_war() -> void:
 	_chip(Rect2(180, 396, 170, 40), "خسارت ما 12٪", ANAR, 16)
 	_chip(Rect2(370, 396, 170, 40), "خسارت آن‌ها 21٪", LAPIS, 16)
 	_sec(502, "عملیات")
-	var ops := [["plane", "sapphire", "حمله‌ی هوایی", "4 جنگنده  ·  هدف: فرودگاه کالدریس", "آماده", ""], ["missile", "ruby", "حمله‌ی موشکی", "12 موشک  ·  هدف: پادگان", "", "18:40"],
-		["tank", "emerald", "پیشروی زمینی", "3 گردان  ·  2 ساعت تا مرز", "آماده", ""]]
+	var ops := [["u_fighter", "sapphire", "حمله‌ی هوایی", "4 جنگنده  ·  هدف: فرودگاه کالدریس", "آماده", ""], ["u_ballistic", "ruby", "حمله‌ی موشکی", "12 موشک  ·  هدف: پادگان", "", "18:40"],
+		["u_tank", "emerald", "پیشروی زمینی", "3 گردان  ·  2 ساعت تا مرز", "آماده", ""]]
 	for i in ops.size():
 		var o: Array = ops[i]
 		var r := Rect2(20, 556 + i * 152, 680, 142)
@@ -792,7 +794,14 @@ func _s_war() -> void:
 			_txt(Rect2(60, r.position.y + 16, 110, 110), o[5], 20, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, display_font, 4)
 		else:
 			_btn(Rect2(40, r.position.y + 36, 180, 70), "پرتاب", "red")
-	_row(Rect2(20, 1016, 680, 98), "radar", "emerald", "پدافند هوایی", "2 سامانه فعال  ·  رادار روشن  ·  آخرین رهگیری 14:20", "", Color.WHITE, Color(LEAF, 0.6))
+	# the war's other rooms
+	var rooms := [["u_troops", "نیروها", "cream"], ["u_ballistic", "زرادخانه", "ruby"], ["u_radar", "پدافند", "teal"]]
+	for i in rooms.size():
+		var rm: Array = rooms[i]
+		var r := Rect2(478.0 - i * 229.0, 1016, 222, 88)
+		var b := _button(r, Color("#3F55A8"), Color("#1A2560"), Color("#0A1030"), 22.0, 7.0)
+		_emboss(rm[0], Rect2(r.end.x - 78, r.position.y + 6, 70, 70), rm[2])
+		b.add_child(_glabel(rm[1], display_font, 27, "#FFFFFF", "#FFD66B", Rect2(8, 0, r.size.x - 88, r.size.y - 7), HORIZONTAL_ALIGNMENT_CENTER, 6))
 
 
 # -- the world ----------------------------------------------------------------------------------------
@@ -881,3 +890,362 @@ func _s_levelup() -> void:
 		_emboss(rw[0], Rect2(x + 30, 796, 116, 116), rw[1])
 		_txt(Rect2(x, 920, 176, 50), rw[2], 18, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, display_font, 4)
 	_btn(Rect2(160, 1020, 400, 90), "عالی!", "gold")
+
+
+# -- the armed forces -----------------------------------------------------------------------------------
+# Shaped like the server's military views (internal/telegram/screens/military.go):
+# a country's equipment by branch (ground, air, navy, air defence) and class
+# (configs/content/military.yml), each class split into its designs — a
+# design's generation is its technology's (defence_industry.yml). Counts are
+# exact because the viewer holds clearance; everyone else sees bands.
+
+const GEN_COL := [Color("#3FAE63"), Color("#3F7BE8"), Color("#9A5CF0")]
+const GEN_PAL := ["emerald", "sapphire", "violet"]
+const GEN_TOP := ["#E4FFE9", "#E2ECFF", "#F0E6FF"]
+const GEN_BOT := ["#7FE39B", "#8FB4FF", "#C9A8FF"]
+
+const BRANCHES := [["ground", "زمینی", "u_tank"], ["air", "هوایی", "u_airforce"], ["navy", "دریایی", "u_carrier"], ["air_defence", "پدافند", "u_radar"]]
+
+# class: icon, name, unit word, counts per generation, design names, status line
+const FORCES := {
+	"air": [
+		["u_fighter", "جنگنده", "فروند", [10, 20, 3], ["شاهین", "شاهین M", "سیمرغ"], "4 در عملیات  ·  3 آسیب‌دیده"],
+		["u_stealth", "جنگنده‌ی رادارگریز", "فروند", [0, 4, 2], ["", "شبح", "شبح X"], "همه آماده"],
+		["u_bomber", "بمب‌افکن", "فروند", [6, 2, 0], ["عقاب", "عقاب B", ""], "2 در راه آزور"],
+		["u_drone", "پهپاد رزمی", "فروند", [24, 40, 12], ["پرستو", "مهاجر", "کرکس"], "9 در عملیات"],
+	],
+	"ground": [
+		["u_helmet", "نیروی انسانی", "نفر", [1240, 310, 86], ["سرباز", "درجه‌دار", "افسر"], "رسته‌ی نیروهای مسلح  ·  18 داوطلب تازه"],
+		["u_tank", "تانک", "دستگاه", [60, 32, 8], ["پلنگ", "پلنگ 2", "ببر"], "6 آسیب‌دیده"],
+		["u_ifv", "نفربر رزمی", "دستگاه", [90, 45, 0], ["گورخر", "گورخر 2", ""], "همه آماده"],
+		["u_artillery", "توپخانه", "قبضه", [36, 18, 4], ["رعد", "رعد 2", "تندر"], "12 در مرز تیرگان"],
+	],
+	"navy": [
+		["u_frigate", "ناوچه", "فروند", [4, 2, 0], ["موج", "موج 2", ""], "1 در تعمیر"],
+		["u_sub", "زیردریایی", "فروند", [2, 1, 0], ["نهنگ", "نهنگ 2", ""], "همه آماده"],
+		["u_antiship", "موشک ضدکشتی", "فروند", [30, 16, 4], ["نیزه", "نیزه 2", "زوبین"], "در انبار بندر آزور"],
+	],
+	"air_defence": [
+		["u_radar", "رادار هشدار زودهنگام", "سامانه", [6, 3, 1], ["دیدبان", "دیدبان 2", "افق"], "شبکه روشن  ·  برد 420 کیلومتر"],
+		["u_sam", "پدافند کوتاه‌برد", "آتشبار", [18, 10, 0], ["سپر", "سپر 2", ""], "4 تیر در هر پرتابگر"],
+		["u_sam", "پدافند میان‌برد", "آتشبار", [8, 6, 2], ["باور", "باور 2", "باور 3"], "رهگیر موشک بالستیک"],
+		["u_sam", "پدافند دوربرد", "آتشبار", [0, 3, 1], ["", "ستیغ", "ستیغ 2"], "رهگیر موشک بالستیک"],
+	],
+}
+
+
+func _arg(key: String, def: String) -> String:
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--%s=" % key):
+			return a.substr(key.length() + 3)
+	return def
+
+
+func _node(n: Node2D) -> Node2D:
+	ui.add_child(n)
+	return n
+
+
+func _circle(c: Vector2, r: float, col: Color, w := 2.0, fill := Color(0, 0, 0, 0)) -> void:
+	var pts := PackedVector2Array()
+	for i in 73:
+		pts.append(c + Vector2.from_angle(TAU * i / 72.0) * r)
+	if fill.a > 0.0:
+		var p := Polygon2D.new()
+		p.polygon = pts
+		p.color = fill
+		_node(p)
+	var l := Line2D.new()
+	l.points = pts
+	l.width = w
+	l.default_color = col
+	l.antialiased = true
+	_node(l)
+
+
+func _line(a: Vector2, b: Vector2, col: Color, w := 2.0) -> void:
+	var l := Line2D.new()
+	l.points = PackedVector2Array([a, b])
+	l.width = w
+	l.default_color = col
+	l.antialiased = true
+	_node(l)
+
+
+## One generation of a class: its tier's colour, the count, the design.
+## `label` replaces "نسل n" where the tiers are something else (ranks).
+func _gen_card(r: Rect2, icon: String, gen: int, count: int, design: String, label := "", active := false) -> void:
+	var have := count > 0
+	var col: Color = GEN_COL[gen - 1] if have else Color("#3A4058")
+	var f := _frame(r, 16.0, Color(col.darkened(0.5), 0.97), Color(col.darkened(0.82), 0.97), GOLD if active else col.lightened(0.3), 0.05 if have else 0.0, 3.0 if active else 2.0)
+	var m := f.material as ShaderMaterial
+	m.set_shader_parameter("shadow", 0.35)
+	if active or (have and gen == 3):
+		m.set_shader_parameter("glow", Color(GOLD if active else col, 0.45))
+	var ic := _emboss(icon, Rect2(r.position.x + 4, r.position.y + 2, 62, 62), GEN_PAL[gen - 1] if have else "steel")
+	if not have:
+		ic.modulate = Color(1, 1, 1, 0.3)
+	_chip(Rect2(r.end.x - 76, r.position.y + 8, 68, 28), label if label != "" else "نسل %d" % gen, col if have else Color("#59607A"), 16)
+	if have:
+		_big(Rect2(r.position.x + 8, r.position.y + 54, r.size.x - 16, 44), "×" + _n(count), 36, GEN_TOP[gen - 1], GEN_BOT[gen - 1])
+		if label == "":
+			_txt(Rect2(r.position.x + 6, r.position.y + 94, r.size.x - 12, 24), design, 15, Color("#C9D2EE"), HORIZONTAL_ALIGNMENT_CENTER)
+	else:
+		_txt(Rect2(r.position.x + 8, r.position.y + 58, r.size.x - 16, 36), "ندارید", 20, Color("#6E7694"), HORIZONTAL_ALIGNMENT_RIGHT, display_font, 3)
+		_txt(Rect2(r.position.x + 6, r.position.y + 94, r.size.x - 12, 24), "خرید از صنایع", 14, Color("#6E7694"), HORIZONTAL_ALIGNMENT_CENTER)
+
+
+## A class of equipment: its plate, name and total at the reading start, a
+## card per generation after it.
+func _class_row(y: float, c: Array) -> void:
+	var counts: Array = c[3]
+	var total := 0
+	for v in counts:
+		total += int(v)
+	_inset(Rect2(20, y, 680, 142), Color(GOLD, 0.35))
+	_plate(c[0], Rect2(572, y + 6, 84, 84), "cream", Color("#1E2A5A"))
+	var name_px := 22 if (c[1] as String).length() < 12 else 18
+	ui.add_child(_label(c[1], display_font, name_px, Color.WHITE, Rect2(522, y + 88, 180, 30), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	_big(Rect2(522, y + 112, 180, 30), "%s %s" % [_n(total), c[2]], 20, "#FFF6C8", "#FFB21F", HORIZONTAL_ALIGNMENT_CENTER)
+	var ranks: bool = c[0] == "u_helmet"
+	for g in 3:
+		var x := 360.0 - g * 162.0
+		_gen_card(Rect2(x, y + 10, 152, 122), c[0], g + 1, int(counts[g]), c[4][g], c[4][g] if ranks else "")
+
+
+func _forces_summary() -> void:
+	_card(Rect2(20, 256, 680, 104), Color(LEAF, 0.3))
+	_plate("eagle", Rect2(604, 266, 84, 84), "sapphire", Color("#101E60"))
+	ui.add_child(_label("فنویک", display_font, 28, Color.WHITE, Rect2(440, 266, 156, 40), HORIZONTAL_ALIGNMENT_RIGHT, 5))
+	_txt(Rect2(420, 306, 176, 28), "ستاد کل نیروهای مسلح", 15, Color("#AEB8D8"))
+	_txt(Rect2(250, 262, 170, 26), "قدرت رزمی", 15, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_CENTER)
+	_big(Rect2(250, 286, 170, 52), "18,420", 40, "#FFF6C8", "#FFB21F", HORIZONTAL_ALIGNMENT_CENTER)
+	_ring(Rect2(166, 264, 76, 76), 0.86, LEAF)
+	_txt(Rect2(166, 264, 76, 76), "86٪", 19, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, display_font, 4)
+	_txt(Rect2(150, 336, 108, 22), "آمادگی", 14, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_CENTER)
+	_chip(Rect2(34, 268, 118, 34), "محرمانه", ANAR, 17)
+	_txt(Rect2(28, 308, 132, 22), "نگهداری هر دوره", 13, Color("#AEB8D8"), HORIZONTAL_ALIGNMENT_CENTER)
+	_txt(Rect2(28, 328, 132, 26), "12,400", 19, Color("#FFD0D4"), HORIZONTAL_ALIGNMENT_CENTER, display_font, 3)
+
+
+func _branch_tabs(y: float, active: String) -> void:
+	for i in BRANCHES.size():
+		var b: Array = BRANCHES[i]
+		var r := Rect2(536.0 - i * 172.0, y, 164, 76)
+		var on: bool = b[0] == active
+		if on:
+			var f := _frame(r, 18.0, Color("#3A63D0"), Color("#15286A"), GOLD, 0.05, 3.0)
+			(f.material as ShaderMaterial).set_shader_parameter("glow", Color("#8FB4FF", 0.5))
+		else:
+			_inset(r, Color(GOLD, 0.25))
+		var ic := _emboss(b[2], Rect2(r.end.x - 70, y + 6, 64, 64), "gold" if on else "steel")
+		if not on:
+			ic.modulate = Color(0.8, 0.84, 0.95)
+		ui.add_child(_label(b[1], display_font, 24 if on else 21, Color.WHITE if on else Color("#AEB8D8"), Rect2(r.position.x + 6, y, r.size.x - 78, 76), HORIZONTAL_ALIGNMENT_CENTER, 4))
+
+
+func _s_forces() -> void:
+	var branch := _arg("branch", "air")
+	_hdr("نیروهای مسلح", Color("#3D6B3A"))
+	_forces_summary()
+	_branch_tabs(374, branch)
+	var rows: Array = FORCES[branch]
+	for i in rows.size():
+		_class_row(466 + i * 152, rows[i])
+
+
+# -- one design, as its commander sees it ---------------------------------------------------------------
+func _stat(r: Rect2, name: String, value: String, v: float, delta: String, col: Color) -> void:
+	_txt(Rect2(r.position.x, r.position.y, r.size.x, 26), name, 16, Color("#AEB8D8"))
+	var val := _label(value, display_font, 22, Color.WHITE, Rect2(r.position.x, r.position.y - 2, r.size.x - 120, 30), HORIZONTAL_ALIGNMENT_LEFT, 4)
+	val.text_direction = Control.TEXT_DIRECTION_LTR
+	ui.add_child(val)
+	_pbar(Rect2(r.position.x + 70, r.position.y + 32, r.size.x - 70, 18), v, col)
+	if delta != "":
+		var d := _txt(Rect2(r.position.x, r.position.y + 26, 64, 28), delta, 16, Color("#7FE39B"), HORIZONTAL_ALIGNMENT_LEFT, display_font, 3)
+		d.text_direction = Control.TEXT_DIRECTION_LTR
+
+
+func _s_unit() -> void:
+	_hdr("جنگنده", Color("#2A4BC8"))
+	_card(Rect2(20, 256, 680, 330), Color(GEN_COL[1], 0.45))
+	# the hero: the airframe on a lit disc
+	var disc := _gradient(Rect2(40, 280, 300, 220), Color(GEN_COL[1], 0.0), Color(GEN_COL[1], 0.35))
+	disc.modulate = Color(1, 1, 1, 0.9)
+	_circle(Vector2(190, 470), 120, Color(GEN_COL[1].lightened(0.3), 0.5), 3.0, Color(GEN_COL[1], 0.12))
+	_emboss("u_fighter", Rect2(50, 262, 280, 240), "sapphire")
+	_big(Rect2(350, 268, 336, 60), "شاهین M", 50, "#FFFFFF", "#BFD4FF")
+	_txt(Rect2(350, 326, 336, 26), "طراح و سازنده: صنایع هوایی آراز", 16, Color("#C9D2EE"))
+	_chip(Rect2(588, 362, 98, 34), "نسل 2", GEN_COL[1], 18)
+	_chip(Rect2(470, 362, 110, 34), "کیفیت 72", SAFFRON, 17)
+	_big(Rect2(350, 404, 336, 60), "×20", 54, "#FFF6C8", "#FFB21F")
+	_txt(Rect2(350, 460, 336, 26), "فروند در اختیار نیروی هوایی", 16, Color("#C9D2EE"))
+	# the generations of the class, this one lit
+	var gens := [[1, 10, "شاهین"], [2, 20, "شاهین M"], [3, 3, "سیمرغ"]]
+	for i in 3:
+		var g: Array = gens[i]
+		var r := Rect2(476.0 - i * 222.0, 510, 210, 62)
+		var col: Color = GEN_COL[i]
+		var f := _frame(r, 16.0, Color(col.darkened(0.3 if i == 1 else 0.55)), Color(col.darkened(0.8)), GOLD if i == 1 else Color(col, 0.7), 0.0, 3.0 if i == 1 else 1.5)
+		if i == 1:
+			(f.material as ShaderMaterial).set_shader_parameter("glow", Color(GOLD, 0.4))
+		ui.add_child(_label("نسل %d  ·  %s" % [g[0], g[2]], display_font, 19, Color.WHITE, Rect2(r.position.x + 56, r.position.y, 150, 62), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+		_big(Rect2(r.position.x + 8, r.position.y + 6, 60, 50), _n(g[1]), 28, GEN_TOP[i], GEN_BOT[i], HORIZONTAL_ALIGNMENT_LEFT)
+	_sec(600, "مشخصات")
+	var sx := [370.0, 30.0]
+	_stat(Rect2(sx[0], 656, 320, 54), "سرعت", "2,100 km/h", 0.72, "+300", LAPIS)
+	_stat(Rect2(sx[1], 656, 320, 54), "برد", "1,800 km", 0.6, "+300", LAPIS)
+	_stat(Rect2(sx[0], 724, 320, 54), "محموله", "8,000 kg", 0.55, "+1,000", LAPIS)
+	_stat(Rect2(sx[1], 724, 320, 54), "نبرد هوایی", "2 موشک", 0.5, "", LAPIS)
+	_stat(Rect2(sx[0], 792, 320, 54), "سطح مقطع راداری", "3.2 m²", 0.35, "−1.8", LEAF)
+	_stat(Rect2(sx[1], 792, 320, 54), "دیده می‌شود از", "268 km", 0.52, "−36", LEAF)
+	# where the pieces are
+	var st := [["آماده", "14", LEAF], ["در عملیات", "3", SAFFRON], ["آسیب‌دیده", "2", ANAR], ["در راه", "1", LAPIS]]
+	for i in st.size():
+		var s: Array = st[i]
+		var r := Rect2(532.0 - i * 170.0, 866, 160, 84)
+		_inset(r, Color(s[2], 0.6))
+		_big(Rect2(r.position.x, r.position.y + 4, r.size.x, 46), s[1], 38, "#FFFFFF", Color(s[2]).lightened(0.4).to_html(false))
+		_txt(Rect2(r.position.x, r.position.y + 50, r.size.x, 28), s[0], 16, Color("#C9D2EE"), HORIZONTAL_ALIGNMENT_CENTER)
+	_inset(Rect2(20, 962, 680, 56))
+	_emboss("u_fort", Rect2(640, 964, 52, 52), "cream")
+	_txt(Rect2(36, 962, 600, 56), "پایگاه‌ها:  فنویک 8  ·  آزور 6  ·  تیرگان 5  ·  انبار 1", 18, Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT, display_font, 3)
+	_btn(Rect2(370, 1030, 330, 76), "ارتقا به نسل 3", "gold")
+	_btn(Rect2(20, 1030, 330, 76), "استقرار", "blue")
+
+
+# -- missiles and munitions, across the branches, and a salvo --------------------------------------------
+const MISSILES := [
+	["u_ballistic", "موشک بالستیک", "رهگیری: فقط پدافند میان‌برد و دوربرد", [40, 24, 6]],
+	["u_cruise", "موشک کروز", "پرواز پست  ·  رادار از 40 کیلومتری می‌بیندش", [52, 30, 8]],
+	["u_antiship", "موشک ضدکشتی", "برای ناوگان  ·  در انبار بندر آزور", [30, 16, 4]],
+	["u_bomb", "بمب هدایت‌شونده", "مهمات جنگنده  ·  هر سورتی 2 بمب", [120, 64, 0]],
+]
+
+
+func _gen_pills(x0: float, y: float, counts: Array) -> void:
+	for g in 3:
+		var r := Rect2(x0 + (2 - g) * 78.0, y, 70, 76)
+		var have := int(counts[g]) > 0
+		var col: Color = GEN_COL[g] if have else Color("#3A4058")
+		var f := _frame(r, 14.0, Color(col.darkened(0.5), 0.97), Color(col.darkened(0.82), 0.97), col.lightened(0.3), 0.0, 2.0)
+		(f.material as ShaderMaterial).set_shader_parameter("shadow", 0.2)
+		_txt(Rect2(r.position.x, y + 4, 70, 24), "نسل %d" % (g + 1), 14, Color(col.lightened(0.5)), HORIZONTAL_ALIGNMENT_CENTER)
+		if have:
+			_big(Rect2(r.position.x, y + 28, 70, 42), _n(int(counts[g])), 28 if int(counts[g]) < 100 else 24, GEN_TOP[g], GEN_BOT[g], HORIZONTAL_ALIGNMENT_CENTER)
+		else:
+			_txt(Rect2(r.position.x, y + 28, 70, 42), "—", 24, Color("#6E7694"), HORIZONTAL_ALIGNMENT_CENTER, display_font)
+
+
+## A row of an arsenal: plate, name, note, total, a pill per generation.
+func _arms_row(y: float, icon: String, name: String, note: String, counts: Array, trim := Color(GOLD, 0.35)) -> void:
+	var total := 0
+	for v in counts:
+		total += int(v)
+	_inset(Rect2(20, y, 680, 100), trim)
+	_plate(icon, Rect2(608, y + 12, 78, 78), "cream", Color("#1E2A5A"))
+	ui.add_child(_label(name, display_font, 23, Color.WHITE, Rect2(270, y + 8, 328, 36), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+	_big(Rect2(270, y + 8, 200, 36), "کل " + _n(total), 24, "#FFF6C8", "#FFB21F", HORIZONTAL_ALIGNMENT_LEFT)
+	var l := _txt(Rect2(270, y + 46, 328, 48), note, 14, Color("#AEB8D8"))
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+	_gen_pills(32, y + 12, counts)
+
+
+func _stepper(y: float, icon: String, gen: int, name: String, have: int, n: int) -> void:
+	_emboss(icon, Rect2(630, y, 56, 56), GEN_PAL[gen - 1])
+	ui.add_child(_label(name, display_font, 20, Color.WHITE, Rect2(330, y, 296, 32), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+	_txt(Rect2(330, y + 30, 296, 24), "نسل %d  ·  %d در انبار" % [gen, have], 14, Color(GEN_COL[gen - 1].lightened(0.4)))
+	var minus := _button(Rect2(236, y + 4, 52, 52), Color("#8E97B4"), Color("#4A536E"), Color("#1E2436"), 16.0, 5.0)
+	minus.add_child(_label("−", display_font, 34, Color.WHITE, Rect2(0, -6, 52, 56), HORIZONTAL_ALIGNMENT_CENTER, 4))
+	_inset(Rect2(128, y + 4, 100, 52), Color(GOLD, 0.6))
+	_big(Rect2(128, y + 4, 100, 52), str(n), 32, "#FFFFFF", "#FFD66B", HORIZONTAL_ALIGNMENT_CENTER)
+	var plus := _button(Rect2(68, y + 4, 52, 52), LEAF.lightened(0.3), LEAF.darkened(0.1), LEAF.darkened(0.55), 16.0, 5.0)
+	plus.add_child(_label("+", display_font, 34, Color.WHITE, Rect2(0, -6, 52, 56), HORIZONTAL_ALIGNMENT_CENTER, 4))
+
+
+func _s_arsenal() -> void:
+	_hdr("زرادخانه", Color("#A01E2A"))
+	for i in MISSILES.size():
+		var m: Array = MISSILES[i]
+		_arms_row(256 + i * 108, m[0], m[1], m[2], m[3])
+	_sec(690, "طرح آتش")
+	_card(Rect2(20, 746, 680, 360), Color(ANAR, 0.4))
+	# the target
+	_plate("u_fort", Rect2(620, 756, 66, 66), "ruby", Color("#3A0E1E"))
+	ui.add_child(_label("پایگاه هوایی کالدریس", display_font, 23, Color.WHITE, Rect2(300, 754, 312, 36), HORIZONTAL_ALIGNMENT_RIGHT, 4))
+	_txt(Rect2(300, 788, 312, 24), "فاصله 640 کیلومتر  ·  3 آتشبار میان‌برد", 14, Color("#FFC9CC"))
+	_btn(Rect2(40, 764, 150, 50), "تغییر هدف", "steel")
+	var sep := ColorRect.new()
+	sep.layout_direction = Control.LAYOUT_DIRECTION_LTR
+	sep.position = Vector2(40, 830)
+	sep.size = Vector2(640, 2)
+	sep.color = Color(GOLD, 0.25)
+	ui.add_child(sep)
+	_stepper(842, "u_ballistic", 3, "موشک بالستیک", 6, 4)
+	_stepper(906, "u_cruise", 2, "موشک کروز", 30, 8)
+	# the commander's estimate: the battle rolled a dozen times
+	_inset(Rect2(36, 972, 648, 58), Color(SAFFRON, 0.5))
+	_ring(Rect2(612, 974, 54, 54), 0.58, SAFFRON)
+	_txt(Rect2(612, 974, 54, 54), "58٪", 14, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, display_font, 3)
+	_txt(Rect2(48, 972, 556, 30), "برآورد: 7 از 12 موشک از پدافند می‌گذرد", 18, Color.WHITE, HORIZONTAL_ALIGNMENT_RIGHT, display_font, 3)
+	_txt(Rect2(48, 1000, 556, 26), "خسارت احتمالی: سنگین  ·  آماده‌سازی 20 دقیقه", 15, Color("#FFE3B0"))
+	_btn(Rect2(160, 1040, 400, 58), "پرتاب 12 موشک", "red")
+
+
+# -- air defence ---------------------------------------------------------------------------------------------
+func _s_airdefence() -> void:
+	_hdr("پدافند هوایی", Color("#1E7A6A"))
+	_card(Rect2(20, 256, 680, 420), Color(FIROUZEH, 0.35))
+	var c := Vector2(300, 470)
+	var R := 190.0
+	_circle(c, R, Color(FIROUZEH, 0.8), 3.0, Color("#03140F", 0.92))
+	# coverage of the batteries, widest first
+	_circle(c + Vector2(10, 10), 150, Color(GEN_COL[2], 0.8), 2.0, Color(GEN_COL[2], 0.10))
+	_circle(c + Vector2(-80, -70), 84, Color(GEN_COL[1], 0.85), 2.0, Color(GEN_COL[1], 0.12))
+	_circle(c + Vector2(90, 96), 70, Color(GEN_COL[1], 0.85), 2.0, Color(GEN_COL[1], 0.12))
+	for p in [Vector2(10, 10), Vector2(-80, -70), Vector2(90, 96), Vector2(-40, 60)]:
+		_circle(c + p, 36, Color(GEN_COL[0], 0.9), 2.0, Color(GEN_COL[0], 0.14))
+	for k in [0.33, 0.66]:
+		_circle(c, R * k, Color(FIROUZEH, 0.22), 1.5)
+	_line(c - Vector2(R, 0), c + Vector2(R, 0), Color(FIROUZEH, 0.22), 1.5)
+	_line(c - Vector2(0, R), c + Vector2(0, R), Color(FIROUZEH, 0.22), 1.5)
+	# the sweep
+	var sweep := Polygon2D.new()
+	var pts := PackedVector2Array([c])
+	var cols := PackedColorArray([Color(FIROUZEH, 0.0)])
+	for i in 13:
+		var a := -2.2 + 0.7 * i / 12.0
+		pts.append(c + Vector2.from_angle(a) * R)
+		cols.append(Color(FIROUZEH, 0.5 * i / 12.0))
+	sweep.polygon = pts
+	sweep.vertex_colors = cols
+	_node(sweep)
+	_line(c, c + Vector2.from_angle(-1.5) * R, Color("#A8FFF0", 0.9), 2.5)
+	# cities
+	var cities := [[Vector2(10, 10), "فنویک", true], [Vector2(-80, -70), "آزور", false], [Vector2(90, 96), "تیرگان", false], [Vector2(-40, 60), "دشتک", false]]
+	for ct in cities:
+		var p: Vector2 = c + ct[0]
+		_circle(p, 7 if ct[2] else 5, GOLD, 3.0, GOLD if ct[2] else Color("#FFF3B0"))
+		_txt(Rect2(p.x - 70, p.y + 6, 140, 26), ct[1], 16, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, display_font, 4)
+	# an incoming raid and its track
+	var blip := c + Vector2(128, -128)
+	_line(c + Vector2(186, -176), blip, Color(ANAR, 0.7), 2.0)
+	for d in [Vector2(0, 0), Vector2(14, -6), Vector2(-6, 12)]:
+		_circle(blip + d, 5, ANAR, 2.0, Color(ANAR, 0.9))
+	_chip(Rect2(blip.x - 150, blip.y - 50, 136, 32), "3 کروز  ·  4 دقیقه", ANAR, 15)
+	# the network's figures
+	var info := [["هشدار زودهنگام", "420 km", FIROUZEH], ["رادارگریز را می‌بیند از", "65 km", VIOLET], ["رهگیری امروز", "78٪", LEAF]]
+	for i in info.size():
+		var it: Array = info[i]
+		_txt(Rect2(500, 280 + i * 92, 186, 26), it[0], 15, Color("#AEB8D8"))
+		var v := _glabel(it[1], display_font, 34, "#FFFFFF", Color(it[2]).lightened(0.4).to_html(false), Rect2(500, 304 + i * 92, 186, 50), HORIZONTAL_ALIGNMENT_RIGHT, 6)
+		v.text_direction = Control.TEXT_DIRECTION_LTR
+		ui.add_child(v)
+	_chip(Rect2(500, 560, 186, 34), "کوتاه‌برد", GEN_COL[0], 16)
+	_chip(Rect2(500, 600, 186, 34), "میان‌برد", GEN_COL[1], 16)
+	_chip(Rect2(500, 640, 186, 34), "دوربرد", GEN_COL[2], 16)
+	var ad: Array = FORCES["air_defence"]
+	for i in ad.size():
+		var a: Array = ad[i]
+		_arms_row(690 + i * 104, a[0], a[1], a[5], a[3], Color(FIROUZEH, 0.45))
