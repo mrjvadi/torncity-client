@@ -37,11 +37,14 @@ the preset itself has been read — that much is verified.
 The Web build is single-threaded (`variant/thread_support=false`), so it needs
 no cross-origin-isolation headers and runs in Telegram's WebView. Serve
 `build/web/` over HTTPS with `.wasm` as `application/wasm` and gzip/brotli
-compression; set the Mini App URL in BotFather to that page. For an even
-smaller download, build custom web templates with 3D and unused modules
-disabled (`scons platform=web target=template_release disable_3d=yes
-module_text_server_fb_enabled=no` keeps the advanced text server Persian
-needs).
+compression; set the Mini App URL in BotFather to that page.
+
+The official template gives about 40.9 MB raw / 8.0 MB brotli.
+`tools/build_web_template.sh` builds a trimmed template (no physics,
+navigation, XR, CSG, WebRTC, fallback text server and other unused modules;
+the advanced text server Persian needs is kept) and installs it in place of
+the official one. The same export is then 23.6 MB raw / 7.8 MB gzip /
+5.9 MB brotli (wasm 22.2 MB). The script lists which modules stay and why.
 
 ## Headless checks
 
